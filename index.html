@@ -14,7 +14,7 @@
 <title>Siritinga</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
 <style>
 :root{
   --bg:#2b1d6b; --card:#ffffff; --ink:#1f1640; --muted:#6b6290;
@@ -510,6 +510,87 @@ details summary{cursor:pointer;font-weight:800;font-size:19px;margin-top:12px}
 </section>
 
 <script>
+/* ============================================================
+   CONEXIÓN MAESTRO ⇄ ALUMNOS
+   Los mensajes viajan por un servidor público de mensajería (MQTT
+   sobre WebSocket seguro, puerto web), con otro de reserva, y van
+   cifrados con una clave que solo conocen quienes tienen el código.
+   ============================================================ */
+const Net=(()=>{
+  const qp=new URLSearchParams(location.search);
+  const BROKERS=qp.get('mq')?[qp.get('mq')]:['wss://broker.emqx.io:8084/mqtt','wss://test.mosquitto.org:8081/mqtt'];
+  const enc=new TextEncoder(),dec=new TextDecoder();
+  const keyCache={};
+  async function keyFor(code){
+    if(keyCache[code])return keyCache[code];
+    const base=await crypto.subtle.importKey('raw',enc.encode('siritinga|'+code),'PBKDF2',false,['deriveKey']);
+    return keyCache[code]=crypto.subtle.deriveKey({name:'PBKDF2',salt:enc.encode('siritinga-sal-2026-ORB'),iterations:60000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+  }
+  async function topicFor(code){const h=await crypto.subtle.digest('SHA-256',enc.encode('siritinga-tema|'+code));return 'srtg26/'+[...new Uint8Array(h)].slice(0,12).map(b=>b.toString(16).padStart(2,'0')).join('');}
+  async function seal(key,obj){const iv=crypto.getRandomValues(new Uint8Array(12));const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,enc.encode(JSON.stringify(obj))));const out=new Uint8Array(12+ct.length);out.set(iv);out.set(ct,12);return out;}
+  async function unseal(key,buf){const u=new Uint8Array(buf);return JSON.parse(dec.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:u.slice(0,12)},key,u.slice(12))));}
+  function mkConn(sendRaw){
+    const h={};let chain=Promise.resolve();
+    const c={open:true,
+      on(ev,fn){(h[ev]=h[ev]||[]).push(fn);},
+      emit(ev,x){(h[ev]||[]).forEach(f=>{try{f(x);}catch(e){console.error(e);}});},
+      send(m){if(!c.open)return;chain=chain.then(()=>sendRaw(m)).catch(()=>{});},
+      close(){if(!c.open)return;c.open=false;c.emit('close');}};
+    return c;
+  }
+  function connectBroker(url,clientId,will){
+    return new Promise((res,rej)=>{
+      let ok=false,cl;
+      try{cl=mqtt.connect(url,{clientId,clean:true,connectTimeout:6000,reconnectPeriod:2000,keepalive:20,will,protocolVersion:4});}catch(e){rej(e);return;}
+      cl.on('connect',()=>{if(!ok){ok=true;res(cl);}});
+      cl.on('error',()=>{});
+      setTimeout(()=>{if(!ok){try{cl.end(true);}catch(e){}rej(new Error('timeout'));}},7000);
+    });
+  }
+  /* ----- maestro ----- */
+  async function host(code,onConn){
+    const key=await keyFor(code),base=await topicFor(code),conns={},clients=[];
+    const tries=await Promise.allSettled(BROKERS.map(u=>connectBroker(u,'h'+code+'_'+Math.random().toString(36).slice(2,8))));
+    tries.forEach(t=>{if(t.status==='fulfilled')clients.push(t.value);});
+    if(!clients.length)throw new Error('sin servidor');
+    clients.forEach(cl=>{
+      cl.subscribe(base+'/h',{qos:1});
+      let chain=Promise.resolve();
+      cl.on('message',(t,payload)=>{chain=chain.then(async()=>{
+        let m;try{m=await unseal(key,payload);}catch(e){return;}
+        const id=String(m.f||'').slice(0,40);if(!/^[a-z0-9]+$/i.test(id))return;
+        let c=conns[id];
+        if(m.d&&m.d.t==='__bye'){if(c)c.close();return;}
+        if(!c||!c.open){
+          c=conns[id]=mkConn(async msg=>{cl.publish(base+'/p/'+id,await seal(key,msg),{qos:1});});
+          c.last=Date.now();onConn(c);
+        }
+        c.last=Date.now();
+        if(m.d&&m.d.t==='__ping')return;
+        c.emit('data',m.d);
+      }).catch(()=>{});});
+    });
+    const hb=setInterval(()=>{const now=Date.now();Object.values(conns).forEach(c=>{if(c.open&&now-c.last>30000)c.close();});},5000);
+    return {destroy(){clearInterval(hb);clients.forEach(c=>{try{c.end(true);}catch(e){}});},brokers:clients.length};
+  }
+  /* ----- alumno ----- */
+  async function join(code){
+    const key=await keyFor(code),base=await topicFor(code),id='a'+Math.random().toString(36).slice(2,12);
+    const will={topic:base+'/h',payload:await seal(key,{f:id,d:{t:'__bye'}}),qos:1};
+    let cl=null;
+    for(const url of BROKERS){try{cl=await connectBroker(url,id,will);break;}catch(e){}}
+    if(!cl)throw new Error('sin servidor');
+    const c=mkConn(async msg=>{cl.publish(base+'/h',await seal(key,{f:id,d:msg}),{qos:1});});
+    cl.subscribe(base+'/p/'+id,{qos:1});
+    let chain=Promise.resolve();
+    cl.on('message',(t,payload)=>{chain=chain.then(async()=>{let d;try{d=await unseal(key,payload);}catch(e){return;}c.emit('data',d);}).catch(()=>{});});
+    const ping=setInterval(()=>c.send({t:'__ping'}),8000);
+    c.destroy=()=>{clearInterval(ping);c.send({t:'__bye'});setTimeout(()=>{c.open=false;try{cl.end(true);}catch(e){}},400);};
+    return c;
+  }
+  return {host,join,brokers:BROKERS};
+})();
+
 /* ============================================================
    MÚSICA GENERADA AL MOMENTO (original, nunca se repite)
    Cada frase se compone al azar a partir de escalas, acordes y
@@ -1026,7 +1107,6 @@ function store(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(
 function mmss(ms){const s=Math.max(0,Math.ceil(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 const PREFIX='siritinga-dli-';
 const params=new URLSearchParams(location.search);
-function peerOpts(){const ps=params.get('ps');if(!ps)return {debug:0};const [host,port]=ps.split(':');return {host,port:+port,path:'/',secure:false,debug:0};}
 function b64e(s){return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
 function b64d(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return decodeURIComponent(escape(atob(s)));}
 function fnv(str){let h=0x811c9dc5;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}return h;}
@@ -1177,32 +1257,28 @@ function prizeLabel(p,T){
    MAESTRO (servidor de la partida)
    ===================================================== */
 let H=null;
-function createGame(){
+async function createGame(){
   const qs=parseBank($('bank').value);
   if(qs.length<4){$('setupErr').textContent='Necesitas al menos 4 preguntas válidas.';return;}
   if(SET.how==='tarea'){makeHomework(qs);return;}
-  if(typeof Peer==='undefined'){$('setupErr').textContent='No se pudo cargar la conexión. Revisa que haya internet.';return;}
+  if(typeof mqtt==='undefined'){$('setupErr').textContent='No se pudo cargar la conexión. Revisa que haya internet y recarga la página.';return;}
   $('createBtn').disabled=true;$('setupErr').textContent='Creando partida…';
   musicFor(SET.mode);musicAuto(true);
   const code=String(Math.floor(10000+Math.random()*90000));
-  const peer=new Peer(PREFIX+code,peerOpts());
-  peer.on('open',()=>{
-    H={peer,code,qs,cls:CL.sel,sabN:$('sabN').value,photos:$('usePhotos').checked,mode:SET.mode,season:$('season').value,dur:+$('dur').value*1000,players:{},state:'lobby',endsAt:0,feed:[],joinN:0};
-    document.body.classList.toggle('hallo',H.mode==='fiesta');
-    $('codeBig').textContent=code;$('codeSmall').textContent=code;
-    $('lobbyMode').textContent=MODES[H.mode].icon+' '+modeLabel(H.mode,H.season)+' · '+clsById(H.cls).name;
-    $('gameModeName').textContent=modeLabel(H.mode,H.season);
-    show('s-lobby');renderLobby();
-  });
-  peer.on('error',e=>{
-    if(e.type==='unavailable-id'){peer.destroy();$('createBtn').disabled=false;createGame();return;}
-    if(!H){$('createBtn').disabled=false;$('setupErr').textContent='No se pudo crear la partida ('+e.type+'). Revisa la conexión.';}
-  });
-  peer.on('disconnected',()=>{try{peer.reconnect();}catch(e){}});
-  peer.on('connection',conn=>{
-    conn.on('data',d=>hostMsg(conn,d));
-    conn.on('close',()=>{const p=byConn(conn);if(p){p.conn=null;renderLobby();renderBoard();}});
-  });
+  let net;
+  try{
+    net=await Net.host(code,conn=>{
+      conn.on('data',d=>hostMsg(conn,d));
+      conn.on('close',()=>{if(!H)return;const p=byConn(conn);if(p){p.conn=null;renderLobby();renderBoard();}});
+    });
+  }catch(e){$('createBtn').disabled=false;$('setupErr').textContent='No se pudo conectar con el servidor del juego. Revisa la conexión a internet e inténtalo otra vez.';return;}
+  $('createBtn').disabled=false;$('setupErr').textContent='';
+  H={net,code,qs,cls:CL.sel,sabN:$('sabN').value,photos:$('usePhotos').checked,mode:SET.mode,season:$('season').value,dur:+$('dur').value*1000,players:{},state:'lobby',endsAt:0,feed:[],joinN:0};
+  document.body.classList.toggle('hallo',H.mode==='fiesta');
+  $('codeBig').textContent=code;$('codeSmall').textContent=code;
+  $('lobbyMode').textContent=MODES[H.mode].icon+' '+modeLabel(H.mode,H.season)+' · '+clsById(H.cls).name;
+  $('gameModeName').textContent=modeLabel(H.mode,H.season);
+  show('s-lobby');renderLobby();
 }
 function byConn(c){return Object.values(H.players).find(p=>p.conn===c);}
 function hsend(p,msg){if(p&&p.conn&&p.conn.open)p.conn.send(msg);}
@@ -1237,7 +1313,7 @@ function hostMsg(conn,d){
     renderLobby();renderBoard();
     return;
   }
-  const p=byConn(conn); if(!p)return;
+  const p=byConn(conn); if(!p){if(d.t!=='__ping')conn.send({t:'rejoin'});return;}
   if(d.t==='av'){
     if(p.rec){const tmp={...p.rec,av:d.av};cleanRec(tmp);p.rec.av=tmp.av;saveClasses();p.av=p.rec.av;}else p.av=cleanAv(d.av);
     renderLobby();renderBoard();return;}
@@ -1708,33 +1784,23 @@ $('joinCode').addEventListener('keydown',e=>{if(e.key==='Enter')$('joinName').fo
 $('joinName').addEventListener('keydown',e=>{if(e.key==='Enter')joinGame();});
 $('hwStudent').addEventListener('keydown',e=>{if(e.key==='Enter')startHomework();});
 function send(m){if(P&&P.conn&&P.conn.open)P.conn.send(m);}
-function joinGame(){
+function joinMsg(){return {t:'join',name:P.name,av:PROF.av,prof:{owned:PROF.owned,wallet:PROF.wallet},pend:PROF.pend};}
+async function joinGame(){
   const code=$('joinCode').value.trim(), name=$('joinName').value.trim().replace(/\s+/g,' ');
   if(!/^\d{5}$/.test(code)){$('joinErr').textContent='El código tiene 5 números.';return;}
   if(!name){$('joinErr').textContent='Escribe tu nombre.';return;}
-  if(typeof Peer==='undefined'){$('joinErr').textContent='No se pudo cargar la conexión. Revisa que haya internet.';return;}
+  if(typeof mqtt==='undefined'){$('joinErr').textContent='No se pudo cargar la conexión. Revisa que haya internet y recarga la página.';return;}
   $('joinErr').textContent='Conectando…';$('joinBtn').disabled=true;
-  if(P&&P.peer)P.peer.destroy();
+  if(P&&P.conn&&P.conn.destroy)P.conn.destroy();
   loadProfile(name);musicAuto(false);
-  const peer=new Peer(peerOpts());
-  P={peer,code,name,conn:null,joined:false,tries:0};
-  const fail=msg=>{$('joinErr').textContent=msg;$('joinBtn').disabled=false;};
-  const to=setTimeout(()=>{if(!P.joined)fail('No encuentro esa partida. Revisa el código.');},12000);
-  peer.on('error',e=>{if(e.type==='peer-unavailable'){clearTimeout(to);fail('No existe ninguna partida con ese código.');}else if(!P.joined){clearTimeout(to);fail('Error de conexión ('+e.type+').');}});
-  peer.on('open',()=>connectHost());
-  peer.on('disconnected',()=>{try{peer.reconnect();}catch(e){}});
+  P={code,name,conn:null,joined:false,net:true};
+  const me=P,fail=msg=>{if(P!==me)return;$('joinErr').textContent=msg;$('joinBtn').disabled=false;};
+  let c;
+  try{c=await Net.join(code);}catch(e){fail('No hay conexión con el servidor del juego. Revisa internet e inténtalo otra vez.');return;}
+  if(P!==me){c.destroy();return;}
+  P.conn=c;c.on('data',playerMsg);c.send(joinMsg());
+  const to=setTimeout(()=>{if(P===me&&!P.joined){fail('No encuentro esa partida. Revisa el código y que la partida siga abierta en la pantalla del maestro.');c.destroy();}},10000);
   P.clearTo=()=>clearTimeout(to);
-}
-function connectHost(){
-  const conn=P.peer.connect(PREFIX+P.code,{reliable:true});
-  P.conn=conn;
-  conn.on('open',()=>conn.send({t:'join',name:P.name,av:PROF.av,prof:{owned:PROF.owned,wallet:PROF.wallet},pend:PROF.pend}));
-  conn.on('data',playerMsg);
-  conn.on('close',()=>{
-    if(!P.joined||P.over||P.kicked)return;
-    toast('Se ha perdido la conexión. Reconectando…',4000);
-    setTimeout(()=>{if(P.tries++<10)connectHost();},1500);
-  });
 }
 function setGold(g){$('hudGold').textContent=fmt(g);}
 function hudAv(){$('hudAv').innerHTML=avatarSVG(PROF.av,34);}
@@ -1742,15 +1808,16 @@ let voteTimer=null;
 function playerMsg(d){
   if(!d||typeof d!=='object')return;
   clearInterval(voteTimer);
-  if(d.t==='reject'){P.clearTo&&P.clearTo();$('joinErr').textContent=d.why;$('hwErr').textContent=d.why;$('joinBtn').disabled=false;P.peer&&P.peer.destroy();return;}
+  if(d.t==='reject'){P.clearTo&&P.clearTo();$('joinErr').textContent=d.why;$('hwErr').textContent=d.why;$('joinBtn').disabled=false;P.conn&&P.conn.destroy&&P.conn.destroy();return;}
   if(d.t==='welcome'){
-    P.clearTo&&P.clearTo();USE_PHOTOS=d.photos!==false;if(d.exp!=null)paintBg(d.exp);const first=!P.joined;P.joined=true;P.tries=0;P.mode=d.mode;musicFor(d.mode);P.season=d.season;P.T=theme(d.mode);
+    P.clearTo&&P.clearTo();USE_PHOTOS=d.photos!==false;if(d.exp!=null)paintBg(d.exp);const first=!P.joined;P.joined=true;P.mode=d.mode;musicFor(d.mode);P.season=d.season;P.T=theme(d.mode);
     document.body.classList.toggle('hallo',P.T.hallo);
     setGold(d.gold);hudAv();$('hud').classList.add('on');
     if(P.hw){H.state='playing';if(H.mode==='ciclope'){H.dur=H.n*9000;cyInit();cyLoop();}const p=allP()[0];sendQuestion(p);return;}
     if(first||d.late)openPirate(d.late?'late':'lobby');
     return;
   }
+  if(d.t==='rejoin'){if(P&&P.net&&!P.kicked)send(joinMsg());return;}
   if(d.t==='profile'){
     PROF.av=cleanAv(d.prof.av);PROF.owned=validOwned(d.prof.owned);PROF.wallet=Math.max(0,+d.prof.wallet||0);if(d.pendDone)PROF.pend=0;
     saveProfile();hudAv();if(d.bought)toast('¡Comprado: '+d.bought+'!');
@@ -1891,7 +1958,7 @@ function loadProfile(name){
   if(PROF.av.color==='dorado'&&!PROF.owned.includes('dorado'))PROF.av.color='naranja';
 }
 function saveProfile(){store(PROF.k,{av:PROF.av,owned:PROF.owned,wallet:PROF.wallet,pend:PROF.pend||0});}
-const live=()=>P&&P.peer&&P.joined&&P.conn&&P.conn.open;
+const live=()=>P&&P.net&&P.joined&&P.conn&&P.conn.open;
 let pirCtx='lobby';
 function openPirate(ctx){
   pirCtx=ctx;
