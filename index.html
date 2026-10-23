@@ -368,6 +368,7 @@ details summary{cursor:pointer;font-weight:800;font-size:19px;margin-top:12px}
       </div>
     </div>
   </div>
+  <button class="btn gold" id="pirReady" style="display:none;font-size:26px;padding:14px 40px" onclick="pirReady()">¡Listo! Este es mi pirata</button>
   <button class="btn" id="pirBack" style="display:none" onclick="pirBack()">Volver</button>
 </section>
 
@@ -409,6 +410,13 @@ details summary{cursor:pointer;font-weight:800;font-size:19px;margin-top:12px}
   <p class="sub" id="voteSub">¿Quién es el saboteador? Vota con cuidado.</p>
   <div class="big-msg" style="font-size:40px" id="voteTimer"></div>
   <div class="targets" id="voteList"></div>
+</section>
+
+<section class="screen" id="s-ready">
+  <div id="readyAv"></div>
+  <div class="big-msg">¡Preparado!</div>
+  <p class="sub" style="font-size:24px">Espera a que el maestro empiece la partida.</p>
+  <button class="btn ghost lt" onclick="openPirate('lobby')">Cambiar mi pirata</button>
 </section>
 
 <section class="screen" id="s-msg">
@@ -830,6 +838,7 @@ function hostMsg(conn,d){
   }
   const p=byConn(conn); if(!p)return;
   if(d.t==='av'){p.av=cleanAv(d.av);renderLobby();renderBoard();return;}
+  if(d.t==='ready'){p.ready=true;renderLobby();return;}
   if(H.state!=='playing')return;
   if(d.t==='next'&&(p.phase==='idle'||p.phase==='done'))sendQuestion(p);
   else if(d.t==='answer'&&p.phase==='q')onAnswer(p,d.i===p.right);
@@ -921,7 +930,7 @@ function lateJoin(p){
 function renderLobby(){
   if(!H)return;
   const ps=allP().sort((a,b)=>a.joinN-b.joinN);
-  $('chips').innerHTML=ps.map(p=>'<button class="chip" data-k="'+esc(p.key)+'" style="opacity:'+(p.conn?1:.4)+'">'+avMini(p.av,40)+esc(p.name)+'</button>').join('');
+  $('chips').innerHTML=ps.map(p=>'<button class="chip" data-k="'+esc(p.key)+'" style="opacity:'+(p.conn?1:.4)+'">'+avMini(p.av,40)+esc(p.name)+(p.ready?' <span style="color:var(--ok)">✓</span>':'')+'</button>').join('');
   $('chips').querySelectorAll('.chip').forEach(b=>b.onclick=()=>kick(b.dataset.k));
   $('lobbyCount').textContent=ps.length?ps.length+' jugador'+(ps.length>1?'es':'')+' · toca un nombre para expulsarlo':'Esperando jugadores…';
   $('startBtn').disabled=!ps.length;
@@ -1346,8 +1355,10 @@ function openPirate(ctx){
   $('pirTitle').textContent=ctx==='lobby'?'¡Ya estás dentro!':'Mi pirata';
   $('pirSub').textContent=ctx==='lobby'?'Prepara a tu pirata mientras empieza la partida.':'Gasta tus doblones en la tienda del puerto.';
   $('pirBack').style.display=ctx==='lobby'?'none':'';
+  $('pirReady').style.display=ctx==='lobby'?'':'none';
   renderPirate();show('s-pirate');
 }
+function pirReady(){send({t:'ready'});$('readyAv').innerHTML=avatarSVG(PROF.av,150);show('s-ready');}
 function pirBack(){show('s-pend');$('pendAv').innerHTML=avatarSVG(PROF.av,120);}
 function pirChanged(){saveProfile();renderPirate();hudAv();if(P&&P.joined&&!P.over)send({t:'av',av:PROF.av});}
 function renderPirate(){
