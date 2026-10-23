@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Siritinga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+:root{
+  --bg:#2b1d6b; --bg2:#4a2fb0; --card:#ffffff; --ink:#1f1640; --muted:#6b6290;
+  --gold:#ffc83d; --gold-d:#e09a00; --ok:#22b573; --bad:#ef4b5f;
+  --a1:#ef4b5f; --a2:#2f8cff; --a3:#ffb020; --a4:#22b573;
+  --r:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  font-family:"Baloo 2",system-ui,sans-serif;color:var(--ink);
+  background:radial-gradient(circle at 20% 0%,var(--bg2),var(--bg) 70%) fixed;
+  min-height:100vh;
+}
+button{font:inherit;cursor:pointer;border:0}
+input,textarea,select{font:inherit}
+.screen{display:none;min-height:100vh;padding:24px 16px;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+.screen.on{display:flex}
+.card{background:var(--card);border-radius:var(--r);padding:24px;width:100%;max-width:560px;box-shadow:0 10px 0 rgba(0,0,0,.18)}
+.wide{max-width:1100px}
+h1{font-size:clamp(40px,7vw,72px);line-height:1;margin:0;color:#fff;text-align:center;text-shadow:0 5px 0 rgba(0,0,0,.25)}
+h1 span{color:var(--gold)}
+h2{margin:0 0 8px;font-size:28px}
+.sub{color:#d9d2ff;text-align:center;margin:0;font-size:20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 26px;border-radius:14px;font-size:22px;font-weight:800;color:#fff;background:var(--a2);box-shadow:0 6px 0 rgba(0,0,0,.25);transition:transform .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.btn.gold{background:var(--gold);color:var(--ink)}
+.btn.green{background:var(--ok)}
+.btn.ghost{background:transparent;color:var(--muted);box-shadow:none;font-size:18px;padding:8px}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+label{font-weight:700;display:block;margin:10px 0 4px}
+input[type=text],select{width:100%;padding:12px 14px;border-radius:12px;border:3px solid #ddd6ff;font-size:24px;font-weight:700;text-align:center}
+textarea{width:100%;min-height:260px;border-radius:12px;border:3px solid #ddd6ff;padding:10px;font-size:15px;font-family:ui-monospace,monospace}
+.hint{color:var(--muted);font-size:15px;margin:4px 0 0}
+.err{color:var(--bad);font-weight:700;min-height:24px;text-align:center}
+
+/* maestro */
+.code-box{text-align:center;color:#fff}
+.code-box .lbl{font-size:24px;color:#d9d2ff}
+.code{font-size:clamp(70px,14vw,150px);font-weight:800;letter-spacing:10px;line-height:1;color:var(--gold);text-shadow:0 6px 0 rgba(0,0,0,.3)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:1000px}
+.chip{background:#fff;border-radius:999px;padding:6px 18px;font-size:22px;font-weight:700;animation:pop .3s}
+.chip:hover{background:#ffe1e5;text-decoration:line-through}
+@keyframes pop{from{transform:scale(.3)}to{transform:scale(1)}}
+.topbar{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:1100px;color:#fff}
+.timer{font-size:56px;font-weight:800;color:var(--gold)}
+.board{display:flex;flex-direction:column;gap:8px}
+.bar{display:flex;align-items:center;gap:12px;font-size:24px;font-weight:700}
+.bar .pos{width:36px;text-align:right;color:var(--muted)}
+.bar .name{width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .fill{height:36px;border-radius:10px;background:linear-gradient(90deg,var(--gold),var(--gold-d));min-width:6px;transition:width .5s}
+.bar .val{min-width:80px}
+.feed{list-style:none;margin:0;padding:0;font-size:19px;max-height:260px;overflow:hidden}
+.feed li{padding:4px 0;border-bottom:1px solid #eee;animation:pop .3s}
+.cols{display:grid;grid-template-columns:2fr 1fr;gap:18px;width:100%;max-width:1100px}
+@media (max-width:800px){.cols{grid-template-columns:1fr}}
+.podium{display:flex;align-items:flex-end;gap:16px;justify-content:center}
+.pod{width:180px;text-align:center;color:#fff}
+.pod .blk{border-radius:14px 14px 0 0;display:flex;align-items:flex-start;justify-content:center;font-size:60px;font-weight:800;padding-top:10px}
+.pod .nm{font-size:26px;font-weight:800}
+.pod .gd{font-size:20px;color:var(--gold)}
+
+/* alumno */
+.hud{position:fixed;top:12px;right:12px;background:#fff;border-radius:999px;padding:6px 18px;font-size:24px;font-weight:800;display:none;align-items:center;gap:6px;z-index:5;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.hud.on{display:flex}
+.coin{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff3b0,var(--gold) 45%,var(--gold-d));border:2px solid #b37400;display:inline-block}
+.qtext{font-size:clamp(24px,4.5vw,36px);font-weight:800;text-align:center;line-height:1.2}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:900px}
+@media (max-width:600px){.answers{grid-template-columns:1fr}}
+.ans{min-height:110px;border-radius:16px;color:#fff;font-size:24px;font-weight:700;padding:12px;box-shadow:0 7px 0 rgba(0,0,0,.25);line-height:1.15}
+.ans:nth-child(1){background:var(--a1)}.ans:nth-child(2){background:var(--a2)}
+.ans:nth-child(3){background:var(--a3)}.ans:nth-child(4){background:var(--a4)}
+.ans:active{transform:translateY(4px)}
+.big-msg{font-size:clamp(40px,8vw,70px);font-weight:800;color:#fff;text-align:center;line-height:1.05}
+.big-msg.ok{color:#7dffb9}.big-msg.bad{color:#ff9aa7}
+.chests{display:flex;gap:22px;flex-wrap:wrap;justify-content:center}
+.chest{width:180px;height:160px;position:relative;background:none;padding:0}
+.chest .lid{position:absolute;left:10px;right:10px;top:10px;height:60px;border-radius:40px 40px 8px 8px;background:#a0612a;border:6px solid #6b3c13;transition:transform .4s;transform-origin:bottom left}
+.chest .box{position:absolute;left:10px;right:10px;bottom:10px;height:90px;border-radius:8px;background:#b8743a;border:6px solid #6b3c13}
+.chest .lock{position:absolute;left:50%;top:60px;transform:translateX(-50%);width:30px;height:36px;background:var(--gold);border:4px solid #b37400;border-radius:6px;z-index:2}
+.chest:hover .lid{transform:rotate(-6deg)}
+.chest.open .lid{transform:rotate(-35deg) translateY(-10px)}
+.chest .prize{position:absolute;left:0;right:0;top:-40px;text-align:center;font-size:24px;font-weight:800;color:#fff;opacity:0;transition:opacity .3s .2s}
+.chest.open .prize{opacity:1}
+.chest.dim{opacity:.45}
+.chest.pick .box{box-shadow:0 0 0 6px var(--gold)}
+.targets{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;width:100%;max-width:800px}
+.target{background:#fff;border-radius:14px;padding:12px;font-size:22px;font-weight:700;box-shadow:0 5px 0 rgba(0,0,0,.2)}
+.target small{display:block;color:var(--muted);font-size:17px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#fff;border-radius:14px;padding:12px 22px;font-size:22px;font-weight:800;box-shadow:0 6px 0 rgba(0,0,0,.25);display:none;z-index:9;text-align:center}
+.toast.on{display:block;animation:pop .3s}
+.status{color:#d9d2ff;font-size:16px;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="hud" id="hud"><span class="coin"></span><span id="hudGold">0</span></div>
+<div class="toast" id="toast"></div>
+
+<!-- INICIO -->
+<section class="screen on" id="s-home">
+  <h1>Siri<span>tinga</span></h1>
+  <p class="sub">Responde, abre cofres y consigue más oro que nadie</p>
+  <div class="row">
+    <button class="btn gold" onclick="goJoin()">Soy alumno</button>
+    <button class="btn" onclick="goTeacher()">Soy el maestro</button>
+  </div>
+</section>
+
+<!-- MAESTRO: CONTRASEÑA -->
+<section class="screen" id="s-pin">
+  <div class="card" style="max-width:420px">
+    <h2>Acceso del maestro</h2>
+    <label for="pin">Contraseña</label>
+    <input type="password" id="pin" autocomplete="current-password" style="width:100%;padding:12px 14px;border-radius:12px;border:3px solid #ddd6ff;font-size:24px;text-align:center">
+    <div class="err" id="pinErr"></div>
+    <div class="row">
+      <button class="btn ghost" onclick="show('s-home')">Volver</button>
+      <button class="btn green" onclick="checkPin()">Entrar</button>
+    </div>
+  </div>
+</section>
+
+<!-- MAESTRO: PREPARAR -->
+<section class="screen" id="s-setup">
+  <div class="card" style="max-width:820px">
+    <h2>Preparar la partida</h2>
+    <label for="dur">Duración</label>
+    <select id="dur">
+      <option value="300">5 minutos</option>
+      <option value="420" selected>7 minutos</option>
+      <option value="600">10 minutos</option>
+      <option value="900">15 minutos</option>
+    </select>
+    <label for="bank">Preguntas</label>
+    <p class="hint">Una pregunta por línea: <b>pregunta | respuesta correcta | incorrecta | incorrecta | incorrecta</b>. Puedes pegar tus propias preguntas; se guardan en este ordenador.</p>
+    <textarea id="bank" spellcheck="false"></textarea>
+    <div class="row" style="justify-content:space-between;margin-top:10px">
+      <button class="btn ghost" onclick="resetBank()">Restaurar preguntas de ejemplo</button>
+      <span class="hint" id="bankCount"></span>
+    </div>
+    <div class="err" id="setupErr"></div>
+    <div class="row">
+      <button class="btn ghost" onclick="show('s-home')">Volver</button>
+      <button class="btn green" id="createBtn" onclick="createGame()">Crear partida</button>
+    </div>
+  </div>
+</section>
+
+<!-- MAESTRO: SALA DE ESPERA -->
+<section class="screen" id="s-lobby">
+  <div class="code-box">
+    <div class="lbl">Abrid esta misma página, pulsad «Soy alumno» y escribid el código:</div>
+    <div class="code" id="codeBig">-----</div>
+  </div>
+  <div class="chips" id="chips"></div>
+  <p class="sub" id="lobbyCount">Esperando jugadores… (toca un nombre para expulsarlo)</p>
+  <button class="btn gold" id="startBtn" onclick="startGame()" disabled>¡Empezar!</button>
+</section>
+
+<!-- MAESTRO: PARTIDA -->
+<section class="screen" id="s-hgame" style="justify-content:flex-start">
+  <div class="topbar">
+    <div style="font-size:24px">Código: <b id="codeSmall" style="color:var(--gold)"></b></div>
+    <div class="timer" id="timer">0:00</div>
+    <button class="btn ghost" style="color:#fff" onclick="endGame()">Terminar ya</button>
+  </div>
+  <div class="cols">
+    <div class="card wide"><h2>Clasificación</h2><div class="board" id="board"></div></div>
+    <div class="card"><h2>¿Qué está pasando?</h2><ul class="feed" id="feed"></ul></div>
+  </div>
+</section>
+
+<!-- MAESTRO: FINAL -->
+<section class="screen" id="s-hend">
+  <h1>¡Fin de la <span>partida</span>!</h1>
+  <div class="podium" id="podium"></div>
+  <div class="card wide" style="max-width:700px"><div class="board" id="finalBoard"></div></div>
+  <button class="btn" onclick="location.reload()">Nueva partida</button>
+</section>
+
+<!-- ALUMNO: ENTRAR -->
+<section class="screen" id="s-join">
+  <h1>Siri<span>tinga</span></h1>
+  <div class="card" style="max-width:420px">
+    <label for="joinCode">Código de la partida</label>
+    <input type="text" id="joinCode" inputmode="numeric" maxlength="5" autocomplete="off">
+    <label for="joinName">Tu nombre</label>
+    <input type="text" id="joinName" maxlength="14" autocomplete="off">
+    <div class="err" id="joinErr"></div>
+    <div class="row"><button class="btn gold" id="joinBtn" onclick="joinGame()">Entrar</button></div>
+  </div>
+  <button class="btn ghost" style="color:#d9d2ff" onclick="show('s-home')">Volver</button>
+</section>
+
+<section class="screen" id="s-wait">
+  <div class="big-msg">¡Ya estás dentro!</div>
+  <p class="sub" style="font-size:26px">¿Ves tu nombre en la pantalla? Espera a que empiece la partida.</p>
+</section>
+
+<section class="screen" id="s-q">
+  <div class="card wide" style="max-width:900px"><div class="qtext" id="qText"></div></div>
+  <div class="answers" id="answers"></div>
+</section>
+
+<section class="screen" id="s-fb">
+  <div class="big-msg" id="fbMsg"></div>
+  <div class="card" id="fbRight" style="text-align:center;font-size:24px;display:none"></div>
+  <button class="btn gold" id="fbBtn"></button>
+</section>
+
+<section class="screen" id="s-chests">
+  <div class="big-msg" style="font-size:44px">Elige un cofre</div>
+  <div class="chests" id="chests"></div>
+  <div class="big-msg" style="font-size:34px;min-height:44px" id="chestMsg"></div>
+  <button class="btn gold" id="chestNext" style="visibility:hidden" onclick="send({t:'next'})">Siguiente pregunta</button>
+</section>
+
+<section class="screen" id="s-target">
+  <div class="big-msg" style="font-size:42px" id="targetTitle"></div>
+  <div class="targets" id="targets"></div>
+</section>
+
+<section class="screen" id="s-pend">
+  <div class="big-msg" id="pendPlace"></div>
+  <p class="sub" style="font-size:28px" id="pendGold"></p>
+</section>
+
+<script>
+/* ---------- utilidades ---------- */
+const $ = id => document.getElementById(id);
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function toast(txt,ms=2600){const t=$('toast');t.textContent=txt;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),ms);}
+const fmt = n => n.toLocaleString('es-ES');
+const PREFIX='siritinga-dli-';
+const params=new URLSearchParams(location.search);
+function peerOpts(){ // ?ps=host:puerto solo para pruebas con servidor propio
+  const ps=params.get('ps'); if(!ps) return {debug:0};
+  const [host,port]=ps.split(':'); return {host,port:+port,path:'/',secure:false,debug:0};
+}
+
+/* ---------- banco de preguntas ---------- */
+const DEFAULT_BANK = `Toda la materia está formada por partículas demasiado pequeñas para verlas. ¿Cómo se llaman? | partículas | células | burbujas | piedras
+¿En qué estado de la materia las partículas están muy juntas y solo vibran en su sitio? | sólido | líquido | gas | ninguno
+¿Qué estado de la materia tiene volumen fijo pero toma la forma del recipiente? | líquido | sólido | gas | ninguno
+¿Qué estado de la materia no tiene ni forma ni volumen fijos? | gas | sólido | líquido | ninguno
+Tapas una jeringa llena de aire y empujas el émbolo. ¿Qué les pasa a las partículas de aire? | se acercan unas a otras | desaparecen | se convierten en agua | se hacen más pequeñas
+Un globo inflado pesa más que uno desinflado. ¿Por qué? | el aire tiene masa | el globo se estira | el aire es invisible | el globo cambia de color
+Disuelves azúcar en agua y ya no lo ves. ¿Qué ha pasado con el azúcar? | sus partículas siguen en el agua | ha desaparecido | se ha convertido en agua | ha perdido su masa
+¿Cómo sabemos que el azúcar disuelto sigue en el agua? | el agua sabe dulce | el agua se pone azul | el vaso pesa menos | salen burbujas
+¿Por qué un M&M se deshace en la boca y no en la mano seca? | la saliva disuelve la capa de azúcar | la mano está fría | la boca no tiene agua | el chocolate es un gas
+El olor de un perfume llega a toda la clase. ¿Por qué? | sus partículas se mueven y se esparcen por el aire | el perfume es un sólido | el aire está quieto | sus partículas son enormes
+¿Qué instrumento usamos para medir la masa? | la balanza | la probeta | el termómetro | la regla
+¿Qué instrumento usamos para medir el volumen de un líquido? | la probeta | la balanza | el termómetro | el imán
+¿En qué unidad medimos la masa? | gramos | mililitros | grados | metros
+¿En qué unidad medimos el volumen de un líquido? | mililitros | gramos | grados | kilómetros
+¿Qué propiedad nos dice cuánto espacio ocupa un objeto? | el volumen | la masa | el color | la dureza
+¿Qué propiedad nos dice cuánta materia tiene un objeto? | la masa | el volumen | el olor | el brillo
+Un material que deja pasar la electricidad es un… | conductor | aislante | imán | gas
+¿Qué objeto atrae un imán? | un clip de metal | un lápiz de madera | una goma de borrar | un vaso de plástico
+¿Qué material deja pasar peor el calor? | la lana | el cobre | el aluminio | el hierro
+Una propiedad física se puede observar… | sin cambiar el tipo de materia | solo quemando el material | solo con un imán | nunca
+El hielo se derrite. ¿Qué ha cambiado? | su estado, pero sigue siendo agua | ya no es agua | ha perdido toda su masa | sus partículas han desaparecido
+Al calentar un líquido, sus partículas… | se mueven más rápido | se paran | se hacen más grandes | desaparecen
+¿Dónde están las partículas de agua más separadas? | en el vapor | en el hielo | en el agua líquida | en un cubito congelado
+Mezclas arena con agua y remueves. ¿Qué pasa con la arena? | no se disuelve | se disuelve | desaparece | se convierte en gas
+¿Qué propiedad tiene el vidrio de una ventana? | es transparente | es magnético | es muy blando | conduce la electricidad
+La sal se disuelve en agua y la arena no. ¿Qué propiedad estamos comparando? | la solubilidad | el magnetismo | la dureza | el color
+Un trozo de plastilina cambia de forma. ¿Cambia su masa? | no, sigue teniendo la misma masa | sí, pierde masa | sí, gana masa | desaparece
+¿Qué tiene masa y ocupa espacio? | toda la materia | solo los sólidos | solo los líquidos | solo lo que podemos ver`;
+
+function parseBank(txt){
+  const qs=[];
+  txt.split('\n').forEach(line=>{
+    const p=line.split('|').map(s=>s.trim()).filter(Boolean);
+    if(p.length>=3) qs.push({q:p[0],a:p[1],w:p.slice(2,5)});
+  });
+  return qs;
+}
+function loadBank(){let b=null;try{b=localStorage.getItem('cofresBank');}catch(e){} $('bank').value=b||DEFAULT_BANK;countBank();}
+function resetBank(){$('bank').value=DEFAULT_BANK;saveBank();}
+function saveBank(){try{localStorage.setItem('cofresBank',$('bank').value);}catch(e){} countBank();}
+function countBank(){$('bankCount').textContent=parseBank($('bank').value).length+' preguntas válidas';}
+$('bank').addEventListener('input',saveBank);
+loadBank();
+
+/* ---------- cofres ---------- */
+const PRIZES=[
+  {k:'add',v:10,w:18},{k:'add',v:20,w:18},{k:'add',v:30,w:14},{k:'add',v:50,w:10},{k:'add',v:100,w:4},
+  {k:'mul',v:2,w:6},{k:'mul',v:3,w:2},
+  {k:'steal',v:25,w:9},{k:'swap',w:3},
+  {k:'lose',v:25,w:6},{k:'lose',v:50,w:3},{k:'none',w:7}
+];
+function rollPrize(){const tot=PRIZES.reduce((s,p)=>s+p.w,0);let r=Math.random()*tot;for(const p of PRIZES){if((r-=p.w)<0)return p;}return PRIZES[0];}
+function prizeLabel(p){
+  return {add:'+'+p.v+' de oro',mul:'¡Oro ×'+p.v+'!',steal:'Roba un '+p.v+' %',swap:'¡Intercambio!',lose:'Pierdes un '+p.v+' %',none:'Nada…'}[p.k];
+}
+
+/* =====================================================
+   MAESTRO (servidor de la partida)
+   ===================================================== */
+let H=null; // estado del maestro
+function createGame(){
+  const qs=parseBank($('bank').value);
+  if(qs.length<4){$('setupErr').textContent='Necesitas al menos 4 preguntas válidas.';return;}
+  if(typeof Peer==='undefined'){$('setupErr').textContent='No se pudo cargar la conexión. Revisa que haya internet.';return;}
+  $('createBtn').disabled=true;$('setupErr').textContent='Creando partida…';
+  const code=String(Math.floor(10000+Math.random()*90000));
+  const peer=new Peer(PREFIX+code,peerOpts());
+  peer.on('open',()=>{
+    H={peer,code,qs,dur:+$('dur').value*1000,players:{},state:'lobby',endsAt:0,feed:[]};
+    $('codeBig').textContent=code;$('codeSmall').textContent=code;
+    show('s-lobby');renderLobby();
+  });
+  peer.on('error',e=>{
+    if(e.type==='unavailable-id'){peer.destroy();$('createBtn').disabled=false;createGame();return;}
+    if(!H){$('createBtn').disabled=false;$('setupErr').textContent='No se pudo crear la partida ('+e.type+'). Revisa la conexión.';}
+  });
+  peer.on('disconnected',()=>{try{peer.reconnect();}catch(e){}});
+  peer.on('connection',conn=>{
+    conn.on('data',d=>hostMsg(conn,d));
+    conn.on('close',()=>{const p=byConn(conn);if(p){p.conn=null;renderLobby();}});
+  });
+}
+function byConn(c){return Object.values(H.players).find(p=>p.conn===c);}
+function hsend(p,msg){if(p&&p.conn&&p.conn.open)p.conn.send(msg);}
+function others(p){return Object.values(H.players).filter(x=>x!==p);}
+
+function hostMsg(conn,d){
+  if(!H||!d||typeof d!=='object')return;
+  if(d.t==='join'){
+    const name=String(d.name||'').trim().slice(0,14);
+    if(!name){conn.send({t:'reject',why:'Escribe tu nombre.'});return;}
+    const key=name.toLowerCase();
+    let p=H.players[key];
+    if(p&&p.conn&&p.conn.open&&p.conn!==conn){conn.send({t:'reject',why:'Ese nombre ya está en uso. Prueba con otro.'});return;}
+    if(!p){
+      if(H.state==='over'){conn.send({t:'reject',why:'La partida ya ha terminado.'});return;}
+      p=H.players[key]={key,name,gold:0,order:shuffle(H.qs.map((_,i)=>i)),qi:0,phase:'idle',chests:null,pend:null,right:-1};
+      if(H.state==='playing')addFeed(esc(name)+' se ha unido a la partida');
+    }
+    p.conn=conn;
+    conn.send({t:'welcome',name:p.name,gold:p.gold});
+    if(H.state==='playing'){conn.send({t:'start',left:H.endsAt-Date.now()});resumePlayer(p);}
+    renderLobby();renderBoard();
+    return;
+  }
+  const p=byConn(conn); if(!p||H.state!=='playing')return;
+  if(d.t==='next'&&(p.phase==='idle'||p.phase==='done'))sendQuestion(p);
+  else if(d.t==='answer'&&p.phase==='q'){
+    const ok=d.i===p.right;
+    const cur=H.qs[p.order[(p.qi-1+p.order.length)%p.order.length]];
+    if(ok){p.phase='chest';p.chests=[rollPrize(),rollPrize(),rollPrize()];}
+    else p.phase='done';
+    hsend(p,{t:'result',ok,right:cur.a});
+  }
+  else if(d.t==='pick'&&p.phase==='chest'){
+    const i=Math.max(0,Math.min(2,d.i|0)), pr=p.chests[i];
+    const labels=p.chests.map(prizeLabel);
+    let text='';
+    if((pr.k==='steal'||pr.k==='swap')){
+      const opts=others(p).filter(x=>pr.k==='swap'||x.gold>0);
+      if(!opts.length){p.gold+=20;text='No hay a quién robar: +20 de oro';}
+      else{
+        p.phase='target';p.pend=pr;
+        hsend(p,{t:'reveal',labels,i,text:pr.k==='steal'?'¡Puedes robar oro!':'¡Puedes intercambiar tu oro!',gold:p.gold,wait:true});
+        setTimeout(()=>hsend(p,{t:'choose',kind:pr.k,list:opts.map(x=>({key:x.key,name:x.name,gold:x.gold}))}),1300);
+        return;
+      }
+    }
+    else if(pr.k==='add'){p.gold+=pr.v;text='+'+pr.v+' de oro';}
+    else if(pr.k==='mul'){const g=p.gold;p.gold=g*pr.v;text=g?'¡Tu oro se multiplica por '+pr.v+'!':'Oro ×'+pr.v+'… ¡pero tenías 0!';if(g)addFeed('<b>'+esc(p.name)+'</b> ha multiplicado su oro por '+pr.v);}
+    else if(pr.k==='lose'){const l=Math.floor(p.gold*pr.v/100);p.gold-=l;text='¡Oh, no! Pierdes '+l+' de oro';}
+    else text='El cofre estaba vacío';
+    p.phase='done';
+    hsend(p,{t:'reveal',labels,i,text,gold:p.gold});
+    renderBoard();
+  }
+  else if(d.t==='target'&&p.phase==='target'){
+    const v=H.players[d.key]; const pr=p.pend;
+    if(!v||v===p)return;
+    let text,vt;
+    if(pr.k==='steal'){
+      const s=Math.floor(v.gold*pr.v/100); v.gold-=s; p.gold+=s;
+      text='Le has robado '+s+' de oro a '+v.name; vt=p.name+' te ha robado '+s+' de oro';
+      addFeed('<b>'+esc(p.name)+'</b> le ha robado '+s+' de oro a <b>'+esc(v.name)+'</b>');
+    }else{
+      [p.gold,v.gold]=[v.gold,p.gold];
+      text='Has intercambiado tu oro con '+v.name; vt=p.name+' ha intercambiado su oro contigo';
+      addFeed('<b>'+esc(p.name)+'</b> ha intercambiado su oro con <b>'+esc(v.name)+'</b>');
+    }
+    p.phase='done';p.pend=null;
+    hsend(p,{t:'stolen',text,gold:p.gold});
+    hsend(v,{t:'hit',text:vt,gold:v.gold});
+    renderBoard();
+  }
+}
+function sendQuestion(p){
+  const q=H.qs[p.order[p.qi%p.order.length]]; p.qi++;
+  if(p.qi%p.order.length===0)p.order=shuffle(p.order);
+  const opts=shuffle([q.a,...q.w]); p.right=opts.indexOf(q.a); p.phase='q';
+  hsend(p,{t:'q',text:q.q,opts});
+}
+function resumePlayer(p){
+  if(p.phase==='target'){p.phase='done';p.pend=null;}
+  if(p.phase==='chest'){hsend(p,{t:'result',ok:true,right:''});return;}
+  sendQuestion(p);
+}
+function renderLobby(){
+  if(!H)return;
+  const ps=Object.values(H.players);
+  $('chips').innerHTML=ps.map(p=>'<button class="chip" data-k="'+esc(p.key)+'" style="opacity:'+(p.conn?1:.4)+'">'+esc(p.name)+'</button>').join('');
+  $('chips').querySelectorAll('.chip').forEach(b=>b.onclick=()=>kick(b.dataset.k));
+  $('lobbyCount').textContent=ps.length?ps.length+' jugador'+(ps.length>1?'es':'')+' (toca un nombre para expulsarlo)':'Esperando jugadores…';
+  $('startBtn').disabled=!ps.length;
+}
+function kick(k){const p=H.players[k];if(!p)return;hsend(p,{t:'kicked'});setTimeout(()=>p.conn&&p.conn.close(),300);delete H.players[k];renderLobby();}
+function startGame(){
+  H.state='playing';H.endsAt=Date.now()+H.dur;
+  Object.values(H.players).forEach(p=>{hsend(p,{t:'start',left:H.dur});sendQuestion(p);});
+  show('s-hgame');renderBoard();tick();
+}
+function tick(){
+  if(H.state!=='playing')return;
+  const left=Math.max(0,H.endsAt-Date.now()), s=Math.ceil(left/1000);
+  $('timer').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+  $('timer').style.color=s<=30?'#ff9aa7':'';
+  if(left<=0){endGame();return;}
+  setTimeout(tick,250);
+}
+function ranking(){return Object.values(H.players).sort((a,b)=>b.gold-a.gold);}
+function renderBoard(){
+  if(!H||H.state==='lobby')return;
+  const r=ranking(), max=Math.max(1,...r.map(p=>p.gold));
+  const html=r.slice(0,12).map((p,i)=>'<div class="bar"><span class="pos">'+(i+1)+'</span><span class="name">'+esc(p.name)+'</span><div style="flex:1"><div class="fill" style="width:'+Math.max(1,p.gold/max*100)+'%"></div></div><span class="val">'+fmt(p.gold)+'</span></div>').join('');
+  $('board').innerHTML=html||'<p class="hint">Nadie todavía</p>';
+}
+function addFeed(h){H.feed.unshift(h);H.feed=H.feed.slice(0,12);$('feed').innerHTML=H.feed.map(x=>'<li>'+x+'</li>').join('');}
+function endGame(){
+  if(!H||H.state==='over')return;
+  H.state='over';
+  const r=ranking();
+  r.forEach((p,i)=>hsend(p,{t:'end',place:i+1,total:r.length,gold:p.gold}));
+  const cols=['#c0c0c0','#ffc83d','#cd7f32'], hs=[150,210,110], order=[1,0,2];
+  $('podium').innerHTML=order.map(i=>r[i]?'<div class="pod"><div class="nm">'+esc(r[i].name)+'</div><div class="gd">'+fmt(r[i].gold)+' de oro</div><div class="blk" style="height:'+hs[order.indexOf(i)]+'px;background:'+cols[order.indexOf(i)]+'">'+(i+1)+'</div></div>':'').join('');
+  const max=Math.max(1,...r.map(p=>p.gold));
+  $('finalBoard').innerHTML=r.map((p,i)=>'<div class="bar"><span class="pos">'+(i+1)+'</span><span class="name">'+esc(p.name)+'</span><div style="flex:1"><div class="fill" style="width:'+Math.max(1,p.gold/max*100)+'%"></div></div><span class="val">'+fmt(p.gold)+'</span></div>').join('');
+  show('s-hend');
+}
+window.addEventListener('beforeunload',e=>{if(H&&H.state==='playing'){e.preventDefault();e.returnValue='';}});
+
+/* =====================================================
+   ALUMNO
+   ===================================================== */
+let P=null;
+/* contraseña del maestro: solo se guarda su huella SHA-256, no el texto */
+const PIN_HASH='2441956e284e39a64160e9c3ea7e9f739f06cfeeecd5866174cd51b9653f6a98';
+function unlocked(){try{return sessionStorage.getItem('siritingaMaestro')===PIN_HASH;}catch(e){return false;}}
+function goTeacher(){if(unlocked()){show('s-setup');return;}$('pin').value='';$('pinErr').textContent='';show('s-pin');setTimeout(()=>$('pin').focus(),50);}
+async function checkPin(){
+  const v=$('pin').value;
+  if(!(window.crypto&&crypto.subtle)){$('pinErr').textContent='Este navegador no permite comprobar la contraseña.';return;}
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));
+  const h=[...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  if(h===PIN_HASH){try{sessionStorage.setItem('siritingaMaestro',h);}catch(e){} show('s-setup');}
+  else{$('pinErr').textContent='Contraseña incorrecta.';$('pin').select();}
+}
+$('pin').addEventListener('keydown',e=>{if(e.key==='Enter')checkPin();});
+function goJoin(){show('s-join');setTimeout(()=>$('joinCode').focus(),50);}
+if(params.get('c')){$('joinCode').value=params.get('c');goJoin();}
+$('joinCode').addEventListener('keydown',e=>{if(e.key==='Enter')$('joinName').focus();});
+$('joinName').addEventListener('keydown',e=>{if(e.key==='Enter')joinGame();});
+function send(m){if(P&&P.conn&&P.conn.open)P.conn.send(m);}
+function joinGame(){
+  const code=$('joinCode').value.trim(), name=$('joinName').value.trim();
+  if(!/^\d{5}$/.test(code)){$('joinErr').textContent='El código tiene 5 números.';return;}
+  if(!name){$('joinErr').textContent='Escribe tu nombre.';return;}
+  if(typeof Peer==='undefined'){$('joinErr').textContent='No se pudo cargar la conexión. Revisa que haya internet.';return;}
+  $('joinErr').textContent='Conectando…';$('joinBtn').disabled=true;
+  if(P&&P.peer)P.peer.destroy();
+  const peer=new Peer(peerOpts());
+  P={peer,code,name,conn:null,joined:false,tries:0};
+  const fail=msg=>{$('joinErr').textContent=msg;$('joinBtn').disabled=false;};
+  const to=setTimeout(()=>{if(!P.joined)fail('No encuentro esa partida. Revisa el código.');},12000);
+  peer.on('error',e=>{if(e.type==='peer-unavailable'){clearTimeout(to);fail('No existe ninguna partida con ese código.');}else if(!P.joined){clearTimeout(to);fail('Error de conexión ('+e.type+').');}});
+  peer.on('open',()=>connectHost());
+  peer.on('disconnected',()=>{try{peer.reconnect();}catch(e){}});
+  P.clearTo=()=>clearTimeout(to);
+}
+function connectHost(){
+  const conn=P.peer.connect(PREFIX+P.code,{reliable:true});
+  P.conn=conn;
+  conn.on('open',()=>conn.send({t:'join',name:P.name}));
+  conn.on('data',playerMsg);
+  conn.on('close',()=>{
+    if(!P.joined||P.over||P.kicked)return;
+    toast('Se ha perdido la conexión. Reconectando…',4000);
+    setTimeout(()=>{if(P.tries++<10)connectHost();},1500);
+  });
+}
+function setGold(g){$('hudGold').textContent=fmt(g);}
+function playerMsg(d){
+  if(!d||typeof d!=='object')return;
+  if(d.t==='reject'){P.clearTo();$('joinErr').textContent=d.why;$('joinBtn').disabled=false;P.peer.destroy();return;}
+  if(d.t==='welcome'){P.clearTo();P.joined=true;P.tries=0;setGold(d.gold);$('hud').classList.add('on');show('s-wait');return;}
+  if(d.t==='kicked'){P.kicked=true;$('hud').classList.remove('on');$('joinErr').textContent='El maestro te ha sacado de la partida. Puedes volver a entrar con tu nombre de verdad.';$('joinBtn').disabled=false;show('s-join');return;}
+  if(d.t==='start'){return;}
+  if(d.t==='q'){
+    $('qText').textContent=d.text;
+    $('answers').innerHTML='';
+    d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='ans';b.textContent=o;b.onclick=()=>{$('answers').querySelectorAll('button').forEach(x=>x.disabled=true);send({t:'answer',i});};$('answers').appendChild(b);});
+    show('s-q');return;
+  }
+  if(d.t==='result'){
+    $('fbMsg').className='big-msg '+(d.ok?'ok':'bad');
+    $('fbMsg').textContent=d.ok?'¡Correcto!':'¡Incorrecto!';
+    $('fbRight').style.display=d.ok?'none':'block';
+    $('fbRight').innerHTML=d.ok?'':'La respuesta correcta era:<br><b>'+esc(d.right)+'</b>';
+    $('fbBtn').textContent=d.ok?'¡A por los cofres!':'Siguiente pregunta';
+    $('fbBtn').onclick=d.ok?showChests:()=>send({t:'next'});
+    show('s-fb');return;
+  }
+  if(d.t==='reveal'){
+    const cs=$('chests').querySelectorAll('.chest');
+    cs.forEach((c,i)=>{c.querySelector('.prize').textContent=d.labels[i];c.classList.add('open');c.classList.toggle('pick',i===d.i);c.classList.toggle('dim',i!==d.i);c.disabled=true;});
+    $('chestMsg').textContent=d.text;setGold(d.gold);
+    if(!d.wait)setTimeout(()=>$('chestNext').style.visibility='visible',700);
+    return;
+  }
+  if(d.t==='choose'){
+    $('targetTitle').textContent=d.kind==='steal'?'¿A quién le robas oro?':'¿Con quién intercambias tu oro?';
+    $('targets').innerHTML='';
+    d.list.sort((a,b)=>b.gold-a.gold).forEach(x=>{const b=document.createElement('button');b.className='target';b.innerHTML=esc(x.name)+'<small>'+fmt(x.gold)+' de oro</small>';b.onclick=()=>{$('targets').querySelectorAll('button').forEach(y=>y.disabled=true);send({t:'target',key:x.key});};$('targets').appendChild(b);});
+    show('s-target');return;
+  }
+  if(d.t==='stolen'){setGold(d.gold);showChestsResult(d.text);return;}
+  if(d.t==='hit'){setGold(d.gold);toast(d.text,3500);return;}
+  if(d.t==='end'){
+    P.over=true;
+    $('pendPlace').textContent=d.place===1?'¡Has ganado!':'Puesto '+d.place+' de '+d.total;
+    $('pendGold').textContent='Has conseguido '+fmt(d.gold)+' de oro';
+    show('s-pend');return;
+  }
+}
+function showChests(){
+  $('chests').innerHTML=[0,1,2].map(i=>'<button class="chest" data-i="'+i+'" aria-label="Cofre '+(i+1)+'"><div class="prize"></div><div class="lid"></div><div class="box"></div><div class="lock"></div></button>').join('');
+  $('chests').querySelectorAll('.chest').forEach(b=>b.onclick=()=>{$('chests').querySelectorAll('.chest').forEach(x=>x.disabled=true);send({t:'pick',i:+b.dataset.i});});
+  $('chestMsg').textContent='';$('chestNext').style.visibility='hidden';
+  show('s-chests');
+}
+function showChestsResult(text){
+  show('s-chests');$('chestMsg').textContent=text;$('chestNext').style.visibility='visible';
+}
+</script>
+</body>
+</html>
