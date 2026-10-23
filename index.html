@@ -168,6 +168,17 @@ details summary{cursor:pointer;font-weight:800;font-size:19px;margin-top:12px}
 .cyrun{position:absolute;transition:left .4s linear,top .4s;display:flex;flex-direction:column;align-items:center;font-weight:800;font-size:13px;color:#1f1640;transform:translateX(-50%)}
 .cyrun span{background:#fff;border-radius:8px;padding:0 5px;white-space:nowrap;max-width:90px;overflow:hidden;text-overflow:ellipsis}
 .cymon{position:absolute;top:18%;transition:left .4s linear;transform:translateX(-60%)}
+.miniarena{position:relative;width:100%;max-width:900px;height:min(60vh,520px);background:linear-gradient(#bfe4f2 0 35%,#f3dfa8 35%);border-radius:18px;overflow:hidden;touch-action:manipulation;box-shadow:0 8px 0 rgba(0,0,0,.2)}
+.minitarget{position:absolute;cursor:pointer;transition:left .25s,top .25s;user-select:none}
+.coco{position:absolute;font-size:44px;pointer-events:none;animation:cocofly .6s forwards}
+@keyframes cocofly{from{transform:translate(30px,60px) scale(.6);opacity:1}to{transform:translate(40px,0) scale(1.3);opacity:0}}
+.cylv{position:absolute;top:47%;bottom:4%;border-left:4px dashed rgba(91,67,38,.45);transform:translateX(-2px)}
+.cylv b{position:absolute;top:-30px;left:-16px;width:32px;height:32px;border-radius:50%;background:#fff;border:3px solid #5b4326;display:flex;align-items:center;justify-content:center;font-size:18px;color:#3e2a12}
+.cylv.end{border-left-color:transparent;font-size:40px;top:30%;transform:translateX(-20px)}
+.cyrun svg{border-radius:50%;box-shadow:0 0 0 4px var(--ring,#2ec27e)}
+.cymon{left:6px!important;transform:none!important;top:20%}
+.cymon.hit svg{animation:shake .3s infinite}
+@keyframes shake{0%,100%{transform:translateX(0)}50%{transform:translateX(6px) rotate(3deg)}}
 .musicbtn{position:fixed;left:10px;bottom:10px;z-index:8;width:52px;height:52px;border-radius:50%;background:#fff;font-size:26px;box-shadow:0 4px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center}
 .musicbtn.off{opacity:.75}
 .sabbadge{cursor:pointer;font:inherit;font-weight:800;display:none;background:var(--bad);color:#fff;border-radius:999px;padding:0 10px;font-size:15px;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -476,6 +487,13 @@ details summary{cursor:pointer;font-weight:800;font-size:19px;margin-top:12px}
   <div class="big-msg">¡Preparado!</div>
   <p class="sub" style="font-size:24px">Espera a que el maestro empiece la partida.</p>
   <button class="btn ghost lt" onclick="openPirate('lobby')">Cambiar mi pirata</button>
+</section>
+
+<section class="screen" id="s-mini" style="justify-content:flex-start;padding-top:70px">
+  <div class="big-msg" style="font-size:40px">🥥 ¡Lluvia de cocos!</div>
+  <p class="sub" style="font-size:22px">¡Toca al cíclope todas las veces que puedas!</p>
+  <div class="row" style="color:#fff;font-size:28px;font-weight:800"><span>🥥 <span id="miniCount">0</span></span><span>⏱️ <span id="miniTime">15</span></span></div>
+  <div id="miniArena" class="miniarena"><div id="miniTarget" class="minitarget"></div></div>
 </section>
 
 <section class="screen" id="s-msg">
@@ -874,24 +892,50 @@ function outfitSVG(o,u,neckFill){
   return s;
 }
 /* ---- cabezas (coordenadas antiguas: centro 60,62, radio 38) ---- */
+/* ---- ojos y cabezas al estilo manga (personajes originales) ---- */
 function eyesSVG(y,iris,patch){
-  const eye=(x)=>`<ellipse cx="${x}" cy="${y}" rx="8" ry="9" fill="#fff" stroke="#1f1640" stroke-width="1.5"/><circle cx="${x+1}" cy="${y+1}" r="5.6" fill="${iris}"/><circle cx="${x+1}" cy="${y+1}" r="3" fill="#120c24"/><circle cx="${x+3}" cy="${y-2}" r="1.8" fill="#fff"/><circle cx="${x-1.5}" cy="${y+3}" r="0.9" fill="#fff"/>`;
-  return eye(46)+(patch?'':eye(74));
+  const di=shade(iris,-0.45),li=shade(iris,0.35);
+  const eye=(x,flip)=>{const s=flip?-1:1;return `<g transform="translate(${x} ${y}) scale(${s} 1)">
+    <path d="M-10 -3 Q-2 -12 10 -6 L9 8 Q0 12 -9 8Z" fill="#fff"/>
+    <ellipse cx="1" cy="1.5" rx="7" ry="9.5" fill="${iris}"/><path d="M-6 -3 Q1 -10 8 -3 L8 1 Q1 -5 -6 1Z" fill="${di}" opacity=".85"/>
+    <ellipse cx="1" cy="5" rx="5" ry="4" fill="${li}" opacity=".7"/><ellipse cx="1" cy="1.5" rx="3.2" ry="4.6" fill="#120c24"/>
+    <ellipse cx="-2.5" cy="-2.5" rx="3" ry="3.6" fill="#fff"/><circle cx="4" cy="6" r="1.5" fill="#fff"/>
+    <path d="M-12 -2 Q-3 -14 12 -7 L13 -4 Q-1 -11 -10 1Z" fill="#1a1020"/><path d="M-11 -2 l-5 -4 M-11 1 l-5 -1" stroke="#1a1020" stroke-width="2" stroke-linecap="round"/>
+    <path d="M-7 10 Q1 12 8 9" stroke="#1a1020" stroke-width="1.2" fill="none" opacity=".6"/></g>`;};
+  return eye(46,false)+(patch?'':eye(74,true));
 }
-function humanHead(skin,hair,hc,patch,earFins,finCol){
-  const d=shade(skin,-0.25),h=hc,hd=shade(hc,-0.3);
+function spikes(cx,cy,r,a0,a1,n,len,seed,jit=0.3){
+  const R=rng(seed);let d='';
+  for(let i=0;i<=n;i++){
+    const t=i/n,a=a0+(a1-a0)*t,ao=a+(a1-a0)/n*0.5,L=len*(0.7+R()*jit*2);
+    const p1=[cx+Math.cos(a)*r,cy+Math.sin(a)*r];d+=(i?'L':'M')+p1[0].toFixed(1)+' '+p1[1].toFixed(1);
+    if(i<n)d+=' L'+(cx+Math.cos(ao)*(r+L)).toFixed(1)+' '+(cy+Math.sin(ao)*(r+L)).toFixed(1);
+  }
+  return d;
+}
+const IRIS={negro:'#5b3a24',castano:'#8a5a2b',rubio:'#2f7fe8',pelirrojo:'#2e9b5f',blanco:'#8e5bd8',azul:'#1f8fd6'};
+function humanHead(skin,hair,hc,patch,earFins,finCol,hcKey){
+  const d=shade(skin,-0.28),ol='#2b1a12',h=hc,hd=shade(hc,-0.35),hl=shade(hc,0.35);
+  const face='M23 50 Q24 82 44 96 Q60 106 76 96 Q96 82 97 50 Q96 18 60 18 Q24 18 23 50Z';
   let back='',front='';
-  if(hair==='largo'||earFins) back=`<path d="M20 60 Q18 20 60 18 Q102 20 100 60 L106 112 Q92 120 82 106 L80 72 L40 72 L38 106 Q28 120 14 112Z" fill="${h}" stroke="${hd}" stroke-width="2.5"/>`;
-  if(hair==='coletas') back=`<circle cx="12" cy="80" r="15" fill="${h}" stroke="${hd}" stroke-width="2.5"/><circle cx="108" cy="80" r="15" fill="${h}" stroke="${hd}" stroke-width="2.5"/><rect x="18" y="66" width="8" height="8" rx="2" fill="#ef4b5f"/><rect x="94" y="66" width="8" height="8" rx="2" fill="#ef4b5f"/>`;
-  if(hair==='mono') back=`<circle cx="60" cy="16" r="16" fill="${h}" stroke="${hd}" stroke-width="2.5"/>`;
-  const fringe=`<path d="M23 58 Q22 20 60 18 Q98 20 97 58 Q92 38 76 33 Q70 44 54 38 Q38 40 23 58Z" fill="${h}" stroke="${hd}" stroke-width="2.5"/>`;
-  if(hair==='corto'||hair==='largo'||hair==='coletas'||hair==='mono') front=fringe;
-  if(hair==='rizado'){front='';for(let i=0;i<11;i++){const a=Math.PI*(1.05+i*0.09),x=60+Math.cos(a)*36,y=58+Math.sin(a)*38;front+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="12" fill="${h}" stroke="${hd}" stroke-width="2"/>`;}}
-  if(hair==='rapado') front=`<path d="M25 52 Q27 22 60 22 Q93 22 95 52 Q60 36 25 52Z" fill="${h}" opacity=".75"/>`;
-  const ears=earFins?`<path d="M24 60 L4 48 L10 72 Z M96 60 L116 48 L110 72Z" fill="${finCol}" stroke="${shade(finCol,-0.3)}" stroke-width="2"/>`:`<circle cx="23" cy="66" r="8" fill="${skin}" stroke="${d}" stroke-width="2"/><circle cx="97" cy="66" r="8" fill="${skin}" stroke="${d}" stroke-width="2"/>`;
-  return back+ears+`<ellipse cx="60" cy="62" rx="36" ry="38" fill="${skin}" stroke="${d}" stroke-width="2.5"/><path d="M72 30 Q96 46 94 74 Q86 94 66 98 Q84 82 84 62 Q84 42 72 30Z" fill="${d}" opacity=".18"/>`+front+
-    `<g stroke="${hair==='rapado'?d:hd}" stroke-width="3" stroke-linecap="round"><line x1="39" y1="48" x2="52" y2="46"/>${patch?'':'<line x1="68" y1="46" x2="81" y2="48"/>'}</g>`+eyesSVG(60,'#5a3a1a',patch)+
-    `<path d="M58 66 q3 6 -2 8" stroke="${d}" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="38" cy="76" r="6" fill="#ff8a8a" opacity=".45"/><circle cx="82" cy="76" r="6" fill="#ff8a8a" opacity=".45"/><path d="M48 82 Q60 92 72 82" fill="#fff" stroke="#7a2030" stroke-width="3" stroke-linecap="round"/>`;
+  if(hair==='largo'||earFins) back=`<path d="M18 52 Q16 12 60 10 Q104 12 102 52 L108 116 L96 104 L92 120 L82 100 L80 74 L40 74 L38 100 L28 120 L24 104 L12 116Z" fill="${h}" stroke="${ol}" stroke-width="2.5" stroke-linejoin="round"/>`;
+  if(hair==='coletas') back=`<path d="M22 52 Q4 60 2 92 L8 84 L6 112 L16 94 L18 118 L26 92 Q28 70 30 56Z" fill="${h}" stroke="${ol}" stroke-width="2.5" stroke-linejoin="round"/><path d="M98 52 Q116 60 118 92 L112 84 L114 112 L104 94 L102 118 L94 92 Q92 70 90 56Z" fill="${h}" stroke="${ol}" stroke-width="2.5" stroke-linejoin="round"/><circle cx="26" cy="54" r="5" fill="#ef4b5f" stroke="${ol}" stroke-width="1.5"/><circle cx="94" cy="54" r="5" fill="#ef4b5f" stroke="${ol}" stroke-width="1.5"/>`;
+  if(hair==='mono') back=`<path d="M48 18 Q50 0 60 2 Q70 0 72 18Z" fill="${h}" stroke="${ol}" stroke-width="2.5"/><rect x="52" y="12" width="16" height="5" rx="2" fill="#d62828"/>`;
+  // flequillo en mechones puntiagudos
+  const fringe=`<path d="M20 58 Q16 14 60 12 Q104 14 100 58 L94 40 L90 54 L82 34 L76 50 L66 30 L60 46 L52 30 L46 48 L38 34 L32 52 L26 40Z" fill="${h}" stroke="${ol}" stroke-width="2.5" stroke-linejoin="round"/><path d="M34 22 Q50 14 62 18 Q46 20 36 30Z" fill="${hl}" opacity=".8"/>`;
+  if(hair==='corto') front=`<path d="${spikes(60,40,26,Math.PI*1.02,Math.PI*1.98,8,20,3)} Z" fill="${h}" stroke="${ol}" stroke-width="2.5" stroke-linejoin="round"/>`+fringe;
+  if(hair==='largo'||hair==='coletas'||hair==='mono') front=fringe;
+  if(hair==='rizado') front=`<path d="${spikes(60,46,30,Math.PI*0.95,Math.PI*2.05,12,15,9,0.35)} Z" fill="${h}" stroke="${ol}" stroke-width="2.5" stroke-linejoin="round"/>`+fringe;
+  if(hair==='rapado') front=`<path d="M22 54 Q20 16 60 16 Q100 16 98 54 L92 44 L86 50 L80 40 L72 46 L66 38 L58 44 L52 38 L44 46 L38 40 L32 50 L28 44Z" fill="${h}" stroke="${ol}" stroke-width="2.5" stroke-linejoin="round"/>`;
+  const ears=earFins?`<path d="M24 58 L2 44 L8 62 L0 70 L12 72Z M96 58 L118 44 L112 62 L120 70 L108 72Z" fill="${finCol}" stroke="${ol}" stroke-width="2"/>`:`<path d="M24 56 Q12 54 14 68 Q16 78 26 74Z M96 56 Q108 54 106 68 Q104 78 94 74Z" fill="${skin}" stroke="${ol}" stroke-width="2.2"/>`;
+  const iris=IRIS[hcKey]||'#8a5a2b';
+  return back+ears+`<path d="${face}" fill="${skin}" stroke="${ol}" stroke-width="2.8"/>
+    <path d="M76 26 Q98 40 96 64 Q94 84 78 96 Q88 74 86 56 Q84 38 76 26Z" fill="${d}" opacity=".35"/>
+    <path d="M28 54 Q60 44 92 54 L92 60 Q60 50 28 60Z" fill="${d}" opacity=".35"/>`+front+
+    `<g fill="${hair==='rapado'?d:hd}"><path d="M36 46 Q44 40 54 43 L53 46 Q45 44 37 49Z"/>${patch?'':'<path d="M84 46 Q76 40 66 43 L67 46 Q75 44 83 49Z"/>'}</g>`+eyesSVG(62,iris,patch)+
+    `<path d="M60 70 l-2 8 l4 0" stroke="${d}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <g stroke="#ff7a8a" stroke-width="2" stroke-linecap="round" opacity=".8"><line x1="32" y1="78" x2="36" y2="74"/><line x1="36" y1="79" x2="40" y2="75"/><line x1="80" y1="78" x2="84" y2="74"/><line x1="84" y1="79" x2="88" y2="75"/></g>
+    <path d="M48 84 Q60 98 72 84 Q60 88 48 84Z" fill="#8a2030" stroke="${ol}" stroke-width="2" stroke-linejoin="round"/><path d="M50 85 Q60 88 70 85 L69 87 Q60 90 51 87Z" fill="#fff"/><path d="M55 92 Q60 89 65 92 Q60 95 55 92Z" fill="#ff8a9a"/>`;
 }
 function animalHead(kind,c,patch){
   const d=shade(c,-0.3),l=shade(c,0.55);let body='',eyes=true,eyeY=62;
@@ -909,7 +953,7 @@ function animalHead(kind,c,patch){
 }
 function creatureHead(kind,c,patch,a){
   const d=shade(c,-0.3),l=shade(c,0.6);
-  if(kind==='sirena'){const sk=shade(c,0.62);return humanHead(sk,'largo',val(HAIRC,a.hc),patch,true,c)+`<g transform="translate(86 26) rotate(20)"><path d="M0 -10 L3 -3 L10 -3 L4 2 L6 10 L0 5 L-6 10 L-4 2 L-10 -3 L-3 -3Z" fill="#ffb020" stroke="#b37400" stroke-width="1.5"/></g>`;}
+  if(kind==='sirena'){const sk=shade(c,0.62);return humanHead(sk,'largo',val(HAIRC,a.hc),patch,true,c,a.hc)+`<g transform="translate(86 26) rotate(20)"><path d="M0 -10 L3 -3 L10 -3 L4 2 L6 10 L0 5 L-6 10 L-4 2 L-10 -3 L-3 -3Z" fill="#ffb020" stroke="#b37400" stroke-width="1.5"/></g>`;}
   if(kind==='dragon') return `<path d="M34 34 Q26 8 40 4 Q40 20 46 30Z M86 34 Q94 8 80 4 Q80 20 74 30Z" fill="#fff4d6" stroke="#8a6a45" stroke-width="2.5"/><path d="M20 56 L4 44 L12 66Z M100 56 L116 44 L108 66Z" fill="${shade(c,-0.15)}" stroke="${d}" stroke-width="2.5"/><ellipse cx="60" cy="60" rx="38" ry="36" fill="${c}" stroke="${d}" stroke-width="4"/><ellipse cx="60" cy="84" rx="24" ry="15" fill="${l}" stroke="${d}" stroke-width="2.5"/><circle cx="52" cy="82" r="2.5" fill="${d}"/><circle cx="68" cy="82" r="2.5" fill="${d}"/><g fill="${shade(c,-0.15)}"><circle cx="38" cy="38" r="4"/><circle cx="48" cy="30" r="3.5"/><circle cx="60" cy="27" r="4"/><circle cx="72" cy="30" r="3.5"/><circle cx="82" cy="38" r="4"/></g>`+eyesSVG(58,'#e0a020',patch)+`<path d="M50 92 q10 6 20 0" fill="none" stroke="#1f1640" stroke-width="3" stroke-linecap="round"/>`;
   if(kind==='fantasma') return `<path d="M22 70 Q20 22 60 22 Q100 22 98 70 L98 96 Q90 88 84 96 Q78 104 72 96 Q66 88 60 96 Q54 104 48 96 Q42 88 36 96 Q30 104 22 96Z" fill="#fbfbff" stroke="#b9c0d6" stroke-width="3"/><path d="M80 30 Q98 46 96 74 L96 92 Q90 88 86 92 Q90 60 80 30Z" fill="#c9d0e6" opacity=".6"/><ellipse cx="46" cy="58" rx="7" ry="11" fill="#1f1640"/>${patch?'':'<ellipse cx="74" cy="58" rx="7" ry="11" fill="#1f1640"/><circle cx="76" cy="53" r="2.5" fill="#fff"/>'}<circle cx="48" cy="53" r="2.5" fill="#fff"/><circle cx="36" cy="74" r="6" fill="${c}" opacity=".5"/><circle cx="84" cy="74" r="6" fill="${c}" opacity=".5"/><ellipse cx="60" cy="78" rx="7" ry="8" fill="#1f1640"/>`;
   if(kind==='robot'){const m=shade(c,0.25);return `<line x1="60" y1="22" x2="60" y2="6" stroke="#5a6170" stroke-width="4"/><circle cx="60" cy="6" r="6" fill="#ef4b5f" stroke="#7a1f2a" stroke-width="2"/><rect x="14" y="54" width="10" height="20" rx="3" fill="#8a95a5" stroke="#4a5563" stroke-width="2"/><rect x="96" y="54" width="10" height="20" rx="3" fill="#8a95a5" stroke="#4a5563" stroke-width="2"/><rect x="22" y="22" width="76" height="78" rx="18" fill="${m}" stroke="${d}" stroke-width="4"/><rect x="30" y="30" width="60" height="10" rx="4" fill="#fff" opacity=".35"/><g fill="${d}">${[[30,30],[90,30],[30,92],[90,92]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="2.5"/>`).join('')}</g><circle cx="46" cy="58" r="11" fill="#1f1640" stroke="#4a5563" stroke-width="3"/><circle cx="46" cy="58" r="6" fill="#7ee8ff"/><circle cx="48" cy="56" r="2" fill="#fff"/>${patch?'':'<circle cx="74" cy="58" r="11" fill="#1f1640" stroke="#4a5563" stroke-width="3"/><circle cx="74" cy="58" r="6" fill="#7ee8ff"/><circle cx="76" cy="56" r="2" fill="#fff"/>'}<rect x="42" y="78" width="36" height="12" rx="4" fill="#1f1640"/><g stroke="#7ee8ff" stroke-width="2">${[48,54,60,66,72].map(x=>`<line x1="${x}" y1="80" x2="${x}" y2="88"/>`).join('')}</g>`;}
@@ -931,7 +975,7 @@ function avatarSVG(av,size=96){
   av=cleanAv(av);const u='a'+(++AVN);
   const c=val(COLORS,av.color),patch=av.equip.eye==='parche';
   let head,top=24,neck=c;
-  if(av.style==='pirata'){const sk=val(SKINS,av.skin);head=humanHead(sk,av.hair,val(HAIRC,av.hc),patch);neck=sk;top=av.hair==='mono'?14:av.hair==='rizado'?20:22;}
+  if(av.style==='pirata'){const sk=val(SKINS,av.skin);head=humanHead(sk,av.hair,val(HAIRC,av.hc),patch,false,null,av.hc);neck=sk;top=av.hair==='mono'?14:av.hair==='rizado'?20:22;}
   else if(av.style==='animal'){head=animalHead(av.kind,c,patch);top={gato:26,loro:28,pulpo:20,cangrejo:16,mono:24,tiburon:28}[av.kind];}
   else {head=creatureHead(av.kind,c,patch,av);neck=av.kind==='sirena'?shade(c,0.62):c;top={sirena:22,dragon:22,fantasma:22,robot:22}[av.kind];}
   const ghost=av.style==='criatura'&&av.kind==='fantasma';
@@ -1209,6 +1253,7 @@ function hostMsg(conn,d){
   else if(d.t==='target'&&p.phase==='target')onTarget(p,d.key);
   else if(d.t==='card'&&p.phase==='card')onCard(p,d.i|0);
   else if(d.t==='vote'&&H.meeting&&p.phase==='meeting'&&!p.out)onVote(p,d.key);
+  else if(d.t==='minihits'&&H.cy&&H.cy.mini){H.cy.mini.hits[p.key]=Math.max(H.cy.mini.hits[p.key]||0,Math.min(150,d.n|0));if(!H.local)renderPanel();}
 }
 function curQ(p){return H.qs[p.cur];}
 function sendQuestion(p){
@@ -1242,13 +1287,22 @@ function onAnswer(p,ok){
     hsend(p,{t:'result',ok,right,msg,gold:p.gold});
     renderBoard();checkSab();
   }else if(H.mode==='ciclope'){
-    p.phase='done';let msg;
-    if(ok){p.streak=(p.streak||0)+1;const fast=p.streak>=3,step=fast?13:9;p.pos+=step;p.gold+=fast?15:10;
-      msg=(fast?'🔥 ¡Racha de '+p.streak+'! Corres a toda velocidad: ':'🏃 ¡Corres! ')+'+'+step+' pasos.';}
-    else{p.streak=0;}
-    const gap=Math.round(p.pos-H.cy.c);
-    hsend(p,{t:'result',ok,right,msg:ok?msg+'<br>👁️ El cíclope está a <b>'+gap+'</b> pasos.':'',gold:p.gold});hsend(p,{t:'gap',gap});
+    p.phase='done';let msg='';const C=H.cy;
+    C.answers++;
+    if(ok){
+      p.streak=(p.streak||0)+1;const fast=p.streak>=3,step=fast?13:9;p.gold+=fast?15:10;
+      msg=(fast?'🔥 ¡Racha de '+p.streak+'! Corres a toda velocidad: ':'🏃 ¡Corres! ')+'+'+step+' pasos.';
+      if(!p.done){
+        const lv0=cyLevel(p);p.pos=Math.min(C.levels*C.L,p.pos+step);const lv1=cyLevel(p);
+        if(p.pos>=C.levels*C.L){p.done=true;C.finished++;p.finish=C.finished;p.gold+=100;msg+='<br>🏝️ <b>¡Has escapado del cíclope!</b> Has llegado al barco. +100 de oro. Sigue respondiendo para ayudar a tu clase.';addFeed('🏝️ <b>'+esc(p.name)+'</b> ha escapado del cíclope');}
+        else if(lv1>lv0){p.cyp=Math.max(p.cyp,(lv1-1)*C.L-24);p.cyp=Math.min(p.cyp,(lv1-1)*C.L-24);msg+='<br>⭐ <b>¡Nivel '+lv0+' superado!</b> Ahora estás en el nivel '+lv1+' de '+C.levels+'.';addFeed('⭐ <b>'+esc(p.name)+'</b> llega al nivel '+lv1);}
+      }
+    }else p.streak=0;
+    if(!p.done&&ok)msg+='<br>👁️ El cíclope está a <b>'+Math.round(p.pos-p.cyp)+'</b> pasos.';
+    hsend(p,{t:'result',ok,right,msg,gold:p.gold});cySendGap(p);
     renderBoard();
+    if(C.answers%C.every===0)setTimeout(startMini,1200);
+    if(!H.tarea&&allP().length&&allP().every(x=>x.done))setTimeout(endGame,2500);
   }else if(H.mode==='bandera'){
     if(!ok){p.phase='done';hsend(p,{t:'result',ok,right});return;}
     p.gold+=10;p.phase='card';
@@ -1293,7 +1347,7 @@ function resumePlayer(p){
   sendQuestion(p);
 }
 function lateJoin(p){
-  if(H.mode==='ciclope'){p.pos=H.cy.c+20;p.streak=0;p.caughtN=0;}
+  if(H.mode==='ciclope'){p.pos=0;p.cyp=-24;p.streak=0;p.caughtN=0;p.done=false;}
   if(H.mode==='saboteador'){p.role='crew';}
   if(H.mode==='bandera'){const r=allP().filter(x=>x.team==='rojo').length,a=allP().filter(x=>x.team==='azul').length;p.team=r<=a?'rojo':'azul';}
 }
@@ -1331,7 +1385,7 @@ function startGame(){
     else sendQuestion(p);
   });
   $('modePanel').style.display=(H.mode==='saboteador'||H.mode==='bandera'||H.mode==='ciclope')?'block':'none';
-  if(H.mode==='ciclope')$('modePanel').innerHTML='<div class="row" style="justify-content:space-between"><h2>👁️ ¡Que viene el cíclope!</h2><span class="hint">Cada acierto os hace correr. ¡Que no os alcance!</span></div><div class="cyscene"><div class="sea"></div><div class="path"></div><div class="cymon" id="cyMon">'+cyclopsSVG(120)+'</div><div id="cyRunners"></div></div>';
+  if(H.mode==='ciclope')$('modePanel').innerHTML='<div class="row" style="justify-content:space-between"><h2>👁️ ¡Que viene el cíclope!</h2><span class="hint">'+H.cy.levels+' niveles hasta el barco. Si el cíclope te alcanza, vuelves al principio de tu nivel.</span></div><div class="cyscene"><div class="sea"></div><div class="path"></div><div id="cyMarks"></div><div class="cymon" id="cyMon">'+cyclopsSVG(110)+'</div><div id="cyRunners"></div></div><div id="cyProg" style="margin-top:10px"></div>';
   $('boardTitle').textContent=H.mode==='saboteador'?'Tripulación':'Clasificación';
   show('s-hgame');renderBoard();tick();
 }
@@ -1348,7 +1402,7 @@ function tick(){
   if(!H||H.state!=='playing')return;
   const left=Math.max(0,H.endsAt-Date.now());
   $('timer').textContent=mmss(left);$('timer').style.color=left<=30000?'#ff9aa7':'';
-  if(H.mode==='ciclope'){cyStep();renderPanel();}
+  if(H.mode==='ciclope'){cyStep();renderPanel();if(H.cy.mini)return setTimeout(tick,250);}
   if(H.mode==='saboteador'){
     if(H.meeting){if(Date.now()>=H.meeting.until)endMeeting();else renderPanel();}
     else if(Date.now()>=H.nextMeeting&&left>35000)startMeeting();
@@ -1356,10 +1410,12 @@ function tick(){
   if(left<=0&&!H.meeting){endGame();return;}
   setTimeout(tick,250);
 }
-function ranking(){return allP().sort((a,b)=>b.gold-a.gold);}
+function ranking(){
+  if(H.mode==='ciclope'&&H.cy)return allP().sort((a,b)=>(b.done-a.done)||(a.done&&b.done?a.finish-b.finish:0)||(b.pos-a.pos)||(b.gold-a.gold));
+  return allP().sort((a,b)=>b.gold-a.gold);}
 function barRow(p,i,max){
   const extra=H.mode==='bandera'&&p.team?`<span style="width:12px;height:12px;border-radius:50%;background:${H.teams[p.team].color};flex:none"></span>`:'';
-  const tag=p.out?` <small style="color:var(--muted)">${p.revealSab?'(era saboteador)':'(en el bote)'}</small>`:'';
+  const tag=p.out?` <small style="color:var(--muted)">${p.revealSab?'(era saboteador)':'(en el bote)'}</small>`:(H.mode==='ciclope'&&H.cy&&p.pos!=null?` <small style="color:var(--muted)">${p.done?'⛵ a salvo':'nivel '+cyLevel(p)}</small>`:'');
   return '<div class="bar'+(p.out?' out':'')+'"><span class="pos">'+(i+1)+'</span><span class="name">'+avMini(p.av,30)+extra+esc(p.name)+'</span><div style="flex:1"><div class="fill" style="width:'+Math.max(1,p.gold/max*100)+'%"></div></div><span class="val">'+fmt(p.gold)+tag+'</span></div>';
 }
 function renderBoard(){
@@ -1376,13 +1432,18 @@ function renderPanel(){
     <div class="meter"><div style="width:${H.prog}%;background:linear-gradient(90deg,#7ee2a8,#22b573)"></div><span>Rumbo: ${Math.floor(H.prog)} %</span></div>
     <div class="meter" style="margin-top:8px"><div style="width:${H.water}%;background:linear-gradient(90deg,#9fd0ff,#2f7fe8)"></div><span>Agua en la bodega: ${Math.floor(H.water)} %</span></div>`;
   }else if(H.mode==='ciclope'){
-    const ps=allP(),c=H.cy.c,maxP=Math.max(c+30,...ps.map(p=>p.pos||0)),L=c-8,R=maxP+10,X=v=>((v-L)/(R-L)*100).toFixed(2);
-    $('cyMon').style.left=X(c)+'%';
+    const C=H.cy,ps=allP(),TOT=C.levels*C.L,X=v=>(14+Math.max(0,v)/TOT*78).toFixed(2);
     const box=$('cyRunners');
+    if(!box.dataset.marks){box.dataset.marks='1';let mk='';for(let k=1;k<=C.levels;k++)mk+=`<div class="cylv" style="left:${X((k-1)*C.L)}%"><b>${k}</b></div>`;mk+=`<div class="cylv end" style="left:${X(TOT)}%">⛵</div>`;$('cyMarks').innerHTML=mk;}
     ps.forEach((p,i)=>{let el=box.querySelector('[data-k="'+CSS.escape(p.key)+'"]');
       if(!el){el=document.createElement('div');el.className='cyrun';el.dataset.k=p.key;box.appendChild(el);}
-      const sig=JSON.stringify(p.av)+p.name;if(el.dataset.sig!==sig){el.dataset.sig=sig;el.innerHTML=avatarSVG(p.av,46)+'<span>'+esc(p.name)+'</span>';}
-      el.style.left=X(p.pos)+'%';el.style.top=(46+(i%5)*9)+'%';el.style.opacity=p.conn?1:.4;});
+      const sig=JSON.stringify(p.av)+p.name;if(el.dataset.sig!==sig){el.dataset.sig=sig;el.innerHTML=avatarSVG(p.av,44)+'<span>'+esc(p.name)+'</span>';}
+      const gap=p.pos-p.cyp;el.style.setProperty('--ring',p.done?'#2ec27e':gap>25?'#2ec27e':gap>10?'#e08a00':'#ef4b5f');
+      el.style.left=X(p.pos||0)+'%';el.style.top=(40+(i%6)*9)+'%';el.style.opacity=p.conn?1:.4;});
+    const n=C.answers%C.every;
+    $('cyProg').innerHTML=C.mini?`<div class="meter"><div style="width:${Math.max(0,(C.mini.until-Date.now())/150)}%;background:linear-gradient(90deg,#ffd27a,#e08a00)"></div><span>🥥 ¡Lluvia de cocos! ${Object.values(C.mini.hits).reduce((s,x)=>s+x,0)} cocos · ${mmss(C.mini.until-Date.now())}</span></div>`
+      :`<div class="meter"><div style="width:${n/C.every*100}%;background:linear-gradient(90deg,#9fd0ff,#2f7fe8)"></div><span>Respuestas de la clase: ${n} de ${C.every} para la lluvia de cocos 🥥</span></div>`;
+    $('cyMon').style.opacity=C.mini?1:.95;$('cyMon').classList.toggle('hit',!!C.mini);
   }else if(H.mode==='bandera'){
     const t=H.teams;const tr=(a,b)=>`<div class="row" style="justify-content:space-between"><b style="font-size:24px;color:${t[a].color}">${t[a].name}</b><span style="font-size:20px">${'🛡️'.repeat(t[a].shield)}</span><span class="score" style="font-size:44px;color:${t[a].color};display:flex;align-items:center;gap:4px">${t[a].cap} ${flagSVG(t[b].color).replace('width="50" height="60"','width="34" height="42"')}</span></div>
       <div class="track"><span class="flag" style="${a==='rojo'?'right':'left'}:10px">${flagSVG(t[b].color)}</span><span class="runner" style="left:calc(${a==='rojo'?Math.min(92,t[a].p*0.88):Math.max(0,88-t[a].p*0.88)}% + 4px)">${shipSVG(t[a].color,a==='azul')}</span></div>`;
@@ -1460,22 +1521,44 @@ function checkSab(){
   return false;
 }
 
-/* ----- el cíclope ----- */
-function cyInit(){H.cy={c:0,last:Date.now(),start:Date.now(),gapAt:0};allP().forEach(p=>{p.pos=22+Math.random()*4;p.streak=0;p.caughtN=0;});}
+/* ----- el cíclope: niveles y minijuego ----- */
+function cyLevels(durMs){const m=durMs/60000;return Math.max(2,Math.min(10,Math.round(m*0.55)));}
+function cyLevel(p){return Math.min(H.cy.levels,Math.floor(p.pos/H.cy.L)+1);}
+function cyInit(){
+  H.cy={L:60,levels:H.tarea?Math.max(2,Math.min(6,Math.round(H.n/6))):cyLevels(H.dur),answers:0,every:H.tarea?10:30,finished:0,mini:null,last:Date.now(),start:Date.now(),gapAt:0};
+  allP().forEach(p=>{p.pos=0;p.cyp=-24;p.streak=0;p.caughtN=0;p.done=false;});
+}
+function cySendGap(p){if(p.pos==null)return;hsend(p,{t:'gap',gap:Math.round(p.pos-p.cyp),level:cyLevel(p),levels:H.cy.levels,done:!!p.done});}
 function cyStep(){
-  const now=Date.now(),dt=Math.min(1,(now-H.cy.last)/1000);H.cy.last=now;
-  const prog=Math.min(1,(now-H.cy.start)/Math.max(60000,H.dur||300000));
-  H.cy.c+=(0.5+0.45*prog)*dt;
+  const C=H.cy,now=Date.now(),dt=Math.min(1,(now-C.last)/1000);C.last=now;
+  if(C.mini){if(now>=C.mini.until)endMini();return;}
   allP().forEach(p=>{
-    if(p.pos==null)return;
-    if(p.pos<=H.cy.c){
-      const lose=Math.floor(p.gold*0.25);p.gold-=lose;p.pos=H.cy.c+16;p.caughtN=(p.caughtN||0)+1;p.streak=0;
-      hsend(p,{t:'caught',lose,gold:p.gold});addFeed('👁️ El cíclope ha atrapado a <b>'+esc(p.name)+'</b>');renderBoard();
+    if(p.pos==null||p.done||!p.conn&&!H.local)return;
+    const lv=cyLevel(p);p.cyp+=Math.min(1.15,0.5+0.1*(lv-1))*dt;
+    if(p.cyp>=p.pos){
+      const start=(lv-1)*C.L,lose=Math.floor(p.gold*0.1);p.gold-=lose;p.pos=start;p.cyp=start-24;p.caughtN=(p.caughtN||0)+1;p.streak=0;
+      hsend(p,{t:'caught',lose,gold:p.gold,level:lv});addFeed('👁️ El cíclope ha atrapado a <b>'+esc(p.name)+'</b>: vuelve al principio del nivel '+lv);renderBoard();
     }
   });
-  if(now-H.cy.gapAt>2000){H.cy.gapAt=now;allP().forEach(p=>{if(p.pos!=null)hsend(p,{t:'gap',gap:Math.round(p.pos-H.cy.c)});});}
+  if(now-C.gapAt>2000){C.gapAt=now;allP().forEach(cySendGap);}
 }
 function cyLoop(){if(!H||H.state!=='playing')return;cyStep();setTimeout(cyLoop,250);}
+function startMini(){
+  const C=H.cy;if(!C||C.mini||H.state!=='playing')return;
+  C.mini={until:Date.now()+15000,hits:{}};H.endsAt+=15000;
+  addFeed('🥥 <b>¡Lluvia de cocos!</b>');
+  allP().forEach(p=>{p.phase='mini';hsend(p,{t:'mini',secs:15});});
+  if(!H.local)renderPanel();
+}
+function endMini(){
+  const C=H.cy,m=C.mini;if(!m)return;C.mini=null;
+  const total=Object.values(m.hits).reduce((s,x)=>s+x,0);
+  allP().forEach(p=>{const h=m.hits[p.key]||0,back=Math.min(30,h*2);p.gold+=h*2;if(!p.done)p.cyp-=back;
+    hsend(p,{t:'msg',title:'🥥 ¡'+h+' cocos!',text:'Tu clase ha lanzado '+total+' cocos. '+(p.done?'':'Tu cíclope retrocede '+back+' pasos. ')+'+'+(h*2)+' de oro.'});});
+  addFeed('🥥 La clase ha lanzado <b>'+total+'</b> cocos al cíclope');
+  C.last=Date.now();renderBoard();
+  setTimeout(()=>{if(H.state!=='playing')return;allP().forEach(p=>{p.phase='idle';sendQuestion(p);});},3000);
+}
 
 /* ----- captura la bandera ----- */
 const CARDS=[{i:'⛵',b:'Avanzar',s:'Tu tripulación se acerca a la bandera rival.'},{i:'💥',b:'Cañonazo',s:'La tripulación rival retrocede.'},{i:'🛡️',b:'Escudo',s:'Protege a tu tripulación del próximo cañonazo.'}];
@@ -1521,6 +1604,8 @@ function endGame(){
     sub='Coral '+t.rojo.cap+' 🚩 · Marea '+t.azul.cap+' 🚩';
     allP().forEach(p=>{const won=p.team===w;if(won)p.gold+=50;perTitle[p.key]={title:w?(won?'¡Ha ganado tu tripulación!':'Ha ganado la '+t[w].name):'¡Empate!',text:sub};});
   }
+  if(H.mode==='ciclope'){const C=H.cy;sub=C.finished+' de '+allP().length+' han escapado del cíclope ('+C.levels+' niveles)';
+    allP().forEach(p=>{perTitle[p.key]={title:p.done?'¡Has escapado del cíclope!':'Has llegado al nivel '+cyLevel(p)+' de '+C.levels,text:''};});}
   const rr=ranking();
   rr.forEach((p,i)=>{
     const earned=Math.min(500,Math.max(0,Math.round(p.gold)));
@@ -1603,7 +1688,7 @@ function startHomework(){
 function endHomework(p){
   const code=hwCode(H.id,p.name,p.correct,H.n,p.gold);
   const line=p.name+' · '+p.correct+' de '+H.n+' · '+p.gold+' de '+T_().cur+' · Tarea '+H.id+' · Código '+code;
-  hsend(p,{t:'end',place:0,total:1,gold:p.gold,cur:T_().cur,title:'¡Tarea terminada!',text:'Has acertado '+p.correct+' de '+H.n+' preguntas.',hw:line,...(H.mode==='ciclope'?{caughtN:p.caughtN||0}:{})});
+  hsend(p,{t:'end',place:0,total:1,gold:p.gold,cur:T_().cur,title:'¡Tarea terminada!',text:'Has acertado '+p.correct+' de '+H.n+' preguntas.'+(H.mode==='ciclope'?(p.done?' ¡Has escapado del cíclope!':' Has llegado al nivel '+cyLevel(p)+' de '+H.cy.levels+'.'):''),hw:line,...(H.mode==='ciclope'?{caughtN:p.caughtN||0}:{})});
 }
 
 /* =====================================================
@@ -1729,9 +1814,12 @@ function playerMsg(d){
   }
   if(d.t==='stolen'){setGold(d.gold);show('s-chests');$('chestMsg').textContent=d.text;$('chestNext').style.visibility='visible';return;}
   if(d.t==='gap'){const b=$('cyBar'),g=d.gap;b.style.display='block';
+    const lv='Nivel '+d.level+' de '+d.levels+' · ';
+    if(d.done){b.style.background='#22b573';b.textContent='⛵ ¡A salvo en el barco!';return;}
     b.style.background=g>25?'#22b573':g>10?'#e08a00':'#ef4b5f';
-    b.textContent=g>25?'👁️ El cíclope está lejos: '+g+' pasos':g>10?'👁️ ¡Cuidado! El cíclope está a '+g+' pasos':'👁️ ¡Corre! El cíclope está a '+g+' pasos';return;}
-  if(d.t==='caught'){setGold(d.gold);$('cyAlertArt').innerHTML=cyclopsSVG(150);$('cyAlertTxt').textContent=(d.lose?'Pierdes '+d.lose+' de oro… ':'')+'¡pero consigues escapar!';
+    b.textContent=lv+(g>25?'👁️ El cíclope está lejos: '+g+' pasos':g>10?'👁️ ¡Cuidado! A '+g+' pasos':'👁️ ¡Corre! A '+g+' pasos');return;}
+  if(d.t==='mini'){startMiniClient(d.secs);return;}
+  if(d.t==='caught'){setGold(d.gold);$('cyAlertArt').innerHTML=cyclopsSVG(150);$('cyAlertTxt').textContent='Vuelves al principio del nivel '+d.level+(d.lose?' y pierdes '+d.lose+' de oro':'')+'. ¡Corre otra vez!';
     const al=$('cyAlert');al.classList.add('on');clearTimeout(al.h);al.h=setTimeout(()=>al.classList.remove('on'),2600);return;}
   if(d.t==='hit'){if(d.gold!=null)setGold(d.gold);toast(d.text,3500);return;}
   if(d.t==='mates'){setMates(d.list);toast('🕵️ '+d.text,5000);return;}
@@ -1766,6 +1854,18 @@ function setMates(list){
   const full='🕵️ '+(list.length?'Saboteadores: '+[P.name,...list.map(m=>m.name+(m.out?' (bote)':''))].join(', '):'Eres el único saboteador');
   b.textContent='🕵️';
   b.onclick=()=>{b.textContent=full;clearTimeout(b.h);b.h=setTimeout(()=>b.textContent='🕵️',4000);};
+}
+let MINI=null;
+function startMiniClient(secs){
+  clearInterval(MINI&&MINI.t);clearInterval(MINI&&MINI.s);
+  MINI={n:0,left:secs};$('miniCount').textContent='0';$('miniTime').textContent=secs;
+  const ar=$('miniArena'),tg=$('miniTarget');tg.innerHTML=cyclopsSVG(90);
+  const move=()=>{const w=ar.clientWidth-100,h=ar.clientHeight-110;tg.style.left=Math.max(0,Math.random()*w)+'px';tg.style.top=Math.max(0,Math.random()*h)+'px';};
+  tg.onpointerdown=e=>{e.preventDefault();if(!MINI||MINI.left<=0)return;MINI.n++;$('miniCount').textContent=MINI.n;
+    const f=document.createElement('div');f.className='coco';f.textContent='🥥';f.style.left=tg.style.left;f.style.top=tg.style.top;ar.appendChild(f);setTimeout(()=>f.remove(),600);move();};
+  $('cyBar').style.display='none';show('s-mini');move();
+  MINI.t=setInterval(move,900);
+  MINI.s=setInterval(()=>{MINI.left--;$('miniTime').textContent=Math.max(0,MINI.left);send({t:'minihits',n:MINI.n});if(MINI.left<=0){clearInterval(MINI.t);clearInterval(MINI.s);}},1000);
 }
 function copyText(t){try{navigator.clipboard.writeText(t).then(()=>toast('Copiado'));}catch(e){}}
 function showChests(){
