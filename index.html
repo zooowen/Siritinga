@@ -68,6 +68,25 @@ textarea{width:100%;min-height:240px;border-radius:12px;border:3px solid #ddd6ff
 details summary{cursor:pointer;font-weight:800;font-size:19px;margin-top:12px}
 
 /* elección de modo */
+.subjs{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:16px 0}
+.subj{background:#fff;border:4px solid var(--sc);border-radius:20px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink);box-shadow:0 6px 0 var(--sc);transition:transform .1s}
+.subj:hover{transform:translateY(-3px)}.subj i{font-style:normal;font-size:54px;line-height:1.1}.subj b{font-size:24px}.subj span{font-size:14px;color:var(--muted)}
+.bset{border:3px solid #eee9ff;border-left:10px solid var(--sc);border-radius:16px;padding:12px 14px 4px;margin:10px 0;background:#fcfbff}
+.bhead{display:flex;align-items:center;gap:12px}.bhead>div{flex:1}.bhead b{font-size:21px}.bhead small{display:block;color:var(--muted);font-size:15px}
+.bacts{display:flex;flex-wrap:wrap;gap:4px}.bacts .btn{font-size:15px;padding:6px 8px}
+.tag{background:#fff1c2;color:#7a5a00;font-size:12px;font-weight:800;border-radius:8px;padding:2px 8px;vertical-align:3px}
+.banksum{display:flex;align-items:center;gap:12px;background:#f4f1ff;border-radius:14px;padding:10px 14px;flex-wrap:wrap}
+.banksum b{font-size:20px}.banksum small{display:block;color:var(--muted);font-size:14px}
+.edgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:600px){.edgrid{grid-template-columns:1fr}}
+input.left,.edq input{text-align:left}
+.edq{display:flex;gap:10px;align-items:flex-start;border:3px solid #eee9ff;border-radius:14px;padding:10px;margin:10px 0;background:#fcfbff}
+.edn{background:var(--a2);color:#fff;font-weight:800;border-radius:50%;min-width:34px;height:34px;display:flex;align-items:center;justify-content:center;margin-top:6px}
+.edq input[type=text]{font-size:17px;padding:8px 10px;font-weight:600}
+.edq .eq{font-size:19px;font-weight:700}
+.edans{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}@media(max-width:600px){.edans{grid-template-columns:1fr}}
+.edans .ok{border-color:#2ec27e;background:#effcf5}
+.edpic{display:flex;gap:6px;margin-top:6px}.edpic select{font-size:15px;padding:6px;width:auto;text-align:left;font-weight:600}
+.edx{background:#ffe3e3;color:#b3261e;border-radius:10px;width:34px;height:34px;font-weight:800;margin-top:6px}
 .modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .mode{border:4px solid #eee9ff;border-radius:16px;padding:12px;text-align:left;background:#faf8ff;display:flex;flex-direction:column;gap:4px;color:var(--ink)}
 .mode b{font-size:21px;line-height:1.1}
@@ -263,6 +282,48 @@ details summary{cursor:pointer;font-weight:800;font-size:19px;margin-top:12px}
   </div>
 </section>
 
+<!-- MAESTRO: ASIGNATURA -->
+<section class="screen" id="s-subj">
+  <div class="card" style="max-width:820px">
+    <h2 style="text-align:center">¿De qué asignatura es el juego?</h2>
+    <div class="subjs" id="subjList"></div>
+    <div class="row"><button class="btn ghost" onclick="show('s-home')">Volver</button><button class="btn ghost" onclick="openClasses()">Clases y copias de seguridad</button><button class="btn ghost" onclick="openCheck()">Comprobar resultados de una tarea</button></div>
+  </div>
+</section>
+
+<!-- MAESTRO: JUEGOS DE PREGUNTAS DE UNA ASIGNATURA -->
+<section class="screen" id="s-sets" style="justify-content:flex-start">
+  <div class="card" style="max-width:820px">
+    <h2 id="setsTitle"></h2>
+    <p class="hint">Elige un juego de preguntas para jugar o crea uno nuevo sobre el estándar o el tema que quieras repasar.</p>
+    <div id="setsList"></div>
+    <div class="row"><button class="btn ghost" onclick="openSubjects()">Volver</button><button class="btn gold" onclick="openEditor(null)">＋ Crear juego de preguntas</button></div>
+  </div>
+</section>
+
+<!-- MAESTRO: EDITOR DE PREGUNTAS -->
+<section class="screen" id="s-edit" style="justify-content:flex-start">
+  <div class="card" style="max-width:920px">
+    <h2 id="edHead">Nuevo juego de preguntas</h2>
+    <div class="edgrid">
+      <div><label for="edSubj">Asignatura</label><select id="edSubj"></select></div>
+      <div><label for="edStd">Estándar o tema</label><input type="text" id="edStd" maxlength="60" placeholder="Por ejemplo: 5.2.3 o Los adjetivos" class="left"></div>
+    </div>
+    <label for="edTitle">Título</label><input type="text" id="edTitle" maxlength="60" placeholder="Por ejemplo: Cambios químicos" class="left">
+    <h3>Preguntas <small class="hint" id="edCount"></small></h3>
+    <p class="hint">En cada pregunta, escribe la respuesta correcta en la casilla verde y hasta tres respuestas incorrectas. En el juego, las respuestas salen mezcladas.</p>
+    <div id="edQs"></div>
+    <button class="btn small" onclick="edAdd()">＋ Añadir pregunta</button>
+    <details><summary>Pegar muchas preguntas a la vez</summary>
+      <p class="hint">Una pregunta por línea: <b>pregunta | respuesta correcta | incorrecta | incorrecta | incorrecta</b>. Puedes copiarlas de un documento o de una hoja de cálculo.</p>
+      <textarea id="edPaste" spellcheck="false" style="min-height:120px" placeholder="¿Cuál es la capital de Chile? | Santiago | Lima | Quito | Bogotá"></textarea>
+      <button class="btn small" onclick="edPaste()">Añadir estas preguntas</button>
+    </details>
+    <div class="err" id="edErr"></div>
+    <div class="row"><button class="btn ghost" onclick="openSets()">Cancelar</button><button class="btn green" id="edSave" onclick="edSave()">Guardar</button></div>
+  </div>
+</section>
+
 <!-- MAESTRO: PREPARAR -->
 <section class="screen" id="s-setup" style="justify-content:flex-start">
   <div class="card" style="max-width:920px">
@@ -299,20 +360,16 @@ details summary{cursor:pointer;font-weight:800;font-size:19px;margin-top:12px}
       <label for="hwName">Nombre de la tarea</label>
       <input type="text" id="hwName" maxlength="40" value="Repaso de ciencias">
     </div>
-    <details>
-      <summary>3. Preguntas (<span id="bankCount"></span>)</summary>
-      <p class="hint">Una pregunta por línea: <b>pregunta | respuesta correcta | incorrecta | incorrecta | incorrecta | dibujo</b>. El dibujo es opcional: escribe una de estas palabras o la dirección de una imagen tuya o de uso libre.</p>
-      <p class="hint" id="picList"></p>
+    <h3>3. Preguntas</h3>
+    <div class="banksum" id="bankSum"></div>
+    <div id="photoRow">
       <label style="display:flex;gap:8px;align-items:center;font-weight:700"><input type="checkbox" id="usePhotos" checked style="width:22px;height:22px"> Usar fotos reales de uso libre cuando las haya (si no, se ven los dibujos)</label>
       <button class="btn ghost" style="font-size:15px;padding:4px 0" onclick="openCredits('s-setup')">Ver créditos de las fotos</button>
-      <textarea id="bank" spellcheck="false"></textarea>
-      <div class="row" style="justify-content:space-between;margin-top:6px">
-        <button class="btn ghost" onclick="resetBank()">Restaurar preguntas de ejemplo</button>
-      </div>
-    </details>
+    </div>
+    <div style="display:none"><textarea id="bank" spellcheck="false"></textarea><span id="bankCount"></span><p id="picList"></p></div>
     <div class="err" id="setupErr"></div>
     <div class="row">
-      <button class="btn ghost" onclick="show('s-home')">Volver</button>
+      <button class="btn ghost" onclick="openSets()">Volver</button>
       <button class="btn ghost" onclick="openCheck()">Comprobar resultados de una tarea</button>
       <button class="btn green" id="createBtn" onclick="createGame()">Crear partida</button>
     </div>
@@ -1041,6 +1098,152 @@ function countBank(){$('bankCount').textContent=parseBank($('bank').value).lengt
 $('bank').addEventListener('input',saveBank);
 $('picList').innerHTML='Dibujos disponibles: '+Object.keys(PICS).map(k=>'<b>'+k+'</b>').join(', ')+'.';
 loadBank();
+/* =====================================================
+   ASIGNATURAS Y JUEGOS DE PREGUNTAS DEL MAESTRO
+   Se guardan en este ordenador (y en la copia de seguridad).
+   ===================================================== */
+const SUBJ=[
+  {k:'espanol',n:'Español',i:'📖',c:'#e4572e'},
+  {k:'ciencias',n:'Ciencias',i:'🔬',c:'#2ec27e'},
+  {k:'mates',n:'Matemáticas',i:'➗',c:'#3a86ff'},
+  {k:'cultura',n:'Cultura',i:'🌎',c:'#8e5bd8'}
+];
+const SAMPLE_BANKS=[
+ {subj:'ciencias',title:'La materia y sus partículas',std:'Estándares 5.2.1 y 5.2.2',text:DEFAULT_BANK},
+ {subj:'espanol',title:'El y la, ser y el futuro',std:'Gramática · Módulo A',text:`¿Qué artículo va con «casa»? | la | el | los | las
+¿Qué artículo va con «libro»? | el | la | las | unas
+¿Qué artículo va con «ventana»? | la | el | los | unos
+¿Qué artículo va con «perro»? | el | la | las | una
+¿Qué artículo va con «mesa»? | la | el | los | un
+¿Qué artículo va con «cuaderno»? | el | la | las | una
+Completa: Nosotros ___ compañeros de clase. | somos | son | es | soy
+Completa: Ustedes ___ muy simpáticos. | son | somos | eres | soy
+Completa: Ellas ___ de Utah. | son | somos | es | eres
+Completa: Mañana ellos ___ al fútbol. | jugarán | jugamos | juegan | jugó
+Completa: El sábado ustedes ___ pizza. | comerán | comemos | comen | comí
+Completa: El año que viene ellas ___ en Madrid. | vivirán | vivimos | viven | vivió`},
+ {subj:'mates',title:'Sumar y restar fracciones',std:'Fracciones',text:`¿Cuánto es 1/2 + 1/4? | 3/4 | 2/6 | 1/6 | 2/4
+¿Cuánto es 2/5 + 1/5? | 3/5 | 3/10 | 2/5 | 1/5
+¿Cuánto es 2/3 + 1/6? | 5/6 | 3/9 | 3/6 | 1/2
+¿Cuánto es 3/4 − 1/2? | 1/4 | 2/2 | 1/2 | 2/4
+¿Cuánto es 5/8 − 1/4? | 3/8 | 4/4 | 1/8 | 1/2
+¿Qué fracción es mayor? | 3/4 | 2/3 | 1/2 | 5/8
+¿Qué fracción es equivalente a 1/2? | 4/8 | 2/3 | 3/5 | 1/4
+¿Cuánto es 1/3 de 12? | 4 | 3 | 6 | 9
+¿Cuánto es 1 − 3/10? | 7/10 | 2/10 | 3/10 | 7/1
+Ana come 1/4 de una pizza y Leo 2/4. ¿Cuánta pizza han comido? | 3/4 | 3/8 | 2/4 | 1/2`},
+ {subj:'cultura',title:'Países y capitales hispanohablantes',std:'Cultura · Países',text:`¿Cuál es la capital de España? | Madrid | Barcelona | Sevilla | Valencia
+¿Cuál es la capital de México? | Ciudad de México | Guadalajara | Cancún | Monterrey
+¿Cuál es la capital de Argentina? | Buenos Aires | Córdoba | Rosario | Mendoza
+¿Cuál es la capital de Perú? | Lima | Cuzco | Arequipa | Quito
+¿Cuál es la capital de Colombia? | Bogotá | Medellín | Cali | Caracas
+¿Cuál es la capital de Chile? | Santiago | Valparaíso | Lima | Montevideo
+¿En qué continente está España? | Europa | América | África | Asia
+¿En qué país se celebra el Día de Muertos? | México | Chile | España | Uruguay
+¿Qué idioma se habla en Brasil? | portugués | español | francés | italiano
+¿De qué país es típica la paella? | España | Argentina | Cuba | Perú`}
+];
+let BANKS=null,BSUBJ='ciencias',BEDIT=null;
+function bankId(){return 'b'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+function loadBanks(){
+  let L=store('siritingaBancos');
+  if(!Array.isArray(L)){
+    L=SAMPLE_BANKS.map(b=>({id:bankId(),...b,ej:true}));
+    const old=store('siritingaBank');
+    if(typeof old==='string'&&old.trim()&&old.trim()!==DEFAULT_BANK.trim())L.unshift({id:bankId(),subj:'ciencias',title:'Mis preguntas de ciencias',std:'',text:old});
+    store('siritingaBancos',L);
+  }
+  BANKS=L.filter(b=>b&&b.id&&SUBJ.some(s=>s.k===b.subj));
+}
+function saveBanks(){store('siritingaBancos',BANKS);}
+loadBanks();
+const nQs=b=>parseBank(b.text).length;
+const subjOf=k=>SUBJ.find(s=>s.k===k)||SUBJ[1];
+
+/* 1) elegir asignatura */
+function openSubjects(){
+  $('subjList').innerHTML=SUBJ.map(s=>{const n=BANKS.filter(b=>b.subj===s.k).length;
+    return `<button class="subj" data-k="${s.k}" style="--sc:${s.c}"><i>${s.i}</i><b>${s.n}</b><span>${n} juego${n===1?'':'s'} de preguntas</span></button>`;}).join('');
+  $('subjList').querySelectorAll('.subj').forEach(b=>b.onclick=()=>{BSUBJ=b.dataset.k;openSets();});
+  show('s-subj');
+}
+/* 2) juegos de preguntas de la asignatura */
+function openSets(){
+  const s=subjOf(BSUBJ),L=BANKS.filter(b=>b.subj===BSUBJ);
+  $('setsTitle').innerHTML=s.i+' '+s.n;
+  $('setsList').innerHTML=L.length?L.map(b=>{const n=nQs(b);return `<div class="bset" style="--sc:${s.c}">
+      <div class="bhead"><div><b>${esc(b.title)}</b>${b.ej?' <span class="tag">ejemplo</span>':''}<small>${b.std?esc(b.std)+' · ':''}${n} pregunta${n===1?'':'s'}</small></div>
+      <button class="btn green small" data-play="${b.id}" ${n<4?'disabled title="Necesita al menos 4 preguntas"':''}>Jugar</button></div>
+      <div class="bacts"><button class="btn ghost" data-ed="${b.id}">✏️ Editar</button><button class="btn ghost" data-dup="${b.id}">📄 Duplicar</button><button class="btn ghost" data-del="${b.id}">🗑️ Borrar</button></div></div>`;}).join('')
+    :'<p class="hint" style="text-align:center;font-size:18px;margin:18px 0">Todavía no hay juegos de preguntas de '+s.n.toLowerCase()+'. ¡Crea el primero!</p>';
+  const q=sel=>$('setsList').querySelectorAll(sel);
+  q('[data-play]').forEach(b=>b.onclick=()=>playBank(b.dataset.play));
+  q('[data-ed]').forEach(b=>b.onclick=()=>openEditor(b.dataset.ed));
+  q('[data-dup]').forEach(b=>b.onclick=()=>{const o=BANKS.find(x=>x.id===b.dataset.dup);BANKS.splice(BANKS.indexOf(o)+1,0,{...o,id:bankId(),title:o.title+' (copia)',ej:false});saveBanks();openSets();});
+  q('[data-del]').forEach(b=>b.onclick=()=>{
+    if(b.dataset.armed!=='1'){b.dataset.armed='1';b.textContent='¿Seguro? Pulsa otra vez';setTimeout(()=>{b.dataset.armed='';b.textContent='🗑️ Borrar';},4000);return;}
+    BANKS=BANKS.filter(x=>x.id!==b.dataset.del);saveBanks();openSets();});
+  show('s-sets');
+}
+function playBank(id){
+  const b=BANKS.find(x=>x.id===id);if(!b)return;
+  SET.bank=id;$('bank').value=b.text;countBank();
+  $('bankSum').innerHTML=`<span style="font-size:30px">${subjOf(b.subj).i}</span><div style="flex:1"><b>${esc(b.title)}</b><small>${subjOf(b.subj).n}${b.std?' · '+esc(b.std):''} · ${nQs(b)} preguntas</small></div><button class="btn small" onclick="openSets()">Cambiar</button><button class="btn small ghost" onclick="openEditor('${b.id}')">Editar</button>`;
+  $('hwName').value=('Repaso: '+b.title).slice(0,40);
+  $('photoRow').style.display=b.subj==='ciencias'?'block':'none';
+  renderSetupMap();$('setupErr').textContent='';show('s-setup');
+}
+/* 3) editor */
+const PIC_OPTS=()=>'<option value="">Sin imagen</option>'+Object.keys(PICS).map(k=>`<option value="${k}">${(typeof PIC_NAMES!=='undefined'&&PIC_NAMES[k])||k}</option>`).join('')+'<option value="url">Dirección de una imagen…</option>';
+function qToLine(q){const c=s=>String(s||'').replace(/\|/g,'/').replace(/\s+/g,' ').trim();return [c(q.q),c(q.a),...q.w.map(c)].filter((x,i)=>i<2||x).join(' | ')+(q.pic?' | '+c(q.pic):'');}
+function openEditor(id){
+  const b=id?BANKS.find(x=>x.id===id):null;
+  BEDIT={id:b?b.id:null,subj:b?b.subj:BSUBJ,title:b?b.title:'',std:b?b.std:'',qs:b?parseBank(b.text):[]};
+  if(!BEDIT.qs.length)BEDIT.qs=[{q:'',a:'',w:['','',''],pic:''}];
+  $('edSubj').innerHTML=SUBJ.map(s=>`<option value="${s.k}"${s.k===BEDIT.subj?' selected':''}>${s.i} ${s.n}</option>`).join('');
+  $('edTitle').value=BEDIT.title;$('edStd').value=BEDIT.std;$('edPaste').value='';$('edErr').textContent='';
+  $('edHead').textContent=b?'Editar juego de preguntas':'Nuevo juego de preguntas';
+  renderEdQs();show('s-edit');
+}
+function readEdQs(){
+  $('edQs').querySelectorAll('.edq').forEach((d,i)=>{const q=BEDIT.qs[i];if(!q)return;
+    q.q=d.querySelector('.eq').value;q.a=d.querySelector('.ea').value;q.w=[...d.querySelectorAll('.ew')].map(x=>x.value);
+    const ps=d.querySelector('.ep').value;q.pic=ps==='url'?d.querySelector('.eu').value.trim():ps;});
+}
+function renderEdQs(){
+  $('edQs').innerHTML=BEDIT.qs.map((q,i)=>{const isUrl=/^https?:/i.test(q.pic||'');const w=[0,1,2].map(j=>q.w[j]||'');
+    return `<div class="edq"><div class="edn">${i+1}</div><div style="flex:1">
+      <input type="text" class="eq" placeholder="Escribe la pregunta" value="${esc(q.q)}">
+      <div class="edans"><input type="text" class="ea ok" placeholder="Respuesta correcta" value="${esc(q.a)}">${w.map(x=>`<input type="text" class="ew" placeholder="Respuesta incorrecta" value="${esc(x)}">`).join('')}</div>
+      <div class="edpic"><select class="ep">${PIC_OPTS()}</select><input type="text" class="eu" placeholder="https://… (imagen de uso libre)" value="${isUrl?esc(q.pic):''}" style="display:${isUrl?'block':'none'}"></div>
+    </div><button class="edx" title="Quitar esta pregunta" data-i="${i}">✕</button></div>`;}).join('');
+  $('edQs').querySelectorAll('.edq').forEach((d,i)=>{const q=BEDIT.qs[i],sel=d.querySelector('.ep');sel.value=/^https?:/i.test(q.pic||'')?'url':(PICS[q.pic]?q.pic:'');
+    sel.onchange=()=>{d.querySelector('.eu').style.display=sel.value==='url'?'block':'none';};});
+  $('edQs').querySelectorAll('.edx').forEach(b=>b.onclick=()=>{readEdQs();BEDIT.qs.splice(+b.dataset.i,1);if(!BEDIT.qs.length)BEDIT.qs.push({q:'',a:'',w:['','',''],pic:''});renderEdQs();});
+  $('edCount').textContent=BEDIT.qs.length+' pregunta'+(BEDIT.qs.length===1?'':'s');
+}
+function edAdd(){readEdQs();BEDIT.qs.push({q:'',a:'',w:['','',''],pic:''});renderEdQs();const L=$('edQs').querySelectorAll('.eq');L[L.length-1].focus();}
+function edPaste(){
+  readEdQs();const add=parseBank($('edPaste').value);
+  if(!add.length){$('edErr').textContent='No he encontrado preguntas con el formato «pregunta | correcta | incorrecta | incorrecta | incorrecta».';return;}
+  BEDIT.qs=BEDIT.qs.filter(q=>q.q.trim()||q.a.trim()).concat(add);$('edPaste').value='';$('edErr').textContent='';renderEdQs();toast(add.length+' preguntas añadidas');
+}
+function edSave(){
+  readEdQs();
+  const title=$('edTitle').value.trim(),subj=$('edSubj').value,std=$('edStd').value.trim();
+  if(!title){$('edErr').textContent='Ponle un título al juego de preguntas.';$('edTitle').focus();return;}
+  const good=BEDIT.qs.filter(q=>q.q.trim()&&q.a.trim()&&q.w.some(x=>x.trim()));
+  const bad=BEDIT.qs.filter(q=>(q.q.trim()||q.a.trim())&&!good.includes(q)).length;
+  if(bad&&!$('edSave').dataset.armed){$('edSave').dataset.armed='1';$('edErr').textContent=bad+' pregunta'+(bad===1?' está incompleta y no se guardará':'s están incompletas y no se guardarán')+' (cada pregunta necesita la respuesta correcta y al menos una incorrecta). Pulsa «Guardar» otra vez para continuar.';setTimeout(()=>delete $('edSave').dataset.armed,6000);return;}
+  delete $('edSave').dataset.armed;
+  const text=good.map(qToLine).join('\n');
+  if(BEDIT.id){const b=BANKS.find(x=>x.id===BEDIT.id);Object.assign(b,{title,subj,std,text,ej:false});}
+  else BANKS.push({id:bankId(),subj,title,std,text});
+  saveBanks();BSUBJ=subj;toast('Juego de preguntas guardado');
+  if(good.length<4)toast('Recuerda: para jugar hacen falta al menos 4 preguntas');
+  openSets();
+}
+
 
 /* ---------- modos de juego ---------- */
 const MODES={
@@ -1082,7 +1285,7 @@ function renderSetupMap(){renderClassSel();const t=expTotal(),k=mapStop(t),nx=MA
 const PIN_HASH='aacbfa36a89116ef3e252a89381fe939e189bca19af34523b126b43b71f77d9c';
 function normPin(s){return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9ñ]/g,'');}
 function unlocked(){try{return sessionStorage.getItem('siritingaMaestro')===PIN_HASH;}catch(e){return false;}}
-function openSetup(){renderSetupMap();show('s-setup');}
+function openSetup(){openSubjects();}
 function goTeacher(){if(unlocked()){openSetup();return;}$('pin').value='';$('pinErr').textContent='';show('s-pin');setTimeout(()=>$('pin').focus(),50);}
 async function checkPin(){
   if(!(window.crypto&&crypto.subtle)){$('pinErr').textContent='Este navegador no permite comprobar la contraseña.';return;}
@@ -1565,7 +1768,7 @@ const SALT='siritinga-cofres-2026';
 function hwCode(id,name,correct,n,gold){return fnv(id+'|'+norm(name)+'|'+correct+'|'+n+'|'+gold+'|'+SALT).toString(36).toUpperCase().padStart(7,'0').slice(-7);}
 function makeHomework(qs){
   const id=fnv(Date.now()+'|'+Math.random()).toString(36).toUpperCase().slice(0,5);
-  const data={v:1,id,ph:$('usePhotos').checked?1:0,name:$('hwName').value.trim()||'Repaso',m:SET.mode,s:$('season').value,n:+$('hwN').value,q:$('bank').value};
+  const data={v:1,id,ph:$('usePhotos').checked&&$('photoRow').style.display!=='none'?1:0,name:$('hwName').value.trim()||'Repaso',m:SET.mode,s:$('season').value,n:+$('hwN').value,q:$('bank').value};
   const link=location.origin+location.pathname+'#tarea='+b64e(JSON.stringify(data));
   const list=store('siritingaTareas')||[];list.unshift({id,name:data.name,mode:data.m,n:data.n,date:new Date().toLocaleDateString('es-ES')});store('siritingaTareas',list.slice(0,40));
   $('hwLink').value=link;
@@ -1897,7 +2100,7 @@ function addClass(){
   const id='c'+Date.now().toString(36);CL.list.push({id,name:v,exp:0,alumnos:{}});CL.sel=id;saveClasses();$('clsNew').value='';renderClasses();paintBg();
 }
 function downloadBackup(){
-  const data=JSON.stringify({app:'siritinga',v:2,fecha:new Date().toISOString(),autor:'Óscar Robles Braojos',clases:CL,tareas:store('siritingaTareas')||[]},null,1);
+  const data=JSON.stringify({app:'siritinga',v:3,fecha:new Date().toISOString(),autor:'Óscar Robles Braojos',clases:CL,tareas:store('siritingaTareas')||[],preguntas:BANKS},null,1);
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));
   a.download='siritinga-copia-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
   $('backupMsg').textContent='Copia descargada. Guárdala en tu Google Drive o en tu ordenador.';
@@ -1905,7 +2108,7 @@ function downloadBackup(){
 $('restoreFile').addEventListener('change',e=>{
   const f=e.target.files[0];if(!f)return;const r=new FileReader();
   r.onload=()=>{try{const d=JSON.parse(r.result);if(d.app!=='siritinga'||!d.clases||!Array.isArray(d.clases.list))throw 0;
-      CL=d.clases;store('siritingaClases',CL);CL=loadClasses();if(Array.isArray(d.tareas))store('siritingaTareas',d.tareas);
+      CL=d.clases;store('siritingaClases',CL);CL=loadClasses();if(Array.isArray(d.tareas))store('siritingaTareas',d.tareas);if(Array.isArray(d.preguntas)){store('siritingaBancos',d.preguntas);loadBanks();}
       renderClasses();paintBg();$('backupMsg').textContent='✅ Copia restaurada ('+CL.list.length+' clases).';}
     catch(err){$('backupMsg').textContent='❌ Ese archivo no es una copia de Siritinga.';}
     e.target.value='';};
