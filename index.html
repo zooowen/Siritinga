@@ -412,9 +412,9 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 .btn.big{font-size:26px;padding:16px 34px;border-radius:20px}
 .crew{max-width:calc(100vw - 32px);overflow:hidden}
 @media (max-width:700px){.crew{height:auto;gap:0}.crew img{height:auto!important;width:calc((100vw - 52px)/7)}.btn.big{font-size:21px;padding:12px 20px}}
-.avl{display:inline-block;border-radius:50%;overflow:hidden;position:relative;flex:none;vertical-align:middle;box-shadow:0 0 0 2px #fff}
+.avl{display:inline-block;border-radius:28%;overflow:hidden;position:relative;flex:none;vertical-align:middle;box-shadow:0 0 0 2px #fff}
 .avl.fr{box-shadow:0 0 0 3px #f5c518}
-.avl i{position:absolute;inset:0;background-repeat:no-repeat;background-size:118% auto;background-position:50% 6%}
+.avl i{position:absolute;inset:6%;background-repeat:no-repeat;background-size:contain;background-position:50% 100%}
 .avl i.card{background-size:cover;background-position:center}
 .big-msg,#fbImg,.dicefx,.coinfx{pointer-events:none}
 .addsubj{border-style:dashed;background:transparent;box-shadow:none}.addsubj i{font-size:54px;color:var(--wood)}
@@ -548,11 +548,38 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 .mode.sel .mimg{border-bottom-color:var(--gold-d)}
 .mode i{position:absolute;top:8px;left:8px;font-size:30px;background:rgba(255,255,255,.85);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center}
 
+/* hundir la flota: partes de barco */
+.fgrid>*{position:relative;overflow:hidden}
+.fseg{position:absolute;inset:14% 0;background:linear-gradient(#9aa6b2,#6b7785);display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25)}
+.fseg.l{left:12%;border-radius:50% 0 0 50%}.fseg.r{right:12%;border-radius:0 50% 50% 0}.fseg.h{left:0;right:0}
+.fseg.t,.fseg.b,.fseg.v{inset:0 14%}.fseg.t{top:12%;border-radius:50% 50% 0 0}.fseg.b{bottom:12%;border-radius:0 0 50% 50%}
+.fseg.o{inset:16%;border-radius:40%}
+.fseg.sunk{background:linear-gradient(#5b636d,#353b42);animation:sinkin .8s ease-out}
+.fseg.sunk::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent 0 4px,rgba(59,135,192,.35) 4px 7px)}
+@keyframes sinkin{from{transform:translateY(-8px);filter:brightness(2)}}
+.fgrid .f2,.fgrid .f3{background:#3b87c0}
+.flegend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin:6px 0}
+.flegend span{display:flex;flex-direction:column;align-items:center;gap:2px}.flegend small{font-size:12px;color:var(--muted)}
+.fship{display:inline-flex;gap:1px;margin:0 2px}.fship b{width:12px;height:10px;background:#6b7785;display:block}
+.fship b:first-child{border-radius:6px 0 0 6px}.fship b:last-child{border-radius:0 6px 6px 0}.fship b:only-child{border-radius:5px}
+.fship.sunk b{background:#d0d4d9;opacity:.6}
+.fships{display:flex;gap:4px;flex-wrap:nowrap}.fship{display:flex}
+/* puntos y doblones de la partida */
+.hud .hudpts{font-family:'Lilita One',sans-serif;font-size:20px;background:#fff6d6;border:2px solid #f0c64a;border-radius:999px;padding:2px 10px;margin-right:4px;white-space:nowrap}
+.gtot{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.gtot span{flex:1;min-width:150px;background:color-mix(in srgb,var(--c) 14%,#fff);border:3px solid var(--c);border-radius:14px;padding:6px 12px;font-size:20px;display:flex;justify-content:space-between;gap:8px}
+.gtot b{color:var(--c)}
+/* modo libre / modo historia */
+.playmode{max-width:520px;margin:0 auto 18px}
+.storybox{text-align:center;padding:26px 18px;margin-bottom:14px;border-radius:20px;border:3px dashed #d9b45a;background:linear-gradient(180deg,#fff8e2,#fdeec4)}
+.storybox .storyicon{font-size:64px;line-height:1}
+.storybox p{font-size:19px;max-width:560px;margin:8px auto}
+
 </style>
 </head>
 <body>
 <div id="mapbg"></div><div id="scenebg"></div><div id="hdecor"></div><div id="tint"></div>
-<div class="hud" id="hud"><span id="hudAv"></span><span class="coin"></span><span id="hudGold">0</span><span class="turbo" id="hudTurbo">⚡ ×2</span><button class="trkbtn" id="hudTricks" onclick="openTricks()">🎩 Trucos</button><span class="tm" id="hudTeam"></span><button class="sabbadge" id="hudSab" title="Toca para ver tu bando"></button></div>
+<div class="hud" id="hud"><span id="hudAv"></span><span class="hudpts" id="hudPts" title="Puntos de la partida">⭐ 0</span><span class="coin" title="Doblones de la partida para trucos"></span><span id="hudGold">0</span><span class="turbo" id="hudTurbo">⚡ ×2</span><button class="trkbtn" id="hudTricks" onclick="openTricks()">🎩 Trucos</button><span class="tm" id="hudTeam"></span><button class="sabbadge" id="hudSab" title="Toca para ver tu bando"></button></div>
 <div class="toast" id="toast"></div>
 <div class="emolayer" id="emoLayer"></div>
 <div class="prize" id="prize"><div id="prizeBox"></div></div>
@@ -561,8 +588,8 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 <div class="fxparty" id="fxParty"></div>
 <div class="fxghost" id="fxGhost"></div>
 <div class="tricks" id="tricks"><div class="card trkcard">
-  <div class="row" style="justify-content:space-between;margin:0"><h2 style="margin:0">🎩 Trucos</h2><span class="chip" style="font-size:18px"><span class="coin"></span><span id="trkWallet">0</span>&nbsp;doblones</span></div>
-  <p class="hint">Se pagan con los doblones de tu pirata. Puedes usar un truco cada 12 segundos.</p>
+  <div class="row" style="justify-content:space-between;margin:0"><h2 style="margin:0">🎩 Trucos</h2><span class="chip" style="font-size:18px"><span class="coin"></span><span id="trkWallet">0</span>&nbsp;doblones de la partida</span></div>
+  <p class="hint">Se pagan con los doblones que ganas en esta partida (y, si no llegan, con los de tu bolsa). Puedes usar un truco cada 12 segundos.</p>
   <div id="trkBody"></div>
   <div class="row"><button class="btn ghost" onclick="closeTricks()">Cerrar</button></div>
 </div></div>
@@ -581,7 +608,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:13px;opacity:.85">Versión 17 · 25/10/2026 · Pergaminos, mejoras y vehículo anfibio</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:13px;opacity:.85">Versión 20 · 25/10/2026 · Botón de modo historia</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -613,6 +640,18 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 <!-- MAESTRO: ASIGNATURA -->
 <section class="screen" id="s-subj">
   <div class="card" style="max-width:820px">
+    <div class="seg playmode" id="playModeSeg">
+      <button data-v="libre" class="sel">🎲 Modo libre</button>
+      <button data-v="historia">📖 Modo historia</button>
+    </div>
+    <div id="storyBox" class="storybox" style="display:none">
+      <div class="storyicon">📖</div>
+      <h2 style="margin:6px 0">Modo historia</h2>
+      <p>Aquí irá la historia de Siritinga para todo el curso: cada partida hará avanzar a la clase por los capítulos.</p>
+      <p class="hint">Todavía no hay ninguna historia. Mientras tanto, puedes seguir jugando en el modo libre.</p>
+      <button class="btn gold" onclick="setPlayMode('libre')">Volver al modo libre</button>
+    </div>
+    <div id="freeBox">
     <h2 style="text-align:center">¿De qué asignatura es el juego?</h2>
     <div class="subjs" id="subjList"></div>
     <div id="newSubj" class="newsubj" style="display:none">
@@ -622,6 +661,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <label>Color</label><div class="opts" id="nsColors"></div>
       <div class="err" id="nsErr"></div>
       <div class="row"><button class="btn ghost" onclick="$('newSubj').style.display='none'">Cancelar</button><button class="btn green" onclick="createSubject()">Crear asignatura</button></div>
+    </div>
     </div>
     <div class="row"><button class="btn ghost" onclick="show('s-home')">Volver</button><button class="btn ghost" onclick="openClasses()">Clases y copias de seguridad</button><button class="btn ghost" onclick="openCheck()">Comprobar resultados de una tarea</button></div>
   </div>
@@ -689,6 +729,9 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
     <div id="liveOpts">
       <label for="dur">Duración</label>
       <select id="dur"><option value="300">5 minutos</option><option value="420" selected>7 minutos</option><option value="600">10 minutos</option><option value="900">15 minutos</option></select>
+      <label for="ptsPct">Doblones que se llevan al final</label>
+      <select id="ptsPct"><option value="25">25 % de los puntos</option><option value="50" selected>50 % de los puntos</option><option value="75">75 % de los puntos</option><option value="100">100 % de los puntos</option></select>
+      <p class="hint">Los doblones que se ganan jugando sirven para comprar trucos y también cuentan como puntos. En los juegos por equipos los puntos se suman y al final se reparten a partes iguales entre los jugadores del equipo.</p>
       <label for="musKind">Música</label>
       <select id="musKind"></select><p class="hint">Al elegir un tema empieza a sonar para que lo escuches. La música es libre (Wikimedia Commons) y sus autores aparecen en los créditos.</p>
     </div>
@@ -1432,20 +1475,34 @@ function avOwned(av,owned){
 function shade(hex,f){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;const t=f<0?0:255,p=Math.abs(f);r=Math.round((t-r)*p+r);g=Math.round((t-g)*p+g);b=Math.round((t-b)*p+b);return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);}
 const val=(L,k)=>(L.find(x=>x[0]===k)||L[0])[1];
 let AVN=0;
+/* puntos de cada dibujo: caja [x0,y0,x1,y1], cabeza (x,ancho), cuerpo (x,ancho), pies (x,ancho) y mano (x,y) */
+const ANCHW={"a_elefanteastronauta":239,"a_elefanterey":211,"a_gatocaballero":170,"a_gatopirata":167,"a_lobobombero":231,"a_lobodetective":205,"a_lobofutbolista":213,"a_lobomedico":187,"a_lobopintor":202,"a_lobosuper":222,"a_monopayaso":193,"a_monopiloto":206,"a_osococinero":159,"a_osojardinero":173,"a_serpientemaga":153,"a_serpientemariposa":181,"a_tigrevaquero":183,"a_tigrevikingo":167,"explorador_bien":244,"p_astronauta":190,"p_astronauta2":183,"p_bombera":174,"p_bombero":188,"p_caballera":174,"p_caballero":189,"p_cientifica":188,"p_cientifico":186,"p_cocinera":166,"p_cocinero":177,"p_faraon":190,"p_faraona":169,"p_gaitera":174,"p_gaitero":168,"p_granjera":172,"p_granjero":158,"p_luchador":185,"p_luchadora":169,"p_maga":169,"p_mago":176,"p_medica":174,"p_medico":167,"p_payasa":184,"p_payaso":185,"p_piloto":171,"p_pirata":167,"p_pirata2":170,"p_romana":162,"p_romano":172,"p_superheroe":163,"p_superheroina":196,"p_vaquera":155,"p_vaquero":164,"p_vikinga":177,"p_vikingo":190};
+const ANCHH={"a_elefanteastronauta":260,"a_elefanterey":260,"a_gatocaballero":260,"a_gatopirata":260,"a_lobobombero":260,"a_lobodetective":260,"a_lobofutbolista":260,"a_lobomedico":260,"a_lobopintor":260,"a_lobosuper":260,"a_monopayaso":260,"a_monopiloto":260,"a_osococinero":260,"a_osojardinero":260,"a_serpientemaga":260,"a_serpientemariposa":260,"a_tigrevaquero":260,"a_tigrevikingo":260,"explorador_bien":360,"p_astronauta":260,"p_astronauta2":260,"p_bombera":260,"p_bombero":260,"p_caballera":260,"p_caballero":260,"p_cientifica":260,"p_cientifico":260,"p_cocinera":260,"p_cocinero":260,"p_faraon":260,"p_faraona":260,"p_gaitera":260,"p_gaitero":260,"p_granjera":260,"p_granjero":260,"p_luchador":260,"p_luchadora":260,"p_maga":260,"p_mago":260,"p_medica":260,"p_medico":260,"p_payasa":260,"p_payaso":260,"p_piloto":260,"p_pirata":260,"p_pirata2":260,"p_romana":260,"p_romano":260,"p_superheroe":260,"p_superheroina":260,"p_vaquera":260,"p_vaquero":260,"p_vikinga":260,"p_vikingo":260};
+const ANCH={"a_elefanteastronauta":[1,1,237,258,100,200,115,236,135,192,237,98],"a_elefanterey":[1,1,210,258,91,110,95,207,117,170,210,180],"a_gatocaballero":[1,1,168,258,61,115,94,159,70,144,168,169],"a_gatopirata":[1,1,165,258,86,121,91,148,55,123,158,132],"a_lobobombero":[1,1,229,258,78,136,114,215,107,62,221,184],"a_lobodetective":[1,1,203,258,82,88,86,202,89,144,203,135],"a_lobofutbolista":[1,1,211,258,93,102,115,186,65,119,206,182],"a_lobomedico":[1,1,185,258,81,102,55,176,75,90,185,161],"a_lobopintor":[1,1,200,258,101,100,91,199,94,103,200,152],"a_lobosuper":[1,1,220,258,76,113,125,198,89,151,220,104],"a_monopayaso":[0,1,192,258,114,55,97,159,88,134,187,173],"a_monopiloto":[1,1,205,258,117,111,113,195,91,148,205,111],"a_osococinero":[1,1,157,258,104,86,76,151,96,126,156,177],"a_osojardinero":[1,1,171,258,103,120,84,167,102,129,168,152],"a_serpientemaga":[1,1,151,258,88,132,66,145,87,111,149,184],"a_serpientemariposa":[1,1,179,258,91,144,101,178,104,114,179,104],"a_tigrevaquero":[1,1,181,258,73,176,85,165,88,171,173,128],"a_tigrevikingo":[1,1,165,258,64,139,78,157,79,152,165,172],"explorador_bien":[1,1,242,359,171,94,130,241,172,108,242,187],"p_astronauta":[1,1,188,258,122,112,88,180,94,144,183,78],"p_astronauta2":[1,1,181,258,113,64,91,178,101,124,181,169],"p_bombera":[1,1,172,258,96,83,94,171,84,151,172,113],"p_bombero":[1,1,186,258,115,70,97,173,109,147,184,183],"p_caballera":[1,1,172,258,108,162,92,163,83,128,172,159],"p_caballero":[1,1,187,258,89,138,105,179,96,136,187,135],"p_cientifica":[1,1,186,258,118,112,89,182,92,144,186,84],"p_cientifico":[1,1,184,258,96,121,91,183,88,128,184,148],"p_cocinera":[1,1,164,258,105,76,87,163,72,123,164,108],"p_cocinero":[1,1,175,257,108,69,88,174,75,124,175,99],"p_faraon":[1,1,188,258,102,158,98,181,93,128,188,133],"p_faraona":[1,1,167,258,88,140,94,152,87,143,167,136],"p_gaitera":[1,1,172,258,104,113,92,171,80,134,172,97],"p_gaitero":[1,1,166,258,97,78,90,133,67,129,166,79],"p_granjera":[1,1,170,258,98,145,97,150,82,137,170,100],"p_granjero":[1,1,156,258,89,85,82,143,64,129,156,138],"p_luchador":[1,1,183,258,94,72,93,175,76,145,183,137],"p_luchadora":[1,1,167,258,98,152,95,116,76,154,166,78],"p_maga":[1,1,167,258,92,156,90,155,89,135,167,139],"p_mago":[1,1,174,258,96,145,84,166,92,123,174,153],"p_medica":[1,1,172,258,93,86,91,144,72,145,170,184],"p_medico":[2,1,165,258,97,66,85,161,84,133,165,160],"p_payasa":[1,1,182,258,103,118,96,181,89,152,182,140],"p_payaso":[1,11,183,258,102,112,94,177,104,165,183,146],"p_piloto":[1,1,168,258,103,88,96,161,90,140,168,114],"p_pirata":[1,1,165,258,97,141,89,163,81,122,165,136],"p_pirata2":[1,1,168,258,102,137,84,159,75,95,168,161],"p_romana":[1,1,160,258,102,135,89,155,73,150,160,138],"p_romano":[1,1,170,258,106,62,90,161,80,108,168,181],"p_superheroe":[1,1,161,258,84,73,82,160,67,143,161,145],"p_superheroina":[1,1,194,258,101,125,100,173,84,137,194,176],"p_vaquera":[1,1,153,258,83,116,76,149,69,137,153,119],"p_vaquero":[1,2,162,258,92,95,83,154,68,128,162,150],"p_vikinga":[1,1,175,258,96,160,97,150,85,128,175,122],"p_vikingo":[1,1,188,258,116,109,110,183,99,113,188,149]};
+function wearImg(x){if(typeof x==='number')return IMG['u'+String(x).padStart(3,'0')];return null;}
+function wearEmo(x){const s=(typeof SEAS_ITEMS!=='undefined'?SEAS_ITEMS:[]).find(z=>z.id===x);return s?s.e:'';}
 function avatarSVG(av,size=96){
-  av=cleanAv(av);const u='a'+(++AVN),src=IMG[av.kind],c0=val(COLORS,av.color);
-  const card=av.kind.startsWith('c_');
-  const pic=card?`<image href="${src}" x="0" y="0" width="120" height="120" preserveAspectRatio="xMidYMid slice"/>`
-               :`<image href="${src}" x="-8" y="8" width="136" height="190" preserveAspectRatio="xMidYMin meet"/>`;
-  const ring=av.equip.frame==='marco'?`<circle cx="60" cy="60" r="57" fill="none" stroke="#f5c518" stroke-width="6"/><circle cx="60" cy="60" r="57" fill="none" stroke="#fff3a0" stroke-width="2" stroke-dasharray="3 9"/>`:'';
-  const glow=av.fx==='brillo'?`<circle cx="60" cy="60" r="58" fill="none" stroke="#c9a6ff" stroke-width="5" opacity=".9"><animate attributeName="stroke" values="#c9a6ff;#7ff0ff;#ffe27a;#c9a6ff" dur="3s" repeatCount="indefinite"/></circle>`:'';
-  let gear='';const W=av.wear||{},POS={cab:[22,20],obj:[98,98],cue:[22,98],pie:[98,22]};
-  Object.entries(W).forEach(([k,x])=>{const [cx,cy]=POS[k];let inner='';
-    if(typeof x==='number')inner=`<image href="${IMG['u'+String(x).padStart(3,'0')]}" x="${cx-17}" y="${cy-17}" width="34" height="34"/>`;
-    else{const s=(typeof SEAS_ITEMS!=='undefined'?SEAS_ITEMS:[]).find(z=>z.id===x);if(s)inner=`<text x="${cx}" y="${cy+9}" text-anchor="middle" font-size="26">${s.e}</text>`;}
-    if(inner)gear+=`<circle cx="${cx}" cy="${cy}" r="21" fill="#fff" stroke="#6b3f17" stroke-width="3"/>${inner}`;});
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 124 124" width="${size}" height="${size}" aria-hidden="true" style="overflow:visible"><defs><clipPath id="cl${u}"><circle cx="60" cy="60" r="57"/></clipPath></defs><circle cx="60" cy="60" r="57" fill="${shade(c0,0.62)}"/><g clip-path="url(#cl${u})">${pic}</g>${ring}${glow}${gear}</svg>`;
+  av=cleanAv(av);const src=IMG[av.kind],c0=val(COLORS,av.color),bg=shade(c0,0.62),W=av.wear||{};
+  const frame=av.equip.frame==='marco'?`<rect x="2" y="2" width="116" height="116" rx="26" fill="none" stroke="#f5c518" stroke-width="6"/><rect x="2" y="2" width="116" height="116" rx="26" fill="none" stroke="#fff3a0" stroke-width="2" stroke-dasharray="3 9"/>`:'';
+  const glow=av.fx==='brillo'?`<rect x="0" y="0" width="120" height="120" rx="28" fill="none" stroke="#c9a6ff" stroke-width="5"><animate attributeName="stroke" values="#c9a6ff;#7ff0ff;#ffe27a;#c9a6ff" dur="3s" repeatCount="indefinite"/></rect>`:'';
+  let body='',over='';const A=ANCH[av.kind];
+  const put=(x,cx,top,w,anchorBottom)=>{const im=wearImg(x);if(im)return `<image href="${im}" x="${cx-w/2}" y="${anchorBottom?top-w:top}" width="${w}" height="${w}" preserveAspectRatio="xMidYMid meet"/>`;const e=wearEmo(x);return e?`<text x="${cx}" y="${anchorBottom?top:top+w*.85}" text-anchor="middle" font-size="${w*.9}">${e}</text>`:'';};
+  if(A&&!av.kind.startsWith('c_')){
+    const [x0,y0,x1,y1,hx,hw,bx,bw,fx,fw,mx,my]=A,h=y1-y0,s=Math.min(112/h,112/(x1-x0)),ox=60-(x1-x0)*s/2,oy=116-h*s;
+    const X=x=>ox+(x-x0)*s,Y=y=>oy+(y-y0)*s;
+    body=`<image href="${src}" x="${ox-x0*s}" y="${oy-y0*s}" width="${(ANCHW[av.kind]||0)*s}" height="${(ANCHH[av.kind]||0)*s}"/>`;
+    if(W.cue!=null)over+=put(W.cue,X(bx),Y(y0+h*.3),Math.max(26,bw*s*.62),false);
+    if(W.pie!=null)over+=put(W.pie,X(fx),Y(y1)+3,Math.max(22,fw*s*.8),true);
+    if(W.cab!=null)over+=put(W.cab,X(hx),Y(y0+h*.16),Math.max(26,hw*s*.82),true);
+    if(W.obj!=null)over+=put(W.obj,Math.min(108,X(mx)),Y(my)-14,30,false);
+  }else{
+    body=`<image href="${src}" x="6" y="6" width="108" height="108" preserveAspectRatio="xMidYMid slice"/>`;
+    const pos={cab:[30,4],obj:[86,86],cue:[4,86],pie:[86,4]};
+    Object.entries(W).forEach(([k,x])=>{const [px,py]=pos[k];over+=put(x,px+14,py,28,false);});
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 124 124" width="${size}" height="${size}" aria-hidden="true" style="overflow:visible"><rect x="0" y="0" width="120" height="120" rx="28" fill="${bg}"/><ellipse cx="60" cy="114" rx="34" ry="5" fill="rgba(0,0,0,.18)"/>${body}${over}${frame}${glow}</svg>`;
 }
+
 
 /* ---------- EL CÍCLOPE (ilustración de Óscar Robles Braojos) ---------- */
 function cyclopsSVG(size=200){
@@ -1482,7 +1539,7 @@ function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
 function toast(txt,ms=2800){const t=$('toast');t.textContent=txt;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),ms);}
 const fmt = n => Math.round(n).toLocaleString('es-ES');
-const money = (n,cur) => fmt(n)+' '+(cur==='caramelos'?'caramelos':'de oro');
+const money = (n,cur) => fmt(n)+' '+(cur==='caramelos'?'caramelos':'doblones');
 const norm = s => String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
 function store(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v));}catch(e){return null;}}
 function mmss(ms){const s=Math.max(0,Math.ceil(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
@@ -1672,7 +1729,7 @@ const subjOf=k=>SUBJ.find(s=>s.k===k)||SUBJ[1];
 function openSubjects(){
   $('subjList').innerHTML=SUBJ.map(s=>{const n=BANKS.filter(b=>b.subj===s.k).length;
     return `<button class="subj" data-k="${s.k}" style="--sc:${s.c}"><i>${s.i}</i><b>${esc(s.n)}</b><span>${n} juego${n===1?'':'s'} de preguntas</span></button>`;}).join('')+'<button class="subj addsubj" style="--sc:#b8a57a" onclick="openNewSubject()"><i>＋</i><b>Nueva asignatura</b><span>Crea la tuya</span></button>';
-  $('newSubj').style.display='none';
+  $('newSubj').style.display='none';setPlayMode('libre');
   $('subjList').querySelectorAll('.subj[data-k]').forEach(b=>b.onclick=()=>{BSUBJ=b.dataset.k;openSets();});
   show('s-subj');
 }
@@ -1753,6 +1810,15 @@ function edSave(){
   openSets();
 }
 
+/* modo de juego del maestro: libre (por defecto) o historia */
+function setPlayMode(v){
+  if(v!=='historia')v='libre';
+  $('playModeSeg').querySelectorAll('button').forEach(b=>b.classList.toggle('sel',b.dataset.v===v));
+  $('storyBox').style.display=v==='historia'?'block':'none';
+  $('freeBox').style.display=v==='historia'?'none':'block';
+}
+$('playModeSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>setPlayMode(b.dataset.v));
+
 /* =====================================================
    TRUCOS: se compran con doblones durante una partida en vivo
    ===================================================== */
@@ -1779,8 +1845,9 @@ function onTrick(p,d){
   let v=null;
   if(t.one){v=H.players[d.key];if(!v||v===p||!v.rec)return res(false,'Elige a un compañero.');}
   const amt=t.amt?(t.amt.includes(+d.amt)?+d.amt:t.amt[0]):0,cost=t.price+amt;
-  if(p.rec.wallet<cost)return res(false,'No tienes doblones suficientes.');
-  dobAdd(p,-cost);p.trickAt=now;
+  if(dobN(p)<cost)return res(false,'No tienes doblones de la partida suficientes. ¡Acierta preguntas para ganar más!');
+  p.spent=(p.spent||0)+cost;hsend(p,{t:'hit',text:'',gold:p.gold});  // gastar doblones no quita puntos
+  p.trickAt=now;renderBoard();
   const fx=(list,k,extra)=>list.forEach(x=>hsend(x,{t:'fx',k,secs:FX_SECS[k],from:p.name,...(extra||{})}));
   let msg='';
   switch(d.k){
@@ -1788,7 +1855,7 @@ function onTrick(p,d){
     case 'fantasma':fx([v],'fantasma');msg='Has enviado fantasmas a '+v.name;break;
     case 'turbo':p.turboUntil=now+FX_SECS.turbo*1000;fx([p],'turbo');msg='¡Turbo! 10 segundos ganando el doble';break;
     case 'terremoto':case 'giro':case 'reves':fx(others(p),d.k);msg=t.n+' para los demás';break;
-    case 'regalo':dobAdd(v,amt);hsend(v,{t:'hit',text:'🎁 '+p.name+' te ha regalado '+amt+' doblones'});msg='Has regalado '+amt+' doblones a '+v.name;break;
+    case 'regalo':v.gift=(v.gift||0)+amt;hsend(v,{t:'hit',text:'',gold:v.gold});hsend(v,{t:'hit',text:'🎁 '+p.name+' te ha regalado '+amt+' doblones'});msg='Has regalado '+amt+' doblones a '+v.name;break;
     case 'ayuda':v.helpFrom=p.name;hsend(v,{t:'hit',text:'💡 '+p.name+' te ayudará en tu próxima pregunta'});msg=v.name+' verá la respuesta correcta en su próxima pregunta';break;
     case 'premio':p.giveTo=v.key;msg='El premio de tu próximo '+(H.mode==='fiesta'?'calabaza':'cofre')+' será para '+v.name;break;
   }
@@ -1821,16 +1888,17 @@ const turboOn=()=>document.body.classList.contains('fx-turbo');
 
 /* ---------- tienda de trucos del alumno ---------- */
 let TRK={sel:null,key:null,list:[]};
+const trkHave=()=>Math.max(0,Math.floor(+($('hudGold').dataset.v||0)));
 function trickBtnVisible(on){$('hudTricks').style.display=on?'inline-flex':'none';}
 function openTricks(){
   if(!live()||!P||P.hw)return;TRK={sel:null,key:null,list:TRK.list};send({t:'plist'});renderTricks();$('tricks').classList.add('on');
 }
 function closeTricks(){$('tricks').classList.remove('on');}
 function renderTricks(){
-  $('trkWallet').textContent=fmt(PROF.wallet);
+  $('trkWallet').textContent=fmt(trkHave());
   const t=TRK.sel&&TRICKS[TRK.sel];
   if(!t){
-    $('trkBody').innerHTML='<div class="trkgrid">'+Object.entries(TRICKS).filter(([k])=>trickOk(k,P.mode)).map(([k,x])=>{const can=PROF.wallet>=x.price+(x.amt?x.amt[0]:0);
+    $('trkBody').innerHTML='<div class="trkgrid">'+Object.entries(TRICKS).filter(([k])=>trickOk(k,P.mode)).map(([k,x])=>{const can=trkHave()>=x.price+(x.amt?x.amt[0]:0);
       return `<button class="trk" data-k="${k}" ${can?'':'disabled'}><i>${x.i}</i><b>${x.n}</b><small>${x.d}</small><span class="trkp"><span class="coin"></span>${x.price?x.price:'Tú decides'}</span></button>`;}).join('')+'</div>';
     $('trkBody').querySelectorAll('.trk').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(TRICKS[k].one||TRICKS[k].amt){TRK.sel=k;renderTricks();}else buyTrick(k);});
     return;
@@ -1842,7 +1910,7 @@ function renderTricks(){
     return;
   }
   const who=(TRK.list.find(x=>x.key===TRK.key)||{}).name||'';
-  h+=`<p class="hint">¿Cuántos doblones le regalas a <b>${esc(who)}</b>?</p><div class="row">`+t.amt.map(a=>`<button class="btn gold" data-a="${a}" ${PROF.wallet>=a?'':'disabled'}>${a}</button>`).join('')+'</div>';
+  h+=`<p class="hint">¿Cuántos doblones le regalas a <b>${esc(who)}</b>?</p><div class="row">`+t.amt.map(a=>`<button class="btn gold" data-a="${a}" ${trkHave()>=a?'':'disabled'}>${a}</button>`).join('')+'</div>';
   $('trkBody').innerHTML=h;$('trkBody').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>buyTrick(TRK.sel,TRK.key,+b.dataset.a));
 }
 function buyTrick(k,key,amt){$('trkBody').querySelectorAll('button').forEach(b=>b.disabled=true);send({t:'trick',k,key,amt});}
@@ -1880,10 +1948,10 @@ function ocaMove(p){
   while(rolls<3){
     rolls++;const d=d6();let pos=p.bpos+d;if(pos>63)pos=63-(pos-63);
     msg+=(msg?'<br>':'')+'🎲 Has sacado un <b>'+d+'</b> '+DICE[d]+' → casilla <b>'+pos+'</b>.';p.bpos=pos;
-    if(pos===63){lapDone(p,63,'Siritinga');msg+='<br>🏝️ <b>¡Has llegado a Siritinga!</b> +100 de oro. Empiezas otra vuelta desde la salida.';break;}
+    if(pos===63){lapDone(p,63,'Siritinga');msg+='<br>🏝️ <b>¡Has llegado a Siritinga!</b> +100 doblones. Empiezas otra vuelta desde la salida.';break;}
     const ri=OCA.rem.indexOf(pos);
     if(ri>=0){const to=ri<OCA.rem.length-1?OCA.rem[ri+1]:63;p.bpos=to;msg+='<br>🌊 <b>De remolino a remolino y tiro porque me lleva la corriente.</b> Saltas a la '+to+'.';
-      if(to===63){lapDone(p,63,'Siritinga');msg+='<br>🏝️ <b>¡Has llegado a Siritinga!</b> +100 de oro. Empiezas otra vuelta.';break;}continue;}
+      if(to===63){lapDone(p,63,'Siritinga');msg+='<br>🏝️ <b>¡Has llegado a Siritinga!</b> +100 doblones. Empiezas otra vuelta.';break;}continue;}
     if(pos===6){p.bpos=12;msg+='<br>🌉 <b>De puente a puente y tiro porque me lleva la corriente.</b>';continue;}
     if(pos===26||pos===53){p.bpos=pos===26?53:26;msg+='<br>🎲 <b>De dados a dados.</b> Vas a la '+p.bpos+'.';break;}
     if(pos===19){p.skip=1;p.skipWhy='en la taberna';msg+='<br>🍺 <b>Taberna del puerto:</b> descansas un turno.';break;}
@@ -1902,7 +1970,7 @@ function snkMove(p){
   if(SNK.up[pos]){msg+='<br>🪢 <b>¡Una cuerda!</b> Subes a la '+SNK.up[pos]+'.';pos=SNK.up[pos];}
   else if(SNK.down[pos]){msg+='<br>🐍 <b>¡La serpiente marina!</b> Bajas a la '+SNK.down[pos]+'.';addFeed('🐍 La serpiente marina atrapa a <b>'+esc(p.name)+'</b>');pos=SNK.down[pos];}
   p.bpos=pos;
-  if(pos===50){lapDone(p,50,'el final');msg+='<br>🏝️ <b>¡Has llegado al final!</b> +100 de oro. Empiezas otra vuelta.';}
+  if(pos===50){lapDone(p,50,'el final');msg+='<br>🏝️ <b>¡Has llegado al final!</b> +100 doblones. Empiezas otra vuelta.';}
   return msg;
 }
 function lapDone(p,n,where){p.laps=(p.laps||0)+1;p.gold+=100;p.bpos=0;if(p.laps===1){p.finish=++H.bg.fin;}addFeed('🏝️ <b>'+esc(p.name)+'</b> llega a '+where+(p.laps>1?' por '+p.laps+'.ª vez':''));}
@@ -1919,16 +1987,16 @@ function mercMove(p){
   if(p.skip>0){p.skip--;return {msg:'⛓️ Sigues en el calabozo: esta vez no tiras.'};}
   const d=d6(),from=p.bpos||0,to=(from+d)%MERC.length;p.bpos=to;
   let msg='🎲 Has sacado un <b>'+d+'</b> '+DICE[d]+' → <b>'+MERC[to].n+'</b>.';
-  if(to<from){p.gold+=40;msg+='<br>⚓ Pasas por la salida: +40 de oro.';}
+  if(to<from){p.gold+=40;msg+='<br>⚓ Pasas por la salida: +40 doblones.';}
   const sq=MERC[to];
   if(sq.k==='isla'){const own=H.bg.own[to];
-    if(!own){if(p.gold>=sq.price)return {msg,buy:to};msg+='<br>Esta isla cuesta '+sq.price+' de oro y aún no te llega.';}
+    if(!own){if(dobN(p)>=sq.price)return {msg,buy:to};msg+='<br>Esta isla cuesta '+sq.price+' doblones y aún no te llega.';}
     else if(own===p.key)msg+='<br>¡Es tu isla! Descansas tranquilo.';
-    else{const o=H.players[own],r=Math.min(p.gold,rent(sq));p.gold-=r;if(o){o.gold+=r;hsend(o,{t:'hit',text:'🏝️ '+p.name+' te paga '+r+' de oro por pasar por '+sq.n,gold:o.gold});}msg+='<br>🏝️ Es de '+(o?o.name:'otro jugador')+': le pagas <b>'+r+'</b> de oro.';}
+    else{const o=H.players[own],r=Math.min(p.gold,rent(sq));p.gold-=r;if(o){o.gold+=r;hsend(o,{t:'hit',text:'🏝️ '+p.name+' te paga '+r+' doblones por pasar por '+sq.n,gold:o.gold});}msg+='<br>🏝️ Es de '+(o?o.name:'otro jugador')+': le pagas <b>'+r+'</b> doblones.';}
   }
-  else if(sq.k==='cofre'){const v=pick([20,30,40,60,-20]);p.gold=Math.max(0,p.gold+v);msg+=v>0?'<br>💰 Cofre: +'+v+' de oro.':'<br>💸 Cofre trampa: pierdes 20 de oro.';}
-  else if(sq.k==='tormenta'){const l=Math.min(p.gold,30);p.gold-=l;msg+='<br>⛈️ Tormenta: pierdes '+l+' de oro.';}
-  else if(sq.k==='viento'){p.gold+=30;msg+='<br>💨 Viento a favor: +30 de oro.';}
+  else if(sq.k==='cofre'){const v=pick([20,30,40,60,-20]);p.gold=Math.max(0,p.gold+v);msg+=v>0?'<br>💰 Cofre: +'+v+' doblones.':'<br>💸 Cofre trampa: pierdes 20 doblones.';}
+  else if(sq.k==='tormenta'){const l=Math.min(p.gold,30);p.gold-=l;msg+='<br>⛈️ Tormenta: pierdes '+l+' doblones.';}
+  else if(sq.k==='viento'){p.gold+=30;msg+='<br>💨 Viento a favor: +30 doblones.';}
   else if(sq.k==='calabozo'){p.skip=1;msg+='<br>⛓️ Calabozo: pierdes un turno.';}
   return {msg};
 }
@@ -1937,13 +2005,23 @@ function mercMove(p){
 const FN=10; // la flota juega en un mar de 10 × 10
 function fleetBoard(){
   const N=FN,occ=new Array(N*N).fill(-1),ships=[];
-  [5,4,3,3,2,2].forEach((len,si)=>{for(let tries=0;tries<800;tries++){const hz=Math.random()<.5,r=Math.floor(Math.random()*(hz?N:N+1-len)),c=Math.floor(Math.random()*(hz?N+1-len:N));
+  [3,3,3,2,2,2,1,1,1,1].forEach((len,si)=>{for(let tries=0;tries<800;tries++){const hz=Math.random()<.5,r=Math.floor(Math.random()*(hz?N:N+1-len)),c=Math.floor(Math.random()*(hz?N+1-len:N));
     const cells=[...Array(len)].map((_,k)=>hz?r*N+c+k:(r+k)*N+c);
     const free=i=>{const r0=Math.floor(i/N),c0=i%N;for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){const rr=r0+dr,cc=c0+dc;if(rr>=0&&rr<N&&cc>=0&&cc<N&&occ[rr*N+cc]>=0)return false;}return true;};
     if(cells.every(free)){cells.forEach(i=>occ[i]=si);ships.push({cells,hits:0});break;}}});
   return {occ,ships,shot:new Array(N*N).fill(0)}; // shot: 0 sin disparar, 1 agua, 2 tocado, 3 hundido
 }
 const COLS='ABCDEFGHIJ';
+const FLEET_SIZES=[[3,3],[2,3],[1,4]];
+function fleetView(B){ // lo que se puede enseñar: agua, partes tocadas y barcos hundidos con su forma
+  return B.shot.map((s,i)=>{if(s<2)return s;const sh=B.ships[B.occ[i]],k=sh.cells.indexOf(i),n=sh.cells.length,hz=n>1&&sh.cells[1]-sh.cells[0]===1;
+    const part=n===1?'o':k===0?(hz?'l':'t'):k===n-1?(hz?'r':'b'):(hz?'h':'v');return s+part;});
+}
+function fleetLegend(B){return '<div class="flegend">'+FLEET_SIZES.map(([len,cnt])=>{const L=B.ships.filter(s=>s.cells.length===len),sunk=L.filter(s=>s.hits>=len).length;
+  return `<span><div class="fships">${Array.from({length:cnt},(_,k)=>`<i class="fship${k<sunk?' sunk':''}">${'<b></b>'.repeat(len)}</i>`).join('')}</div><small>${cnt-sunk} de ${cnt} barcos de ${len}</small></span>`;}).join('')+'</div>';}
+function fcell(v,i,btn){const s=typeof v==='number'?v:+v[0],part=typeof v==='number'?'':v.slice(1);
+  const inner=s===1?'·':s>=2?`<span class="fseg ${part}${s===3?' sunk':''}">${s===2?'💥':''}</span>`:(btn?cellName(i):'');
+  return btn?`<button class="f${s}" data-i="${i}" ${s?'disabled':''}>${inner}</button>`:`<div class="f${s}">${inner}</div>`;}
 const cellName=i=>COLS[i%FN]+(Math.floor(i/FN)+1);
 /* con muchos alumnos, cada jugada de equipo necesita varios aciertos de la tripulación */
 function teamNeed(t){return Math.max(1,Math.ceil(allP().filter(x=>x.team===t).length/4));}
@@ -2018,11 +2096,11 @@ const BG={
     late(p){p.bpos=0;p.skip=0;p.gold=100;},
     answer(p,ok,right){if(!ok){p.phase='done';hsend(p,{t:'result',ok,right});return;}
       p.gold+=gain(p,10);const r=mercMove(p);
-      if(r.buy!=null){const sq=MERC[r.buy];p.phase='act';p.act={k:'buy',sq:r.buy,html:'<b>¡Correcto!</b> +10 de oro<br>'+r.msg+'<br><br>La isla <b>'+esc(sq.n)+'</b> no tiene dueño. ¿La compras por <b>'+sq.price+'</b> de oro? Quien pase por ella te pagará <b>'+rent(sq)+'</b>.',gold:p.gold};hsend(p,{t:'act',...p.act});}
+      if(r.buy!=null){const sq=MERC[r.buy];p.phase='act';p.act={k:'buy',sq:r.buy,html:'<b>¡Correcto!</b> +10 doblones<br>'+r.msg+'<br><br>La isla <b>'+esc(sq.n)+'</b> no tiene dueño. ¿La compras por <b>'+sq.price+'</b> doblones? Quien pase por ella te pagará <b>'+rent(sq)+'</b>.',gold:p.gold};hsend(p,{t:'act',...p.act});}
       else{p.phase='done';hsend(p,{t:'result',ok,right,msg:r.msg,gold:p.gold});}
       renderBoard();},
     do(p,d){const sq=MERC[p.act.sq];let text;
-      if(d.yes&&!H.bg.own[p.act.sq]&&p.gold>=sq.price){p.gold-=sq.price;H.bg.own[p.act.sq]=p.key;text='Ahora '+sq.n+' es tuya. Cada vez que alguien pase por ella, te pagará '+rent(sq)+' de oro.';addFeed('🏝️ <b>'+esc(p.name)+'</b> compra '+esc(sq.n));}
+      if(d.yes&&!H.bg.own[p.act.sq]&&dobN(p)>=sq.price){p.gold-=sq.price;H.bg.own[p.act.sq]=p.key;text='Ahora '+sq.n+' es tuya. Cada vez que alguien pase por ella, te pagará '+rent(sq)+' doblones.';addFeed('🏝️ <b>'+esc(p.name)+'</b> compra '+esc(sq.n));}
       else text='No compras la isla. ¡A seguir navegando!';
       p.phase='done';p.act=null;hsend(p,{t:'info',title:d.yes?'🏝️ ¡Isla comprada!':'⛵ Sigues tu rumbo',text,gold:p.gold});renderBoard();},
     rank:()=>allP().sort((a,b)=>(b.gold+propVal(b))-(a.gold+propVal(a))),
@@ -2040,20 +2118,20 @@ const BG={
     late:teamLate,
     answer(p,ok,right){if(!ok){p.phase='done';hsend(p,{t:'result',ok,right});return;}
       p.gold+=gain(p,10);{const w=charge(p);if(w){p.phase='done';hsend(p,{t:'result',ok,right,msg:w,gold:p.gold});renderBoard();return;}}
-      p.phase='act';p.act={k:'shoot',shot:H.bg.b[rival(p.team)].shot,color:H.teams[p.team].color,html:'<b>¡Correcto!</b> Elige una casilla para disparar a la flota de la '+H.teams[rival(p.team)].name+'.',gold:p.gold};hsend(p,{t:'act',...p.act});},
+      p.phase='act';p.act={k:'shoot',shot:fleetView(H.bg.b[rival(p.team)]),legend:fleetLegend(H.bg.b[rival(p.team)]),color:H.teams[p.team].color,html:'<b>¡Correcto!</b> Elige una casilla para disparar a la flota de la '+H.teams[rival(p.team)].name+'.',gold:p.gold};hsend(p,{t:'act',...p.act});},
     do(p,d){const R=rival(p.team),B=H.bg.b[R],i=d.i|0;
       if(i<0||i>=FN*FN)return;
-      if(B.shot[i]){p.act.shot=B.shot;p.act.html='Un compañero ya ha disparado a '+cellName(i)+'. ¡Elige otra casilla!';hsend(p,{t:'act',...p.act});return;}
+      if(B.shot[i]){p.act.shot=fleetView(B);p.act.legend=fleetLegend(B);p.act.html='Un compañero ya ha disparado a '+cellName(i)+'. ¡Elige otra casilla!';hsend(p,{t:'act',...p.act});return;}
       let title,text;const si=B.occ[i];
       if(si<0){B.shot[i]=1;title='💦 ¡Agua!';text='Tu disparo a '+cellName(i)+' ha caído al mar.';}
       else{const s=B.ships[si];s.hits++;B.shot[i]=2;p.gold+=20;
-        if(s.hits>=s.cells.length){s.cells.forEach(c=>B.shot[c]=3);p.gold+=40;title='🔥 ¡Hundido!';text='¡Has hundido un barco de '+s.cells.length+' casillas! +60 de oro';addFeed('🔥 <b>'+esc(p.name)+'</b> hunde un barco de la '+H.teams[R].name);}
-        else{title='💥 ¡Tocado!';text='¡Has dado a un barco en '+cellName(i)+'! +20 de oro';}}
+        if(s.hits>=s.cells.length){s.cells.forEach(c=>B.shot[c]=3);p.gold+=40;title='🔥 ¡Hundido!';text='¡Has hundido un barco de '+s.cells.length+' casillas! +60 doblones';addFeed('🔥 <b>'+esc(p.name)+'</b> hunde un barco de la '+H.teams[R].name);}
+        else{title='💥 ¡Tocado!';text='¡Has dado a un barco en '+cellName(i)+'! +20 doblones';}}
       p.phase='done';p.act=null;hsend(p,{t:'info',title,text,gold:p.gold});renderBoard();
       if(B.ships.every(s=>s.hits>=s.cells.length)){H.bg.win=p.team;setTimeout(endGame,1500);}},
     panel(){const g=t=>{const B=H.bg.b[t],left=B.ships.filter(s=>s.hits<s.cells.length).length;
-        return `<div class="fleet"><b style="color:${H.teams[t].color}">Flota de la ${H.teams[t].name}</b><small>${left} barco${left===1?'':'s'} a flote</small>${chargeBar(rival(t))}<div class="fgrid" style="grid-template-columns:repeat(${FN},1fr)">${B.shot.map((s,i)=>`<div class="f${s}">${s===1?'·':s===2?'💥':s===3?'🔥':''}</div>`).join('')}</div></div>`;};
-      return '<div class="row" style="justify-content:space-between"><h2>🚢 Hundir la flota</h2><span class="hint">💥 tocado · 🔥 hundido · · agua</span></div><div class="row" style="align-items:flex-start;gap:24px">'+g('rojo')+g('azul')+'</div>';},
+        return `<div class="fleet"><b style="color:${H.teams[t].color}">Flota de la ${H.teams[t].name}</b><small>${left} barco${left===1?'':'s'} a flote</small>${chargeBar(rival(t))}${fleetLegend(B)}<div class="fgrid" style="grid-template-columns:repeat(${FN},1fr)">${fleetView(B).map((v,i)=>fcell(v,i,false)).join('')}</div></div>`;};
+      return '<div class="row" style="justify-content:space-between"><h2>🚢 Hundir la flota</h2><span class="hint">💥 tocado · barco gris: hundido · · agua</span></div><div class="row" style="align-items:flex-start;gap:24px">'+g('rojo')+g('azul')+'</div>';},
     end(){const left=t=>H.bg.b[t].ships.filter(s=>s.hits<s.cells.length).length,hits=t=>H.bg.b[t].shot.filter(x=>x>=2).length;
       const w=H.bg.win||(left('rojo')!==left('azul')?(left('rojo')>left('azul')?'rojo':'azul'):(hits('azul')!==hits('rojo')?(hits('azul')>hits('rojo')?'rojo':'azul'):null));
       allP().forEach(p=>{if(p.team===w)p.gold+=80;});
@@ -2069,7 +2147,7 @@ const BG={
     do(p,d){const g=H.bg.g,c=Math.max(0,Math.min(6,d.c|0));let r=-1;for(let k=5;k>=0;k--)if(!g[k*7+c]){r=k;break;}
       if(r<0){p.act.g=g;p.act.html='Esa columna está llena. ¡Elige otra!';hsend(p,{t:'act',...p.act});return;}
       g[r*7+c]=p.team;let title='🪙 ¡Cofre colocado!',text='Has soltado tu cofre en la columna '+(c+1)+'.';
-      if(c4Win(g,r,c,p.team)){H.bg.score[p.team]++;p.gold+=50;title='🎉 ¡Cuatro en línea!';text='¡Has conseguido cuatro en línea para la '+H.teams[p.team].name+'! +50 de oro. Empieza un tablero nuevo.';addFeed('🎉 <b>'+esc(p.name)+'</b> hace cuatro en línea para la '+H.teams[p.team].name);H.bg.last=g.slice();H.bg.g=new Array(42).fill('');}
+      if(c4Win(g,r,c,p.team)){H.bg.score[p.team]++;p.gold+=50;title='🎉 ¡Cuatro en línea!';text='¡Has conseguido cuatro en línea para la '+H.teams[p.team].name+'! +50 doblones. Empieza un tablero nuevo.';addFeed('🎉 <b>'+esc(p.name)+'</b> hace cuatro en línea para la '+H.teams[p.team].name);H.bg.last=g.slice();H.bg.g=new Array(42).fill('');}
       else if(g.every(x=>x)){H.bg.g=new Array(42).fill('');text+=' El tablero estaba lleno: empieza uno nuevo.';}
       p.phase='done';p.act=null;hsend(p,{t:'info',title,text,gold:p.gold});renderBoard();
       if(H.bg.score[p.team]>=5)setTimeout(endGame,1500);},
@@ -2091,8 +2169,8 @@ const BG={
       if(!mv){const all=dmMoves(b,p.team);if(!all.length){p.phase='done';p.act=null;hsend(p,{t:'info',title:'Sin movimientos',text:'Tu tripulación ya no puede mover.',gold:p.gold});return;}
         p.act.b=b;p.act.moves=all;p.act.html='Un compañero ha movido antes y el tablero ha cambiado. ¡Elige otro movimiento!';hsend(p,{t:'act',...p.act});return;}
       let pc=b[mv.from];b[mv.from]='';let title='♟️ ¡Pieza movida!',text='Tu tripulación avanza.';
-      if(mv.cap!=null){b[mv.cap]='';p.gold+=25;title='⚔️ ¡Pieza comida!';text='¡Has comido una pieza rival! +25 de oro';addFeed('⚔️ <b>'+esc(p.name)+'</b> come una pieza de la '+H.teams[rival(p.team)].name);}
-      const r=Math.floor(mv.to/8);if(pc==='r'&&r===0||pc==='a'&&r===7){pc=pc.toUpperCase();p.gold+=15;text+=' 👑 ¡Tu pieza se ha coronado! Ahora puede moverse hacia atrás. +15 de oro';}
+      if(mv.cap!=null){b[mv.cap]='';p.gold+=25;title='⚔️ ¡Pieza comida!';text='¡Has comido una pieza rival! +25 doblones';addFeed('⚔️ <b>'+esc(p.name)+'</b> come una pieza de la '+H.teams[rival(p.team)].name);}
+      const r=Math.floor(mv.to/8);if(pc==='r'&&r===0||pc==='a'&&r===7){pc=pc.toUpperCase();p.gold+=15;text+=' 👑 ¡Tu pieza se ha coronado! Ahora puede moverse hacia atrás. +15 doblones';}
       b[mv.to]=pc;p.phase='done';p.act=null;hsend(p,{t:'info',title,text,gold:p.gold});renderBoard();
       if(!dmCount(b,rival(p.team)))setTimeout(endGame,1500);},
     panel(){const b=H.bg.b,t=H.teams;
@@ -2110,10 +2188,10 @@ const BG={
     tick(){if(Date.now()>=H.bg.next)bingoCall();},
     do(p,d){const B=p.bingo,i=d.i|0;if(!B||B.marks[i]||B.done)return;
       const ans=B.card[i],ok=H.bg.called.some(k=>H.qs[k].a===ans);
-      if(!ok){p.gold=Math.max(0,p.gold-5);hsend(p,{t:'bmark',i,ok:false,msg:'«'+ans+'» todavía no es la respuesta de ninguna pregunta. −5 de oro',gold:p.gold});renderBoard();return;}
-      B.marks[i]=true;p.gold+=gain(p,10);let msg='¡Bien! +10 de oro';
-      const L=bingoLines(p);if(L>B.lines){p.gold+=30*(L-B.lines);msg='🎉 ¡Línea! +'+30*(L-B.lines)+' de oro';addFeed('🎉 <b>'+esc(p.name)+'</b> canta ¡línea!');B.lines=L;}
-      if(B.marks.every(x=>x)){B.done=true;H.bg.bingos++;const bonus=H.bg.bingos===1?150:H.bg.bingos===2?100:60;p.gold+=bonus;p.finish=H.bg.bingos;msg='🏆 ¡BINGO! +'+bonus+' de oro';addFeed('🏆 <b>'+esc(p.name)+'</b> canta ¡BINGO!');}
+      if(!ok){p.gold=Math.max(0,p.gold-5);hsend(p,{t:'bmark',i,ok:false,msg:'«'+ans+'» todavía no es la respuesta de ninguna pregunta. −5 doblones',gold:p.gold});renderBoard();return;}
+      B.marks[i]=true;p.gold+=gain(p,10);let msg='¡Bien! +10 doblones';
+      const L=bingoLines(p);if(L>B.lines){p.gold+=30*(L-B.lines);msg='🎉 ¡Línea! +'+30*(L-B.lines)+' doblones';addFeed('🎉 <b>'+esc(p.name)+'</b> canta ¡línea!');B.lines=L;}
+      if(B.marks.every(x=>x)){B.done=true;H.bg.bingos++;const bonus=H.bg.bingos===1?150:H.bg.bingos===2?100:60;p.gold+=bonus;p.finish=H.bg.bingos;msg='🏆 ¡BINGO! +'+bonus+' doblones';addFeed('🏆 <b>'+esc(p.name)+'</b> canta ¡BINGO!');}
       hsend(p,{t:'bmark',i,ok:true,msg,gold:p.gold,done:B.done});renderBoard();},
     panel(){const B=H.bg,q=B.cur!=null?H.qs[B.cur]:null;
       return `<div class="row" style="justify-content:space-between"><h2>🎱 Bingo del tesoro</h2><span class="hint">Pregunta ${B.called.length} · la siguiente en <b id="bgNext">${Math.max(0,Math.ceil((B.next-Date.now())/1000))}</b> s · ${B.bingos} bingo${B.bingos===1?'':'s'}</span></div>
@@ -2129,10 +2207,10 @@ const BG={
     begin(){domNewOpen();},
     do(p,d){const D=H.bg,i=d.i|0,tile=p.hand[i];if(tile==null)return;
       if(D.lock[p.key]>Date.now())return;
-      if(tile!==H.qs[D.open].a){p.gold=Math.max(0,p.gold-5);D.lock[p.key]=Date.now()+2500;hsend(p,{t:'dmark',ok:false,msg:'Esa ficha no encaja. −5 de oro. Espera un momento…',gold:p.gold});renderBoard();return;}
-      p.hand.splice(i,1);p.gold+=gain(p,20);D.chain.push({q:H.qs[D.open].q,a:tile,by:p.name});let msg='¡Encaja! +20 de oro';
+      if(tile!==H.qs[D.open].a){p.gold=Math.max(0,p.gold-5);D.lock[p.key]=Date.now()+2500;hsend(p,{t:'dmark',ok:false,msg:'Esa ficha no encaja. −5 doblones. Espera un momento…',gold:p.gold});renderBoard();return;}
+      p.hand.splice(i,1);p.gold+=gain(p,20);D.chain.push({q:H.qs[D.open].q,a:tile,by:p.name});let msg='¡Encaja! +20 doblones';
       addFeed('🁫 <b>'+esc(p.name)+'</b> coloca «'+esc(tile)+'»');
-      if(!p.hand.length){p.doms++;p.gold+=80;msg='🏆 ¡Dominó! Te has quedado sin fichas: +80 de oro. Te repartimos fichas nuevas.';addFeed('🏆 <b>'+esc(p.name)+'</b> hace ¡dominó!');domDeal(p);}
+      if(!p.hand.length){p.doms++;p.gold+=80;msg='🏆 ¡Dominó! Te has quedado sin fichas: +80 doblones. Te repartimos fichas nuevas.';addFeed('🏆 <b>'+esc(p.name)+'</b> hace ¡dominó!');domDeal(p);}
       hsend(p,{t:'dmark',ok:true,msg,gold:p.gold});renderBoard();domNewOpen();},
     panel(){const D=H.bg,q=H.qs[D.open];
       return `<div class="row" style="justify-content:space-between"><h2>🁫 El dominó de las respuestas</h2><span class="hint">${D.chain.length} fichas en la mesa</span></div>
@@ -2153,7 +2231,7 @@ function showAct(d){
   ACT=d;setGold(d.gold);$('actMsg').innerHTML=d.html||'';const box=$('actBox');
   if(d.k==='buy'){box.innerHTML='<div class="row"><button class="btn green" id="aYes">🏝️ Comprar</button><button class="btn" id="aNo">No, gracias</button></div>';
     $('aYes').onclick=()=>{box.querySelectorAll('button').forEach(b=>b.disabled=true);send({t:'do',yes:true});};$('aNo').onclick=()=>{box.querySelectorAll('button').forEach(b=>b.disabled=true);send({t:'do',yes:false});};}
-  if(d.k==='shoot'){box.innerHTML='<div class="fgrid big" style="grid-template-columns:repeat('+FN+',1fr)">'+d.shot.map((s,i)=>`<button class="f${s}" data-i="${i}" ${s?'disabled':''}>${s===1?'·':s===2?'💥':s===3?'🔥':cellName(i)}</button>`).join('')+'</div>';
+  if(d.k==='shoot'){box.innerHTML=(d.legend||'')+'<div class="fgrid big" style="grid-template-columns:repeat('+FN+',1fr)">'+d.shot.map((v,i)=>fcell(v,i,true)).join('')+'</div>';
     box.querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>{box.querySelectorAll('button').forEach(x=>x.disabled=true);send({t:'do',i:+b.dataset.i});});}
   if(d.k==='drop'){box.innerHTML='<div class="c4cols">'+[0,1,2,3,4,5,6].map(c=>`<button data-c="${c}">⬇</button>`).join('')+'</div><div class="c4">'+d.g.map(x=>`<div class="c4c ${x}"></div>`).join('')+'</div>';
     box.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{box.querySelectorAll('button').forEach(x=>x.disabled=true);send({t:'do',c:+b.dataset.c});});}
@@ -2263,14 +2341,14 @@ const SCROLLS=[
   {t:1,n:'Pergamino de papel',p:60,c:'#e9d9a8'},
   {t:2,n:'Pergamino de cuero',p:120,c:'#c98a4b'},
   {t:3,n:'Pergamino de plata',p:220,c:'#c9d3dc'},
-  {t:4,n:'Pergamino de oro',p:400,c:'#ffc83d'},
+  {t:4,n:'Pergamino doblones',p:400,c:'#ffc83d'},
   {t:5,n:'Pergamino cósmico',p:700,c:'#8e5bd8'}
 ];
 const SCROLL_SEAS={t:'s',n:'Pergamino de temporada',p:150,c:'#ff6fa5'};
 const VEH_PRICE=500;
 /* avatares que solo salen en pergaminos */
 const charTier=c=>c[3]<=100?1:c[3]<=150?2:c[3]<=250?3:c[3]<=350?4:5;
-const UPGR=[{id:'marco',n:'Marco de oro',t:2},{id:'dorado',n:'Fondo dorado',t:3},{id:'brillo',n:'Brillo mágico',t:4}];
+const UPGR=[{id:'marco',n:'Marco doblones',t:2},{id:'dorado',n:'Fondo dorado',t:3},{id:'brillo',n:'Brillo mágico',t:4}];
 
 /* estado del inventario en el archivo de la clase (rec) */
 function cleanInv(rec){
@@ -2426,14 +2504,14 @@ function renderGear(){
   $('pirGear').querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{WSLOT=b.dataset.w;renderGear();});
   $('pirGear').querySelectorAll('.vopt').forEach(b=>b.onclick=()=>{const x=b.dataset.g;PROF.av.wear=PROF.av.wear||{};if(x==='')delete PROF.av.wear[WSLOT];else PROF.av.wear[WSLOT]=/^\d+$/.test(x)?+x:x;pirChanged();});
   const up=UPGR.filter(u=>PROF.owned.includes(u.id));
-  $('pirUps').innerHTML=up.length?up.map(u=>{const on=u.id==='marco'?PROF.av.equip.frame==='marco':u.id==='dorado'?PROF.av.color==='dorado':!!PROF.av.fx;return `<button class="btn small${on?' green':''}" data-u="${u.id}">${on?'✓ ':''}${u.n}</button>`;}).join(' '):'<p class="hint">El marco de oro, el fondo dorado y el brillo mágico salen en los pergaminos.</p>';
+  $('pirUps').innerHTML=up.length?up.map(u=>{const on=u.id==='marco'?PROF.av.equip.frame==='marco':u.id==='dorado'?PROF.av.color==='dorado':!!PROF.av.fx;return `<button class="btn small${on?' green':''}" data-u="${u.id}">${on?'✓ ':''}${u.n}</button>`;}).join(' '):'<p class="hint">El marco doblones, el fondo dorado y el brillo mágico salen en los pergaminos.</p>';
   $('pirUps').querySelectorAll('[data-u]').forEach(b=>b.onclick=()=>{const u=b.dataset.u,av=PROF.av;if(u==='marco')av.equip.frame=av.equip.frame==='marco'?undefined:'marco';else if(u==='dorado')av.color=av.color==='dorado'?'naranja':'dorado';else av.fx=av.fx?undefined:'brillo';pirChanged();});
 }
 
 
 /* ---------- modos de juego ---------- */
 const MODES={
-  tesoro:{icon:'💰',name:'Cofres del tesoro',desc:'El clásico: responde, abre cofres, roba oro a tus compañeros.',hw:true,min:1},
+  tesoro:{icon:'💰',name:'Cofres del tesoro',desc:'El clásico: responde, abre cofres, roba doblones a tus compañeros.',hw:true,min:1},
   fiesta:{icon:'🎃',name:'Juego de temporada',desc:'Ahora: Noche de Halloween. Calabazas con caramelos… y algún susto.',hw:true,min:1},
   saboteador:{icon:'⛵',name:'El saboteador del galeón',desc:'Llevad el galeón hasta Siritinga. Un saboteador secreto lo hunde. ¡Descubridlo!',hw:false,min:4},
   bandera:{icon:'🚩',name:'Captura la bandera',desc:'Dos tripulaciones. Avanza, dispara cañonazos y roba la bandera rival.',hw:false,min:2},
@@ -2451,7 +2529,7 @@ const SEASONS={halloween:{name:'Noche de Halloween'}};
 function modeLabel(m,s){return m==='fiesta'?(SEASONS[s]||SEASONS.halloween).name:MODES[m].name;}
 function theme(m){
   const h=m==='fiesta';
-  return {hallo:h,cur:h?'caramelos':'oro',pick:h?'Elige una calabaza':'Elige un cofre',go:h?'¡A por las calabazas!':'¡A por los cofres!',svg:h?pumpkinSVG:chestSVG,thing:h?'Calabaza':'Cofre'};
+  return {hallo:h,cur:h?'caramelos':'doblones',pick:h?'Elige una calabaza':'Elige un cofre',go:h?'¡A por las calabazas!':'¡A por los cofres!',svg:h?pumpkinSVG:chestSVG,thing:h?'Calabaza':'Cofre'};
 }
 let SET={mode:'tesoro',how:'vivo'};
 function renderModes(){
@@ -2475,7 +2553,7 @@ function renderClassSel(){
 }
 $('clsSel').onchange=()=>{CL.sel=$('clsSel').value;saveClasses();renderSetupMap();paintBg();};
 function renderSetupMap(){renderClassSel();const t=expTotal(),k=mapStop(t),nx=MAP_STOPS[k+1];
-  $('setupMap').innerHTML=mapSVG(t,{marks:true})+`<div class="mapinfo"><span>🧭 Expedición de ${esc(curClass().name)}: <b>${fmt(t)}</b> de oro</span><span>${nx?'Próxima parada: <b>'+nx.n+'</b> (faltan '+fmt(nx.need-t)+')':'<b>¡Habéis encontrado Siritinga!</b>'}</span></div>`;}
+  $('setupMap').innerHTML=mapSVG(t,{marks:true})+`<div class="mapinfo"><span>🧭 Expedición de ${esc(curClass().name)}: <b>${fmt(t)}</b> doblones</span><span>${nx?'Próxima parada: <b>'+nx.n+'</b> (faltan '+fmt(nx.need-t)+')':'<b>¡Habéis encontrado Siritinga!</b>'}</span></div>`;}
 
 /* ---------- contraseña del maestro ---------- */
 const PIN_HASH='aacbfa36a89116ef3e252a89381fe939e189bca19af34523b126b43b71f77d9c';
@@ -2502,7 +2580,7 @@ const PRIZES=[
 ];
 function rollPrize(solo){const L=PRIZES.filter(p=>!solo||(p.k!=='steal'&&p.k!=='swap'&&p.k!=='dsteal'));const tot=L.reduce((s,p)=>s+p.w,0);let r=Math.random()*tot;for(const p of L){if((r-=p.w)<0)return p;}return L[0];}
 function prizeLabel(p,T){
-  return {add:'+'+p.v+' '+T.cur,mul:'¡'+(T.hallo?'Caramelos':'Oro')+' ×'+p.v+'!',steal:'Roba un '+p.v+' %',swap:'¡Intercambio!',lose:(T.hallo?'¡Susto! ':'')+'Pierdes un '+p.v+' %',none:T.hallo?'Calabaza vacía…':'Nada…',dadd:'+'+p.v+' doblones',dlose:'Pierdes '+p.v+' doblones',dnone:'0 doblones',dsteal:'Quita '+p.v+' doblones'}[p.k];
+  return {add:'+'+p.v+' '+T.cur,mul:'¡'+(T.hallo?'Caramelos':'Doblones')+' ×'+p.v+'!',steal:'Roba un '+p.v+' %',swap:'¡Intercambio!',lose:(T.hallo?'¡Susto! ':'')+'Pierdes un '+p.v+' %',none:T.hallo?'Calabaza vacía…':'Nada…',dadd:'+'+p.v+' doblones',dlose:'Pierdes '+p.v+' doblones',dnone:'0 doblones',dsteal:'Quita '+p.v+' doblones'}[p.k];
 }
 
 /* =====================================================
@@ -2527,7 +2605,7 @@ async function createGame(){
     });
   }catch(e){$('createBtn').disabled=false;$('setupErr').textContent='No se pudo conectar con el servidor del juego. Revisa la conexión a internet e inténtalo otra vez.';return;}
   $('createBtn').disabled=false;$('setupErr').textContent='';
-  H={net,code,qs,cls:CL.sel,sabN:$('sabN').value,photos:$('usePhotos').checked,mode:SET.mode,season:$('season').value,dur:+$('dur').value*1000,players:{},state:'lobby',endsAt:0,feed:[],joinN:0};
+  H={net,code,qs,cls:CL.sel,sabN:$('sabN').value,photos:$('usePhotos').checked,mode:SET.mode,season:$('season').value,pct:+$('ptsPct').value||50,dur:+$('dur').value*1000,players:{},state:'lobby',endsAt:0,feed:[],joinN:0};
   document.body.classList.toggle('hallo',H.mode==='fiesta');
   $('codeBig').textContent=code;$('codeSmall').textContent=code;
   $('lobbyMode').textContent=MODES[H.mode].icon+' '+modeLabel(H.mode,H.season)+' · '+clsById(H.cls).name;
@@ -2535,7 +2613,17 @@ async function createGame(){
   show('s-lobby');renderLobby();
 }
 function byConn(c){return Object.values(H.players).find(p=>p.conn===c);}
-function hsend(p,msg){if(p&&p.conn&&p.conn.open)p.conn.send(msg);}
+// p.gold = puntos de la partida (deciden quién gana). Los doblones de la partida (para trucos) son los puntos ganados menos lo gastado en trucos, más lo regalado.
+const dobN=p=>Math.max(0,Math.floor(p.gold)-(p.spent||0)+(p.gift||0));
+function hsend(p,msg){if(p&&p.conn&&p.conn.open){if(msg&&msg.gold!=null&&p.key&&msg.dob==null)msg={...msg,dob:dobN(p)};p.conn.send(msg);}}
+// grupos: en los juegos por equipos los puntos se suman y al final se reparten a partes iguales
+function groupOf(p){
+  if(H.mode==='ciclope')return 'clase';
+  if(H.mode==='saboteador')return p.role==='sab'?'sab':'crew';
+  if(p.team&&H.teams&&H.teams[p.team])return p.team;
+  return null;}
+function groupName(g){return g==='clase'?'Toda la clase':g==='sab'?'Los saboteadores':g==='crew'?'La tripulación':(H.teams&&H.teams[g]?H.teams[g].name:g);}
+function groupTotals(){const G={};allP().forEach(p=>{const g=groupOf(p);if(!g)return;(G[g]=G[g]||{pts:0,n:0,color:H.teams&&H.teams[g]?H.teams[g].color:'#2ec27e'});G[g].pts+=Math.max(0,Math.round(p.gold));G[g].n++;});return G;}
 function allP(){return Object.values(H.players);}
 function others(p){return allP().filter(x=>x!==p);}
 function avMini(av,s=34){return s>=80?avatarSVG(av,s):avatarLite(av,s);}
@@ -2635,7 +2723,7 @@ function onAnswer(p,ok){
         const n=Math.max(1,allP().filter(x=>x.conn||H.local).length),step=(fast?13:9)/n;
         const lv0=cyLevel(C);C.pos=Math.min(C.levels*C.L,C.pos+step);const lv1=cyLevel(C);
         msg=(fast?'🔥 ¡Racha de '+p.streak+'! ':'🏃 ')+'¡Tu clase avanza por el laberinto!';
-        if(C.pos>=C.levels*C.L){C.done=true;C.finished=1;allP().forEach(x=>{x.gold+=100;hsend(x,{t:'hit',text:'🏛️ ¡Habéis encontrado la salida del laberinto! +100 de oro para todos',gold:x.gold});});msg+='<br>🏛️ <b>¡Toda la clase ha escapado del cíclope!</b>';addFeed('🏛️ <b>¡La clase ha encontrado la salida del laberinto!</b>');}
+        if(C.pos>=C.levels*C.L){C.done=true;C.finished=1;allP().forEach(x=>{x.gold+=100;hsend(x,{t:'hit',text:'🏛️ ¡Habéis encontrado la salida del laberinto! +100 doblones para todos',gold:x.gold});});msg+='<br>🏛️ <b>¡Toda la clase ha escapado del cíclope!</b>';addFeed('🏛️ <b>¡La clase ha encontrado la salida del laberinto!</b>');}
         else if(lv1>lv0){C.cyp=Math.min(C.cyp,(lv1-1)*C.L-24);msg+='<br>⭐ <b>¡Nivel '+lv0+' superado!</b> La clase está en el nivel '+lv1+' de '+C.levels+'.';addFeed('⭐ La clase llega al nivel '+lv1);}
         cySync();
       }else msg='🏛️ Ya habéis salido del laberinto. ¡Sigue sumando oro!';
@@ -2798,7 +2886,7 @@ function ranking(){
 function barRow(p,i,max){
   const extra=p.team&&H.teams&&H.teams[p.team]?`<span style="width:12px;height:12px;border-radius:50%;background:${H.teams[p.team].color};flex:none"></span>`:'';
   const tag=p.out?` <small style="color:var(--muted)">${p.revealSab?'(era saboteador)':'(en el bote)'}</small>`:(H.mode==='ciclope'&&H.cy&&p.pos!=null?` <small style="color:var(--muted)">${p.done?'⛵ a salvo':'nivel '+cyLevel(p)}</small>`:'');
-  return '<div class="bar'+(p.out?' out':'')+'"><span class="pos">'+(i+1)+'</span><span class="name">'+avMini(p.av,30)+extra+esc(p.name)+'</span><div style="flex:1"><div class="fill" style="width:'+Math.max(1,p.gold/max*100)+'%"></div></div><span class="val">'+fmt(p.gold)+tag+'</span></div>';
+  return '<div class="bar'+(p.out?' out':'')+'"><span class="pos">'+(i+1)+'</span><span class="name">'+avMini(p.av,30)+extra+esc(p.name)+'</span><div style="flex:1"><div class="fill" style="width:'+Math.max(1,p.gold/max*100)+'%"></div></div><span class="val">⭐ '+fmt(p.gold)+tag+'</span></div>';
 }
 function renderBoard(){
   if(!H||H.state==='lobby'||H.local)return;
@@ -2808,7 +2896,9 @@ function renderBoard(){
 function renderBoardNow(){
   if(!H||H.state==='lobby'||H.local)return;
   const r=ranking(),max=Math.max(1,...r.map(p=>p.gold));
-  $('board').innerHTML=r.slice(0,14).map((p,i)=>barRow(p,i,max)).join('')||'<p class="hint">Nadie todavía</p>';
+  const GT=groupTotals(),gk=Object.keys(GT).filter(g=>g!=='sab'&&g!=='crew');
+  const gh=gk.length?'<div class="gtot">'+gk.map(g=>'<span style="--c:'+GT[g].color+'"><b>'+esc(groupName(g))+'</b> ⭐ '+fmt(GT[g].pts)+'</span>').join('')+'</div>':'';
+  $('board').innerHTML=gh+(r.slice(0,14).map((p,i)=>barRow(p,i,max)).join('')||'<p class="hint">Nadie todavía</p>');
   renderPanel();
 }
 function renderPanel(){
@@ -2952,7 +3042,7 @@ function endMini(){
   const total=Object.values(m.hits).reduce((s,x)=>s+x,0);
   const n=Math.max(1,allP().length),back=Math.min(40,Math.round(total/n*2));if(!C.done){C.cyp-=back;cySync();}
   allP().forEach(p=>{const h=m.hits[p.key]||0;p.gold+=h*2;
-    hsend(p,{t:'msg',title:'🥥 ¡'+h+' cocos!',text:'Tu clase ha lanzado '+total+' cocos. '+(C.done?'':'El cíclope retrocede '+back+' pasos. ')+'+'+(h*2)+' de oro.'});});
+    hsend(p,{t:'msg',title:'🥥 ¡'+h+' cocos!',text:'Tu clase ha lanzado '+total+' cocos. '+(C.done?'':'El cíclope retrocede '+back+' pasos. ')+'+'+(h*2)+' doblones.'});});
   addFeed('🥥 La clase ha lanzado <b>'+total+'</b> cocos al cíclope');
   C.last=Date.now();renderBoard();
   setTimeout(()=>{if(H.state!=='playing')return;allP().forEach(p=>{p.phase='idle';sendQuestion(p);});},3000);
@@ -2971,7 +3061,7 @@ function onCard(p,i){
   else{
     me.p+=base*1.5;text='¡Tu tripulación avanza!';
     if(me.p>=100){
-      me.cap++;p.gold+=60;me.p=0;rv.p=0;text='🚩 ¡Has capturado la bandera rival! +60 de oro';
+      me.cap++;p.gold+=60;me.p=0;rv.p=0;text='🚩 ¡Has capturado la bandera rival! +60 doblones';
       addFeed('🚩 <b>'+esc(p.name)+'</b> captura la bandera para la '+me.name);
       allP().forEach(x=>{if(x!==p)hsend(x,{t:'hit',text:p.name+' ha capturado la bandera para la '+me.name,gold:x.gold});});
     }
@@ -3005,23 +3095,28 @@ function endGame(){
   if(BG[H.mode]&&H.bg){const e=BG[H.mode].end();title=e.title;sub=e.sub;allP().forEach(p=>perTitle[p.key]={title:e.per(p).title,text:e.sub});}
   if(H.mode==='ciclope'){const C=H.cy;title=C.done?'¡La clase ha <span>escapado</span>!':'¡El cíclope <span>sigue ahí</span>!';sub=C.done?'Habéis encontrado la salida del laberinto ('+C.levels+' niveles)':'La clase ha llegado al nivel '+cyLevel(C)+' de '+C.levels+' · el cíclope os ha atrapado '+C.caught+(C.caught===1?' vez':' veces');
     allP().forEach(p=>{perTitle[p.key]={title:C.done?'¡Habéis escapado del cíclope!':'La clase ha llegado al nivel '+cyLevel(C)+' de '+C.levels,text:''};});}
-  const rr=ranking();
+  const rr=ranking(),GT=groupTotals(),pct=(H.pct||50)/100;
+  const gsum=Object.entries(GT).map(([g,v])=>groupName(g)+': '+fmt(v.pts)+' puntos'+(v.n?' → '+fmt(Math.min(500,Math.round(v.pts*pct/v.n)))+' doblones cada uno':'')).join(' · ');
+  if(gsum)sub=(sub?sub+' — ':'')+gsum;
   rr.forEach((p,i)=>{
-    const earned=Math.max(0,Math.min(500,Math.max(0,Math.round(p.gold)))+(H.tarea?(p.dob||0):0));
+    const g=groupOf(p),pts=Math.max(0,Math.round(p.gold));
+    const earned=Math.min(500,g&&GT[g]?Math.round(GT[g].pts*pct/GT[g].n):Math.round(pts*pct));
     if(p.rec){p.rec.wallet+=earned;cleanRec(p.rec);}
-    hsend(p,{t:'end',place:i+1,total:rr.length,gold:p.gold,earned,cur:T_().cur,...(perTitle[p.key]||{}),...(H.mode==='ciclope'?{caughtN:p.caughtN||0}:{})});
+    if(perTitle[p.key]&&g&&GT[g])perTitle[p.key].text=(perTitle[p.key].text?perTitle[p.key].text.replace(/\.?\s*$/,'. '):'')+groupName(g)+' ha sumado '+fmt(GT[g].pts)+' puntos, que se reparten a partes iguales entre '+GT[g].n+(GT[g].n===1?' jugador':' jugadores')+'.';
+    else if(g&&GT[g])perTitle[p.key]={text:groupName(g)+' ha sumado '+fmt(GT[g].pts)+' puntos, que se reparten a partes iguales entre '+GT[g].n+' jugadores.'};
+    hsend(p,{t:'end',place:i+1,total:rr.length,gold:p.gold,earned,group:!!g,pct:Math.round(pct*100),cur:T_().cur,...(perTitle[p.key]||{}),...(H.mode==='ciclope'?{caughtN:p.caughtN||0}:{})});
     if(p.rec)hsend(p,{t:'profile',prof:p.rec});
   });
   saveClasses();
   $('endTitle').innerHTML=title;$('endSub').textContent=sub;
   const cols=['#c0c0c0','#ffc83d','#cd7f32'],hs=[150,200,110],order=[1,0,2];
-  $('podium').innerHTML=order.map(i=>rr[i]?'<div class="pod"><span class="avwrap">'+avatarSVG(rr[i].av,i===0?130:110)+'</span><div class="nm">'+esc(rr[i].name)+'</div><div class="gd">'+money(rr[i].gold,T_().cur)+'</div><div class="blk" style="height:'+hs[order.indexOf(i)]+'px;background:'+cols[order.indexOf(i)]+'">'+(i+1)+'</div></div>':'').join('');
+  $('podium').innerHTML=order.map(i=>rr[i]?'<div class="pod"><span class="avwrap">'+avatarSVG(rr[i].av,i===0?130:110)+'</span><div class="nm">'+esc(rr[i].name)+'</div><div class="gd">⭐ '+fmt(rr[i].gold)+' puntos</div><div class="blk" style="height:'+hs[order.indexOf(i)]+'px;background:'+cols[order.indexOf(i)]+'">'+(i+1)+'</div></div>':'').join('');
   H.final=rr.slice();renderFinal('pts');
   // expedición
   const cls=clsById(H.cls),before=cls.exp||0,gain=rr.reduce((s,p)=>s+Math.min(1000,p.gold),0),after=before+gain;
   cls.exp=after;saveClasses();paintBg(after);
   const k0=mapStop(before),k1=mapStop(after),nx=MAP_STOPS[k1+1];
-  let msg='🧭 La expedición de '+esc(cls.name)+' avanza <b>'+fmt(gain)+'</b> de oro.';
+  let msg='🧭 La expedición de '+esc(cls.name)+' avanza <b>'+fmt(gain)+'</b> puntos.';
   if(k1>k0)msg+=k1===MAP_STOPS.length-1?' <b>¡Habéis encontrado la ciudad perdida de Siritinga!</b>':' <b>¡Nueva isla descubierta: '+MAP_STOPS[k1].n+'!</b>';
   $('endMap').innerHTML=mapSVG(after,{marks:true})+'<div class="mapinfo"><span>'+msg+'</span><span>'+(nx?'Próxima parada: <b>'+nx.n+'</b> (faltan '+fmt(nx.need-after)+')':'')+'</span></div>';
   show('s-hend');
@@ -3138,7 +3233,7 @@ function checkResult(){
     const sig=id.toUpperCase()+'-'+code.toUpperCase();
     if(CL.checked.includes(sig)){box.innerHTML='<p class="hint">Este resultado ya se sumó al mapa.</p>';return;}
     const g2=Math.min(1000,+g);
-    box.innerHTML='<label>Sumar su oro al mapa de la clase</label><div class="row"><select id="chkCls" style="max-width:260px">'+CL.list.map(x=>'<option value="'+x.id+'"'+(x.id===CL.sel?' selected':'')+'>'+esc(x.name)+'</option>').join('')+'</select><button class="btn small gold" id="chkAddBtn">Sumar '+fmt(g2)+' de oro</button></div>';
+    box.innerHTML='<label>Sumar su oro al mapa de la clase</label><div class="row"><select id="chkCls" style="max-width:260px">'+CL.list.map(x=>'<option value="'+x.id+'"'+(x.id===CL.sel?' selected':'')+'>'+esc(x.name)+'</option>').join('')+'</select><button class="btn small gold" id="chkAddBtn">Sumar '+fmt(g2)+' doblones</button></div>';
     $('chkAddBtn').onclick=()=>{const cl=clsById($('chkCls').value);cl.exp+=g2;CL.checked.push(sig);if(CL.checked.length>3000)CL.checked=CL.checked.slice(-3000);
       saveClasses();paintBg();box.innerHTML='<p style="color:var(--ok);font-weight:800">✅ Sumado al mapa de '+esc(cl.name)+'.</p>';};
   }
@@ -3160,8 +3255,9 @@ function startHomework(){
 }
 function endHomework(p){
   const code=hwCode(H.id,p.name,p.correct,H.n,p.gold);
-  const line=p.name+' · '+p.correct+' de '+H.n+' · '+p.gold+' de '+T_().cur+' · Tarea '+H.id+' · Código '+code;
-  hsend(p,{t:'end',place:0,total:1,gold:p.gold,cur:T_().cur,title:'¡Tarea terminada!',text:'Has acertado '+p.correct+' de '+H.n+' preguntas.'+(H.mode==='ciclope'?(p.done?' ¡Has escapado del cíclope!':' Has llegado al nivel '+cyLevel(p)+' de '+H.cy.levels+'.'):''),hw:line,...(H.mode==='ciclope'?{caughtN:p.caughtN||0}:{})});
+  const line=p.name+' · '+p.correct+' de '+H.n+' · '+p.gold+' puntos · Tarea '+H.id+' · Código '+code;
+  const earned=Math.min(500,Math.round(Math.max(0,p.gold)*(H.pct||50)/100)+(p.dob||0));
+  hsend(p,{t:'end',place:0,total:1,gold:p.gold,earned,pct:H.pct||50,cur:T_().cur,title:'¡Tarea terminada!',text:'Has acertado '+p.correct+' de '+H.n+' preguntas.'+(H.mode==='ciclope'?(p.done?' ¡Has escapado del cíclope!':' Has llegado al nivel '+cyLevel(p)+' de '+H.cy.levels+'.'):''),hw:line,...(H.mode==='ciclope'?{caughtN:p.caughtN||0}:{})});
 }
 
 /* =====================================================
@@ -3199,12 +3295,14 @@ async function joinGame(){
   const to=setTimeout(()=>{if(P===me&&!P.joined){fail('No encuentro esa partida. Revisa el código y que la partida siga abierta en la pantalla del maestro.');c.destroy();}},10000);
   P.clearTo=()=>clearTimeout(to);
 }
-function setGold(g){$('hudGold').textContent=fmt(g);}
+function setGold(g){$('hudPts').textContent='⭐ '+fmt(g);}
+function setDob(v){$('hudGold').textContent=fmt(v);$('hudGold').dataset.v=v;if($('tricks').classList.contains('on'))renderTricks();}
 function hudAv(){$('hudAv').innerHTML=avatarSVG(PROF.av,34);}
 let voteTimer=null;
 function playerMsg(d){
   if(!d||typeof d!=='object')return;
   clearInterval(voteTimer);
+  if(d.dob!=null)setDob(d.dob);
   if(d.t==='reject'){P.clearTo&&P.clearTo();$('joinErr').textContent=d.why;$('hwErr').textContent=d.why;$('joinBtn').disabled=false;P.conn&&P.conn.destroy&&P.conn.destroy();return;}
   if(d.t==='welcome'){
     P.clearTo&&P.clearTo();USE_PHOTOS=d.photos!==false;if(d.exp!=null)paintBg(d.exp);const first=!P.joined;P.joined=true;P.mode=d.mode;musicFor(d.mode);P.season=d.season;P.T=theme(d.mode);
@@ -3298,9 +3396,9 @@ function playerMsg(d){
     b.style.background=g>25?'#22b573':g>10?'#e08a00':'#ef4b5f';
     b.textContent=lv+(g>25?'👁️ El cíclope está lejos de la clase: '+g+' pasos':g>10?'👁️ ¡Cuidado! A '+g+' pasos de la clase':'👁️ ¡Corred! A '+g+' pasos');return;}
   if(d.t==='mini'){startMiniClient(d.secs);return;}
-  if(d.t==='caught'){setGold(d.gold);$('cyAlertArt').innerHTML=cyclopsSVG(200);$('cyAlertTxt').textContent=(d.group?'¡Ha atrapado a la clase! Volvéis todos a la entrada del laberinto':'Vuelves al principio del nivel '+d.level)+(d.lose?' y pierdes '+d.lose+' de oro':'')+'. ¡Corred otra vez!';
+  if(d.t==='caught'){setGold(d.gold);$('cyAlertArt').innerHTML=cyclopsSVG(200);$('cyAlertTxt').textContent=(d.group?'¡Ha atrapado a la clase! Volvéis todos a la entrada del laberinto':'Vuelves al principio del nivel '+d.level)+(d.lose?' y pierdes '+d.lose+' doblones':'')+'. ¡Corred otra vez!';
     const al=$('cyAlert');al.classList.add('on');clearTimeout(al.h);al.h=setTimeout(()=>al.classList.remove('on'),2600);return;}
-  if(d.t==='hit'){if(d.gold!=null)setGold(d.gold);toast(d.text,3500);return;}
+  if(d.t==='hit'){if(d.gold!=null)setGold(d.gold);if(d.text)toast(d.text,3500);return;}
   if(d.t==='mates'){setMates(d.list);toast('🕵️ '+d.text,5000);return;}
   if(d.t==='meeting'){
     $('voteList').innerHTML='';
@@ -3313,12 +3411,12 @@ function playerMsg(d){
   }
   if(d.t==='msg'){$('msgTitle').textContent=d.title;$('msgBox').innerHTML=esc(d.text);show('s-msg');return;}
   if(d.t==='end'){trickBtnVisible(false);closeTricks();emoVisible(!P.hw);
-    P.over=true;$('cyBar').style.display='none';
+    P.over=true;$('cyBar').style.display='none';if(d.gold!=null)setGold(d.gold);
     const earned=d.earned!=null?d.earned:Math.min(500,Math.max(0,d.gold|0));
     if(P.hw){PROF.pend=(PROF.pend||0)+earned;saveProfile();}
     $('pendAv').innerHTML=avatarSVG(PROF.av,120);
     $('pendPlace').textContent=d.title||(d.place===1?'¡Has ganado!':'Puesto '+d.place+' de '+d.total);
-    $('pendGold').innerHTML=(d.text?esc(d.text)+'<br>':'')+(d.place&&d.title?'Puesto '+d.place+' de '+d.total+' · ':'')+'Has conseguido '+money(d.gold,d.cur)+(d.caughtN!=null?' · El cíclope te ha atrapado '+d.caughtN+(d.caughtN===1?' vez':' veces'):'')+'<br><b>+'+earned+' doblones</b> para tu pirata'+(P.hw?'<br><small>Se guardarán en tu pirata la próxima vez que juegues en clase.</small>':'');
+    $('pendGold').innerHTML=(d.text?esc(d.text)+'<br>':'')+(d.place&&d.title?'Puesto '+d.place+' de '+d.total+' · ':'')+(d.group?'Has aportado ⭐ ':'Has conseguido ⭐ ')+fmt(d.gold)+' puntos'+(d.caughtN!=null?' · El cíclope te ha atrapado '+d.caughtN+(d.caughtN===1?' vez':' veces'):'')+'<br>'+(d.group?'Puntos del equipo repartidos a partes iguales':(d.pct||50)+' % de tus puntos')+': <b>+'+earned+' doblones</b> para tu pirata'+(P.hw?'<br><small>Se guardarán en tu pirata la próxima vez que juegues en clase.</small>':'');
     $('pendShop').style.display=P.hw?'none':'';
     const box=$('pendBox');
     if(d.hw){box.style.display='block';box.innerHTML='<b>Copia esta línea y pégala en la entrega de Canvas:</b><div class="result-code" id="hwLine" style="margin-top:8px">'+esc(d.hw)+'</div><div class="row" style="margin-top:8px"><button class="btn small" onclick="copyText($(\'hwLine\').textContent)">Copiar</button></div>';}
@@ -3420,7 +3518,7 @@ function renderClasses(){
   $('clsList').innerHTML=CL.list.map(c=>{const n=Object.keys(c.alumnos).length,k=mapStop(c.exp);
     return `<div class="card" style="box-shadow:none;border:3px solid #eee9ff;padding:12px;margin:8px 0;max-width:none">
       <div class="linkbox"><input type="text" value="${esc(c.name)}" data-id="${c.id}" class="clsName" maxlength="30" style="font-size:20px;text-align:left"><button class="btn small red" data-del="${c.id}">Borrar</button></div>
-      <p class="hint" style="margin-top:6px">🧭 ${fmt(c.exp)} de oro · última isla: <b>${MAP_STOPS[k].n}</b> · ${n} alumno${n===1?'':'s'} en el archivo${c.id===CL.sel?' · <b>clase elegida</b>':''}</p>
+      <p class="hint" style="margin-top:6px">🧭 ${fmt(c.exp)} doblones · última isla: <b>${MAP_STOPS[k].n}</b> · ${n} alumno${n===1?'':'s'} en el archivo${c.id===CL.sel?' · <b>clase elegida</b>':''}</p>
       ${n?`<details><summary style="font-size:16px">Ver alumnos</summary><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">${Object.values(c.alumnos).sort((a,b)=>a.name.localeCompare(b.name,'es')).map(r=>`<span class="chip" style="font-size:16px;cursor:default">${avatarSVG(r.av,30)}${esc(r.name)} · ${fmt(r.wallet)} 🪙</span>`).join('')}</div></details>`:''}
     </div>`;}).join('');
   $('clsList').querySelectorAll('.clsName').forEach(i=>i.onchange=()=>{const c=clsById(i.dataset.id);const v=i.value.trim();if(v){c.name=v;saveClasses();}else i.value=c.name;});
