@@ -673,7 +673,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 30 · 26/10/2026 · Puntos, monedas y doblones más claros</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 31 · 26/10/2026 · Estándar 5.2.3 en el juego de la materia</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -1420,7 +1420,7 @@ function pumpkinSVG(){return flatten(`<svg viewBox="0 0 180 160" class="chestsvg
 <path d="M62 90 l14 -14 l8 16z M118 90 l-14 -14 l-8 16z" fill="#3a1c06"/><path d="M60 112 q30 26 60 0 l-8 6 l-6 -6 l-8 8 l-8 -8 l-8 8 l-8 -8 l-6 6z" fill="#3a1c06"/><ellipse cx="118" cy="104" rx="16" ry="40" fill="#c96a14" opacity=".45"/></svg>`);}
 
 /* ---------- ILUSTRACIONES PARA LAS PREGUNTAS (200x140) ---------- */
-const PIC_NAMES={particulas:'partículas',solido:'sólido',liquido:'líquido',gas:'gas',jeringa:'jeringa',globo:'globo',azucar:'azúcar en agua',caramelo:'caramelos',perfume:'perfume',balanza:'balanza',probeta:'probeta',pesa:'pesa de gramos',volumen:'volumen',bombilla:'electricidad',iman:'imán',lana:'lana',lupa:'lupa',hielo:'hielo',olla:'calentar',vapor:'vapor',arena:'arena en agua',ventana:'vidrio',sal:'sal',plastilina:'plastilina',estados:'estados de la materia'};
+const PIC_NAMES={oxido:'clavo oxidado',vinagre:'bicarbonato y vinagre',vela:'vela encendida',tostada:'pan tostado',huevo:'huevo frito',macedonia:'macedonia de frutas',particulas:'partículas',solido:'sólido',liquido:'líquido',gas:'gas',jeringa:'jeringa',globo:'globo',azucar:'azúcar en agua',caramelo:'caramelos',perfume:'perfume',balanza:'balanza',probeta:'probeta',pesa:'pesa de gramos',volumen:'volumen',bombilla:'electricidad',iman:'imán',lana:'lana',lupa:'lupa',hielo:'hielo',olla:'calentar',vapor:'vapor',arena:'arena en agua',ventana:'vidrio',sal:'sal',plastilina:'plastilina',estados:'estados de la materia'};
 function dots(n,x0,y0,w,h,seed,r=6,col='#3a86ff'){const R=rng(seed);let s='';for(let i=0;i<n;i++)s+=`<circle cx="${(x0+R()*w).toFixed(1)}" cy="${(y0+R()*h).toFixed(1)}" r="${r}" fill="${col}"/>`;return s;}
 function grid(cols,rows,x0,y0,step,r,col){let s='';for(let i=0;i<cols;i++)for(let j=0;j<rows;j++)s+=`<circle cx="${x0+i*step}" cy="${y0+j*step}" r="${r}" fill="${col}"/>`;return s;}
 const glass=(inner,fill='#cfe8ff')=>`<path d="M60 20 L68 128 L132 128 L140 20" fill="#f4fbff" stroke="#5b7a99" stroke-width="5" stroke-linejoin="round"/>${inner}<path d="M60 20 L68 128 L132 128 L140 20" fill="none" stroke="#5b7a99" stroke-width="5" stroke-linejoin="round"/>`;
@@ -1500,7 +1500,13 @@ const PHOTOS={
   cuaderno:{"f": "thumb/a/ac/Notebooks-rainbow.jpg/500px-Notebooks-rainbow.jpg", "a": "utroja0", "l": "CC0", "p": "File:Notebooks-rainbow.jpg", "d": "Cuadernos"},
   casa:{"f": "thumb/4/49/Albarizas_Casa,_fachada_principal_del_complejo_rural_Las_Albarizas.jpg/500px-Albarizas_Casa,_fachada_principal_del_complejo_rural_Las_Albarizas.jpg", "a": "MiguelVBelmonte", "l": "CC BY-SA 4.0", "p": "File:Albarizas_Casa,_fachada_principal_del_complejo_rural_Las_Albarizas.jpg", "d": "Casa"},
   mesa:{"f": "thumb/5/58/Hal_Blakeley,_Wooden_Table,_c._1953,_NGA_20059.jpg/500px-Hal_Blakeley,_Wooden_Table,_c._1953,_NGA_20059.jpg", "a": "Hal Blakeley (National Gallery of Art)", "l": "CC0", "p": "File:Hal_Blakeley,_Wooden_Table,_c._1953,_NGA_20059.jpg", "d": "Mesa de madera"},
-  plastilina:{"f": "thumb/a/a7/Little_girl_holding_plasticine._(49810941302).jpg/500px-Little_girl_holding_plasticine._(49810941302).jpg", "a": "Nenad Stojkovic", "l": "CC BY 2.0", "p": "File:Little_girl_holding_plasticine._(49810941302).jpg", "d": "Plastilina"}
+  plastilina:{"f": "thumb/a/a7/Little_girl_holding_plasticine._(49810941302).jpg/500px-Little_girl_holding_plasticine._(49810941302).jpg", "a": "Nenad Stojkovic", "l": "CC BY 2.0", "p": "File:Little_girl_holding_plasticine._(49810941302).jpg", "d": "Plastilina"},
+  oxido:{"f": "thumb/5/56/Rostigernagel_2.JPG/500px-Rostigernagel_2.JPG", "a": "Z thomas", "l": "CC BY-SA 3.0", "p": "File:Rostigernagel 2.JPG", "d": "Clavo oxidado"},
+  vinagre:{"f": "thumb/9/97/Baking_soda_and_vinegar.jpg/500px-Baking_soda_and_vinegar.jpg", "a": "katerha", "l": "CC BY 2.0", "p": "File:Baking soda and vinegar.jpg", "d": "Bicarbonato y vinagre"},
+  vela:{"f": "thumb/c/c8/Candle_flame_-_Macro_photography.jpg/500px-Candle_flame_-_Macro_photography.jpg", "a": "Maximilian Schönherr", "l": "CC BY-SA 3.0", "p": "File:Candle flame - Macro photography.jpg", "d": "Llama de una vela"},
+  tostada:{"f": "thumb/6/6c/Toast-2.jpg/500px-Toast-2.jpg", "a": "Rainer Z", "l": "CC BY-SA 3.0", "p": "File:Toast-2.jpg", "d": "Pan tostado"},
+  huevo:{"f": "thumb/5/5c/HK_%E7%85%8E%E8%9B%8B_pan_fried_egg_October_2025_N13P_01.jpg/500px-HK_%E7%85%8E%E8%9B%8B_pan_fried_egg_October_2025_N13P_01.jpg", "a": "SZE XAIMMOOA HONGMIN", "l": "CC0", "p": "File:HK 煎蛋 pan fried egg October 2025 N13P 01.jpg", "d": "Huevo frito"},
+  macedonia:{"f": "thumb/3/3a/Fruit_salad_flanked_by_Sabre_flatware.jpg/500px-Fruit_salad_flanked_by_Sabre_flatware.jpg", "a": "Dinner Series", "l": "CC BY 2.0", "p": "File:Fruit salad flanked by Sabre flatware.jpg", "d": "Macedonia de frutas"}
 };
 let USE_PHOTOS=true;
 function photoCredit(k){const f=PHOTOS[k];return 'Foto: '+f.a+' · '+f.l+' · Wikimedia Commons';}
@@ -1775,7 +1781,24 @@ Mezclas arena con agua y remueves. ¿Qué pasa con la arena? | no se disuelve | 
 ¿Qué propiedad tiene el vidrio de una ventana? | es transparente | es magnético | es muy blando | conduce la electricidad | ventana
 La sal se disuelve en agua y la arena no. ¿Qué propiedad estamos comparando? | la solubilidad | el magnetismo | la dureza | el color | sal
 Un trozo de plastilina cambia de forma. ¿Cambia su masa? | no, sigue teniendo la misma masa | sí, pierde masa | sí, gana masa | desaparece | plastilina
-¿Qué tiene masa y ocupa espacio? | toda la materia | solo los sólidos | solo los líquidos | solo lo que podemos ver | estados`;
+¿Qué tiene masa y ocupa espacio? | toda la materia | solo los sólidos | solo los líquidos | solo lo que podemos ver | estados
+Mezclas bicarbonato y vinagre y salen muchas burbujas. ¿Qué indica? | se ha formado una sustancia nueva (un gas) | el vinagre se ha evaporado | el bicarbonato se ha derretido | no ha pasado nada | vinagre
+Dejas un clavo de hierro en agua varios días y aparece óxido rojizo. ¿Qué tipo de cambio es? | un cambio químico | un cambio físico | una mezcla | un cambio de estado | oxido
+¿Cuál de estas es una señal de que se ha formado una sustancia nueva? | aparece un color nuevo sin añadir pintura | cambia de forma | se rompe en trozos | se moja
+Mezclas arena y piedrecitas. ¿Se forma una sustancia nueva? | no, es una mezcla y se pueden separar | sí, se forma una roca nueva | sí, se forma barro | sí, cambia de color | arena
+Disuelves sal en agua. ¿Cómo puedes recuperar la sal? | dejando que el agua se evapore | con un imán | no se puede recuperar nunca | colándola con un papel | sal
+¿Qué es un cambio físico? | un cambio en el que no se forma ninguna sustancia nueva | un cambio en el que siempre salen burbujas | un cambio que crea una sustancia nueva | un cambio que solo pasa con fuego
+Tuestas pan y se pone marrón y huele distinto. ¿Qué ha pasado? | se ha formado una sustancia nueva | solo ha cambiado de forma | se ha disuelto | se ha mezclado con el aire sin cambiar | tostada
+Fríes un huevo y la clara pasa de transparente a blanca. ¿Puedes volver a tenerlo crudo? | no, es un cambio químico | sí, si lo enfrías | sí, si lo remueves | sí, si le añades agua | huevo
+Haces una macedonia mezclando trozos de fruta. ¿Qué has hecho? | una mezcla: cada fruta sigue siendo la misma | una sustancia nueva | un cambio químico | una reacción con gas | macedonia
+Una vela encendida da luz y calor y la cera se va gastando. ¿Qué cambio ocurre al quemarse? | un cambio químico | un cambio físico | una mezcla | ningún cambio | vela
+Mezclas leche con vinagre y aparecen grumos blancos. ¿Qué indica? | se ha formado una sustancia nueva | la leche se ha congelado | el vinagre se ha evaporado | es solo una mezcla
+¿Cuál de estos cambios es físico? | cortar un papel en trozos | quemar un papel | oxidar un clavo | hornear un pastel
+¿Cuál de estos cambios es químico? | hornear un pastel | derretir mantequilla | romper un vaso | disolver azúcar en agua
+Al mezclar dos líquidos, el vaso se calienta solo, sin ponerlo al fuego. ¿Qué puede indicar? | que se ha formado una sustancia nueva | que los líquidos se han evaporado | que es una mezcla de arena | que el vaso es de metal
+En una mezcla, ¿qué les pasa a las propiedades de cada sustancia? | se conservan | desaparecen | se vuelven todas iguales | cambian siempre de color
+Para saber si al combinar dos sustancias se forma una nueva, ¿qué debes observar? | si aparecen propiedades nuevas: color, gas, olor o calor | solo si cambia la forma | solo si cambia el tamaño | si el recipiente es grande
+Mezclas limaduras de hierro con arena. ¿Cómo puedes separarlas? | con un imán | con agua caliente | con fuego | no se pueden separar | iman`;
 function parseBank(txt){
   const qs=[];
   String(txt||'').split('\n').forEach(line=>{
@@ -1806,7 +1829,7 @@ const SUBJ_BASE=[
   {k:'cultura',n:'Cultura',i:'🌎',c:'#8e5bd8'}
 ];
 const SAMPLE_BANKS=[
- {subj:'ciencias',title:'La materia y sus partículas',std:'Estándares 5.2.1 y 5.2.2',text:DEFAULT_BANK},
+ {k:'materia',old:['La materia y sus partículas'],subj:'ciencias',title:'La materia: partículas, propiedades y cambios',std:'Estándares 5.2.1, 5.2.2 y 5.2.3',text:DEFAULT_BANK},
  {subj:'espanol',title:'El y la, ser y el futuro',std:'Gramática · Módulo A',text:`¿Qué artículo va con «casa»? | la | el | los | las | casa
 ¿Qué artículo va con «libro»? | el | la | las | unas
 ¿Qué artículo va con «ventana»? | la | el | los | unos | ventana
@@ -1878,7 +1901,7 @@ function loadBanks(){
     store('siritingaBancos',L);
   }
   // los juegos de ejemplo que no se han editado se actualizan con la versión nueva
-  L.forEach(b=>{if(b&&b.ej){const s=SAMPLE_BANKS.find(x=>x.title===b.title&&x.subj===b.subj);if(s)b.text=s.text;}});
+  L.forEach(b=>{if(b&&b.ej){const s=SAMPLE_BANKS.find(x=>x.subj===b.subj&&(x.title===b.title||(x.old||[]).includes(b.title)));if(s){b.text=s.text;b.title=s.title;b.std=s.std;}}});
   store('siritingaBancos',L);
   BANKS=L.filter(b=>b&&b.id&&SUBJ.some(s=>s.k===b.subj));
 }
