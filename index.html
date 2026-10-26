@@ -565,7 +565,10 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 .fship.sunk b{background:#d0d4d9;opacity:.6}
 .fships{display:flex;gap:4px;flex-wrap:nowrap}.fship{display:flex}
 /* puntos y doblones de la partida */
-.hud .hudpts{font-family:'Lilita One',sans-serif;font-size:20px;background:#fff6d6;border:2px solid #f0c64a;border-radius:999px;padding:2px 10px;margin-right:4px;white-space:nowrap}
+.hud .hudpts,.hud .hudmon{display:inline-flex;align-items:center;gap:4px;font-family:'Lilita One',sans-serif;font-size:20px;border-radius:999px;padding:2px 10px;margin-right:4px;white-space:nowrap;line-height:1.1}
+.hud .hudpts{background:#fff6d6;border:2px solid #f0c64a}
+.hud .hudmon{background:#e9f7ff;border:2px solid #7cc4ef}
+.hud .hudpts small,.hud .hudmon small{font-family:Inter,system-ui,sans-serif;font-size:12px;font-weight:700;opacity:.7;margin-left:1px}
 .gtot{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
 .gtot span{flex:1;min-width:150px;background:color-mix(in srgb,var(--c) 14%,#fff);border:3px solid var(--c);border-radius:14px;padding:6px 12px;font-size:20px;display:flex;justify-content:space-between;gap:8px}
 .gtot b{color:var(--c)}
@@ -641,7 +644,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 </head>
 <body>
 <div id="mapbg"></div><div id="scenebg"></div><div id="hdecor"></div><div id="tint"></div>
-<div class="hud" id="hud"><span id="hudAv"></span><span class="hudpts" id="hudPts" title="Puntos de la partida">⭐ 0</span><span class="coin" title="Doblones de la partida para trucos"></span><span id="hudGold">0</span><span class="turbo" id="hudTurbo">⚡ ×2</span><button class="trkbtn" id="hudTricks" onclick="openTricks()">🎩 Trucos</button><span class="tm" id="hudTeam"></span><button class="sabbadge" id="hudSab" title="Toca para ver tu bando"></button></div>
+<div class="hud" id="hud"><span id="hudAv"></span><span class="hudpts" id="hudPts" title="Puntos: deciden quién gana">⭐ <b>0</b><small>puntos</small></span><span class="hudmon" title="Monedas: para comprar trucos">🪙 <b id="hudGold">0</b><small>monedas</small></span><span class="turbo" id="hudTurbo">⚡ ×2</span><button class="trkbtn" id="hudTricks" onclick="openTricks()">🎩 Trucos</button><span class="tm" id="hudTeam"></span><button class="sabbadge" id="hudSab" title="Toca para ver tu bando"></button></div>
 <div class="toast" id="toast"></div>
 <div class="emolayer" id="emoLayer"></div>
 <div class="prize" id="prize"><div id="prizeBox"></div></div>
@@ -650,8 +653,8 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 <div class="fxparty" id="fxParty"></div>
 <div class="fxghost" id="fxGhost"></div>
 <div class="tricks" id="tricks"><div class="card trkcard">
-  <div class="row" style="justify-content:space-between;margin:0"><h2 style="margin:0">🎩 Trucos</h2><span class="chip" style="font-size:18px"><span class="coin"></span><span id="trkWallet">0</span>&nbsp;doblones de la partida</span></div>
-  <p class="hint">Se pagan con los doblones que ganas en esta partida (y, si no llegan, con los de tu bolsa). Puedes usar un truco cada 12 segundos.</p>
+  <div class="row" style="justify-content:space-between;margin:0"><h2 style="margin:0">🎩 Trucos</h2><span class="chip" style="font-size:18px">🪙&nbsp;<span id="trkWallet">0</span>&nbsp;monedas</span></div>
+  <p class="hint">Se pagan con las 🪙 monedas que ganas en esta partida. Gastarlas no te quita ⭐ puntos. Puedes usar un truco cada 12 segundos.</p>
   <div id="trkBody"></div>
   <div class="row"><button class="btn ghost" onclick="closeTricks()">Cerrar</button></div>
 </div></div>
@@ -670,7 +673,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 29 · 26/10/2026 · Garaje misterioso en la residencia</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 30 · 26/10/2026 · Puntos, monedas y doblones más claros</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -793,7 +796,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <select id="dur"><option value="300">5 minutos</option><option value="420" selected>7 minutos</option><option value="600">10 minutos</option><option value="900">15 minutos</option></select>
       <label for="ptsPct">Doblones que se llevan al final</label>
       <select id="ptsPct"><option value="25">25 % de los puntos</option><option value="50" selected>50 % de los puntos</option><option value="75">75 % de los puntos</option><option value="100">100 % de los puntos</option></select>
-      <p class="hint">Los doblones que se ganan jugando sirven para comprar trucos y también cuentan como puntos. En los juegos por equipos los puntos se suman y al final se reparten a partes iguales entre los jugadores del equipo.</p>
+      <p class="hint">Cada 🪙 moneda que se gana jugando suma también un ⭐ punto. Las monedas sirven para comprar trucos durante la partida; los puntos deciden quién gana y, al final, se convierten en 💰 doblones para la bolsa de cada alumno. En los juegos por equipos los puntos se suman y al final se reparten a partes iguales entre los jugadores del equipo.</p>
       <label for="musKind">Música</label>
       <select id="musKind"></select><p class="hint">Al elegir un tema empieza a sonar para que lo escuches. La música es libre (Wikimedia Commons) y sus autores aparecen en los créditos.</p>
     </div>
@@ -939,11 +942,11 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
   <div class="big-msg" id="pirTitle" style="font-size:40px">¡Ya estás dentro!</div>
   <p class="sub" id="pirSub">Prepara a tu pirata mientras empieza la partida.</p>
   <div class="card" style="max-width:900px">
-    <div class="pirtop"><div id="pirPreviewSm"></div><button class="btn resbtn" id="resOpenBtn" onclick="openRes()">🏠 Mi residencia<b class="newdot" id="resNew" style="display:none">¡Nuevo!</b></button><div class="wallet"><span class="coin"></span><span id="pirWallet">0</span>&nbsp;doblones</div></div>
+    <div class="pirtop"><div id="pirPreviewSm"></div><button class="btn resbtn" id="resOpenBtn" onclick="openRes()">🏠 Mi residencia<b class="newdot" id="resNew" style="display:none">¡Nuevo!</b></button><div class="wallet" title="Tu bolsa: para pergaminos, vehículo y premios">💰&nbsp;<span id="pirWallet">0</span>&nbsp;doblones en tu bolsa</div></div>
     <div class="seg pirtabs" id="pirTabs"></div>
     <div class="pzone" data-z="perso">
       <div class="pirate-wrap">
-        <div class="pv"><div id="pirPreview"></div><p class="hint" style="text-align:center">Cada moneda que ganas en una partida se guarda como doblón.</p></div>
+        <div class="pv"><div id="pirPreview"></div><p class="hint" style="text-align:center">Al terminar cada partida, parte de tus ⭐ puntos se convierten en 💰 doblones para tu bolsa.</p></div>
         <div>
           <h3 style="margin-top:0">Grupo</h3><div class="seg" id="pirStyles"></div>
           <h3>Personaje</h3><p class="hint">Tienes 5 personajes y 5 animales. ¡En los pergaminos hay muchos más!</p><div class="opts" id="pirKinds"></div>
@@ -1620,6 +1623,21 @@ let AVN=0;
 const ANCHW={"a_elefanteastronauta":239,"a_elefanterey":211,"a_gatocaballero":170,"a_gatopirata":167,"a_lobobombero":231,"a_lobodetective":205,"a_lobofutbolista":213,"a_lobomedico":187,"a_lobopintor":202,"a_lobosuper":222,"a_monopayaso":193,"a_monopiloto":206,"a_osococinero":159,"a_osojardinero":173,"a_serpientemaga":153,"a_serpientemariposa":181,"a_tigrevaquero":183,"a_tigrevikingo":167,"explorador_bien":244,"p_astronauta":190,"p_astronauta2":183,"p_bombera":174,"p_bombero":188,"p_caballera":174,"p_caballero":189,"p_cientifica":188,"p_cientifico":186,"p_cocinera":166,"p_cocinero":177,"p_faraon":190,"p_faraona":169,"p_gaitera":174,"p_gaitero":168,"p_granjera":172,"p_granjero":158,"p_luchador":185,"p_luchadora":169,"p_maga":169,"p_mago":176,"p_medica":174,"p_medico":167,"p_payasa":184,"p_payaso":185,"p_piloto":171,"p_pirata":167,"p_pirata2":170,"p_romana":162,"p_romano":172,"p_superheroe":163,"p_superheroina":196,"p_vaquera":155,"p_vaquero":164,"p_vikinga":177,"p_vikingo":190,"c_dragon":202,"c_unicornio":196,"c_fenix":178,"c_grifo":210,"c_kraken":198,"c_ciclope":216,"c_arboreo":195,"c_lobolunar":209,"c_cristalino":193,"c_pegaso":202,"c_yeti":205,"c_hidra":202,"c_golem":202,"c_basilisco":214,"c_nimbo":209,"c_ajolote":200,"c_tortuga":222,"c_zorrosolar":206};
 const ANCHH={"a_elefanteastronauta":260,"a_elefanterey":260,"a_gatocaballero":260,"a_gatopirata":260,"a_lobobombero":260,"a_lobodetective":260,"a_lobofutbolista":260,"a_lobomedico":260,"a_lobopintor":260,"a_lobosuper":260,"a_monopayaso":260,"a_monopiloto":260,"a_osococinero":260,"a_osojardinero":260,"a_serpientemaga":260,"a_serpientemariposa":260,"a_tigrevaquero":260,"a_tigrevikingo":260,"explorador_bien":360,"p_astronauta":260,"p_astronauta2":260,"p_bombera":260,"p_bombero":260,"p_caballera":260,"p_caballero":260,"p_cientifica":260,"p_cientifico":260,"p_cocinera":260,"p_cocinero":260,"p_faraon":260,"p_faraona":260,"p_gaitera":260,"p_gaitero":260,"p_granjera":260,"p_granjero":260,"p_luchador":260,"p_luchadora":260,"p_maga":260,"p_mago":260,"p_medica":260,"p_medico":260,"p_payasa":260,"p_payaso":260,"p_piloto":260,"p_pirata":260,"p_pirata2":260,"p_romana":260,"p_romano":260,"p_superheroe":260,"p_superheroina":260,"p_vaquera":260,"p_vaquero":260,"p_vikinga":260,"p_vikingo":260,"c_dragon":260,"c_unicornio":260,"c_fenix":260,"c_grifo":260,"c_kraken":260,"c_ciclope":260,"c_arboreo":260,"c_lobolunar":260,"c_cristalino":260,"c_pegaso":260,"c_yeti":260,"c_hidra":260,"c_golem":260,"c_basilisco":260,"c_nimbo":260,"c_ajolote":260,"c_tortuga":260,"c_zorrosolar":260};
 const ANCH={"a_elefanteastronauta":[1,1,237,258,100,200,115,236,135,192,237,98],"a_elefanterey":[1,1,210,258,91,110,95,207,117,170,210,180],"a_gatocaballero":[1,1,168,258,61,115,94,159,70,144,168,169],"a_gatopirata":[1,1,165,258,86,121,91,148,55,123,158,132],"a_lobobombero":[1,1,229,258,78,136,114,215,107,62,221,184],"a_lobodetective":[1,1,203,258,82,88,86,202,89,144,203,135],"a_lobofutbolista":[1,1,211,258,93,102,115,186,65,119,206,182],"a_lobomedico":[1,1,185,258,81,102,55,176,75,90,185,161],"a_lobopintor":[1,1,200,258,101,100,91,199,94,103,200,152],"a_lobosuper":[1,1,220,258,76,113,125,198,89,151,220,104],"a_monopayaso":[0,1,192,258,114,55,97,159,88,134,187,173],"a_monopiloto":[1,1,205,258,117,111,113,195,91,148,205,111],"a_osococinero":[1,1,157,258,104,86,76,151,96,126,156,177],"a_osojardinero":[1,1,171,258,103,120,84,167,102,129,168,152],"a_serpientemaga":[1,1,151,258,88,132,66,145,87,111,149,184],"a_serpientemariposa":[1,1,179,258,91,144,101,178,104,114,179,104],"a_tigrevaquero":[1,1,181,258,73,176,85,165,88,171,173,128],"a_tigrevikingo":[1,1,165,258,64,139,78,157,79,152,165,172],"explorador_bien":[1,1,242,359,171,94,130,241,172,108,242,187],"p_astronauta":[1,1,188,258,122,112,88,180,94,144,183,78],"p_astronauta2":[1,1,181,258,113,64,91,178,101,124,181,169],"p_bombera":[1,1,172,258,96,83,94,171,84,151,172,113],"p_bombero":[1,1,186,258,115,70,97,173,109,147,184,183],"p_caballera":[1,1,172,258,108,162,92,163,83,128,172,159],"p_caballero":[1,1,187,258,89,138,105,179,96,136,187,135],"p_cientifica":[1,1,186,258,118,112,89,182,92,144,186,84],"p_cientifico":[1,1,184,258,96,121,91,183,88,128,184,148],"p_cocinera":[1,1,164,258,105,76,87,163,72,123,164,108],"p_cocinero":[1,1,175,257,108,69,88,174,75,124,175,99],"p_faraon":[1,1,188,258,102,158,98,181,93,128,188,133],"p_faraona":[1,1,167,258,88,140,94,152,87,143,167,136],"p_gaitera":[1,1,172,258,104,113,92,171,80,134,172,97],"p_gaitero":[1,1,166,258,97,78,90,133,67,129,166,79],"p_granjera":[1,1,170,258,98,145,97,150,82,137,170,100],"p_granjero":[1,1,156,258,89,85,82,143,64,129,156,138],"p_luchador":[1,1,183,258,94,72,93,175,76,145,183,137],"p_luchadora":[1,1,167,258,98,152,95,116,76,154,166,78],"p_maga":[1,1,167,258,92,156,90,155,89,135,167,139],"p_mago":[1,1,174,258,96,145,84,166,92,123,174,153],"p_medica":[1,1,172,258,93,86,91,144,72,145,170,184],"p_medico":[2,1,165,258,97,66,85,161,84,133,165,160],"p_payasa":[1,1,182,258,103,118,96,181,89,152,182,140],"p_payaso":[1,11,183,258,102,112,94,177,104,165,183,146],"p_piloto":[1,1,168,258,103,88,96,161,90,140,168,114],"p_pirata":[1,1,165,258,97,141,89,163,81,122,165,136],"p_pirata2":[1,1,168,258,102,137,84,159,75,95,168,161],"p_romana":[1,1,160,258,102,135,89,155,73,150,160,138],"p_romano":[1,1,170,258,106,62,90,161,80,108,168,181],"p_superheroe":[1,1,161,258,84,73,82,160,67,143,161,145],"p_superheroina":[1,1,194,258,101,125,100,173,84,137,194,176],"p_vaquera":[1,1,153,258,83,116,76,149,69,137,153,119],"p_vaquero":[1,2,162,258,92,95,83,154,68,128,162,150],"p_vikinga":[1,1,175,258,96,160,97,150,85,128,175,122],"p_vikingo":[1,1,188,258,116,109,110,183,99,113,188,149],"c_dragon":[0,0,201,259,157,87,101,141,113,162,201,123,62],"c_unicornio":[0,0,195,259,130,92,102,137,99,145,195,154,81],"c_fenix":[0,0,177,259,122,45,91,125,97,142,177,112,80],"c_grifo":[0,0,209,259,136,45,108,147,123,167,209,131,46],"c_kraken":[0,0,197,259,111,100,103,139,106,158,197,127,117],"c_ciclope":[0,0,215,259,114,45,114,151,104,172,215,177,80],"c_arboreo":[0,0,194,259,121,90,102,136,99,156,194,116,106],"c_lobolunar":[0,0,208,259,64,88,121,146,113,167,208,109,41],"c_cristalino":[0,0,192,259,102,110,94,135,87,109,191,153,89],"c_pegaso":[0,0,201,259,174,81,104,141,67,95,201,137,86],"c_yeti":[0,0,204,259,120,86,112,144,96,164,204,154,50],"c_hidra":[0,0,201,259,112,45,100,141,99,162,201,107,46],"c_golem":[0,0,201,259,105,70,107,141,112,162,201,137,31],"c_basilisco":[0,0,213,259,179,85,102,150,111,166,213,81,66],"c_nimbo":[0,0,208,259,130,110,108,146,162,62,208,119,66],"c_ajolote":[0,0,199,259,163,110,98,140,98,99,199,89,68],"c_tortuga":[0,0,221,259,187,110,110,155,118,178,221,135,127],"c_zorrosolar":[0,0,205,259,146,45,96,144,137,133,205,78,73]};
+/* RIG: cabeza [centro x, línea donde apoya el sombrero, ancho, inclinación, altura de los ojos],
+   tronco [centro x, hombros, cintura, ancho], pies [[x, y, ancho]…], mano [x, y, radio] */
+const RIG={
+  p_granjera:{h:[98,52,112,-6,55],t:[90,100,170,62],f:[[50,255,48],[130,248,44]],m:[146,163,11]},
+  a_gatopirata:{h:[85,45,122,-4,65],t:[92,118,185,66],f:[[35,250,40],[105,243,36]],m:[150,113,13]},
+  a_elefanteastronauta:{h:[80,22,110,0,100],t:[145,140,205,95],f:[[60,248,44],[140,248,44]],m:[42,178,11]},
+  c_dragon:{h:[150,42,72,8,62],t:[140,105,195,58],f:[[42,252,40],[118,252,40]],m:[186,170,11]},
+  c_kraken:{h:[118,30,70,12,105],t:[115,120,170,70],f:[[108,258,70]],m:[178,128,11]},
+  p_vikingo:{h:[116,42,90,0,65],t:[118,100,190,70],f:[[58,252,44],[145,252,40]],m:[55,152,10]}
+};
+function rigOf(k){if(RIG[k])return RIG[k];const A=ANCH[k];if(!A)return null;
+  const [x0,y0,x1,y1,hx,hw,bx,bw,fx,fw,mx,my]=A,h=y1-y0,hy=A[12]!=null?A[12]-hw*.28:y0+h*.16;
+  return {h:[hx,hy,hw*.85,0,hy+hw*.3],t:[bx,y0+h*.36,y0+h*.66,bw*.62],f:[[fx-fw*.22,y1,fw*.36],[fx+fw*.22,y1,fw*.36]],m:[Math.min(mx,x1-6),my,10]};}
+const BODYK={11:'capa',12:'capa',253:'capa',300:'capa',293:'capa',18:'cuello',19:'cintura',20:'cintura'};
+function bodyKind(x){return BODYK[x]||'pecho';}
 function wearImg(x){if(typeof x==='number')return IMG['u'+String(x).padStart(3,'0')];return null;}
 function wearEmo(x){const s=(typeof SEAS_ITEMS!=='undefined'?SEAS_ITEMS:[]).find(z=>z.id===x);return s?s.e:'';}
 function avatarSVG(av,size=96){
@@ -1680,7 +1698,10 @@ function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
 function toast(txt,ms=2800){const t=$('toast');t.textContent=txt;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),ms);}
 const fmt = n => Math.round(n).toLocaleString('es-ES');
-const money = (n,cur) => fmt(n)+' '+(cur==='caramelos'?'caramelos':'doblones');
+const money = (n,cur) => fmt(n)+' '+(cur==='caramelos'?'caramelos':'monedas');
+// lo que se gana jugando: cada moneda ganada suma también un punto
+const pm=(n,T)=>'+'+fmt(n)+' ⭐ puntos y +'+fmt(n)+' '+((T||{}).hallo?'🍬 caramelos':'🪙 monedas');
+const pmL=(n,T)=>'−'+fmt(n)+' ⭐ puntos y −'+fmt(n)+' '+((T||{}).hallo?'🍬 caramelos':'🪙 monedas');
 const norm = s => String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
 function store(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v));}catch(e){return null;}}
 function mmss(ms){const s=Math.max(0,Math.ceil(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
@@ -1970,7 +1991,7 @@ const TRICKS={
   terremoto:{n:'Terremoto',i:'🫨',price:35,d:'Las pantallas de los demás vibran durante 10 segundos.'},
   giro:{n:'Remolino',i:'🌀',price:35,d:'Las pantallas de los demás giran durante 10 segundos.'},
   reves:{n:'Al revés',i:'🙃',price:35,d:'Los demás ven las palabras al revés durante 10 segundos.'},
-  regalo:{n:'Regalar doblones',i:'🎁',price:0,d:'Dale doblones a un compañero.',one:true,amt:[10,25,50]},
+  regalo:{n:'Regalar monedas',i:'🎁',price:0,d:'Dale 🪙 monedas a un compañero.',one:true,amt:[10,25,50]},
   ayuda:{n:'Echar una mano',i:'💡',price:20,d:'En su próxima pregunta, tu compañero verá marcada la respuesta correcta.',one:true,no:['bingo','domino']},
   premio:{n:'Premio para otro',i:'🎀',price:15,d:'El premio de tu próximo cofre o calabaza se lo lleva quien tú elijas.',one:true,modes:['tesoro','fiesta']}
 };
@@ -1986,7 +2007,7 @@ function onTrick(p,d){
   let v=null;
   if(t.one){v=H.players[d.key];if(!v||v===p||!v.rec)return res(false,'Elige a un compañero.');}
   const amt=t.amt?(t.amt.includes(+d.amt)?+d.amt:t.amt[0]):0,cost=t.price+amt;
-  if(dobN(p)<cost)return res(false,'No tienes doblones de la partida suficientes. ¡Acierta preguntas para ganar más!');
+  if(dobN(p)<cost)return res(false,'No tienes 🪙 monedas suficientes. ¡Acierta preguntas para ganar más!');
   p.spent=(p.spent||0)+cost;hsend(p,{t:'hit',text:'',gold:p.gold});  // gastar doblones no quita puntos
   p.trickAt=now;renderBoard();
   const fx=(list,k,extra)=>list.forEach(x=>hsend(x,{t:'fx',k,secs:FX_SECS[k],from:p.name,...(extra||{})}));
@@ -1996,7 +2017,7 @@ function onTrick(p,d){
     case 'fantasma':fx([v],'fantasma');msg='Has enviado fantasmas a '+v.name;break;
     case 'turbo':p.turboUntil=now+FX_SECS.turbo*1000;fx([p],'turbo');msg='¡Turbo! 10 segundos ganando el doble';break;
     case 'terremoto':case 'giro':case 'reves':fx(others(p),d.k);msg=t.n+' para los demás';break;
-    case 'regalo':v.gift=(v.gift||0)+amt;hsend(v,{t:'hit',text:'',gold:v.gold});hsend(v,{t:'hit',text:'🎁 '+p.name+' te ha regalado '+amt+' doblones'});msg='Has regalado '+amt+' doblones a '+v.name;break;
+    case 'regalo':v.gift=(v.gift||0)+amt;hsend(v,{t:'hit',text:'',gold:v.gold});hsend(v,{t:'hit',text:'🎁 '+p.name+' te ha regalado '+amt+' 🪙 monedas'});msg='Has regalado '+amt+' 🪙 monedas a '+v.name;break;
     case 'ayuda':v.helpFrom=p.name;hsend(v,{t:'hit',text:'💡 '+p.name+' te ayudará en tu próxima pregunta'});msg=v.name+' verá la respuesta correcta en su próxima pregunta';break;
     case 'premio':p.giveTo=v.key;msg='El premio de tu próximo '+(H.mode==='fiesta'?'calabaza':'cofre')+' será para '+v.name;break;
   }
@@ -2040,7 +2061,7 @@ function renderTricks(){
   const t=TRK.sel&&TRICKS[TRK.sel];
   if(!t){
     $('trkBody').innerHTML='<div class="trkgrid">'+Object.entries(TRICKS).filter(([k])=>trickOk(k,P.mode)).map(([k,x])=>{const can=trkHave()>=x.price+(x.amt?x.amt[0]:0);
-      return `<button class="trk" data-k="${k}" ${can?'':'disabled'}><i>${x.i}</i><b>${x.n}</b><small>${x.d}</small><span class="trkp"><span class="coin"></span>${x.price?x.price:'Tú decides'}</span></button>`;}).join('')+'</div>';
+      return `<button class="trk" data-k="${k}" ${can?'':'disabled'}><i>${x.i}</i><b>${x.n}</b><small>${x.d}</small><span class="trkp">🪙 ${x.price?x.price:'Tú decides'}</span></button>`;}).join('')+'</div>';
     $('trkBody').querySelectorAll('.trk').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(TRICKS[k].one||TRICKS[k].amt){TRK.sel=k;renderTricks();}else buyTrick(k);});
     return;
   }
@@ -2051,7 +2072,7 @@ function renderTricks(){
     return;
   }
   const who=(TRK.list.find(x=>x.key===TRK.key)||{}).name||'';
-  h+=`<p class="hint">¿Cuántos doblones le regalas a <b>${esc(who)}</b>?</p><div class="row">`+t.amt.map(a=>`<button class="btn gold" data-a="${a}" ${trkHave()>=a?'':'disabled'}>${a}</button>`).join('')+'</div>';
+  h+=`<p class="hint">¿Cuántas 🪙 monedas le regalas a <b>${esc(who)}</b>?</p><div class="row">`+t.amt.map(a=>`<button class="btn gold" data-a="${a}" ${trkHave()>=a?'':'disabled'}>${a}</button>`).join('')+'</div>';
   $('trkBody').innerHTML=h;$('trkBody').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>buyTrick(TRK.sel,TRK.key,+b.dataset.a));
 }
 function buyTrick(k,key,amt){$('trkBody').querySelectorAll('button').forEach(b=>b.disabled=true);send({t:'trick',k,key,amt});}
@@ -2089,10 +2110,10 @@ function ocaMove(p){
   while(rolls<3){
     rolls++;const d=d6();let pos=p.bpos+d;if(pos>63)pos=63-(pos-63);
     msg+=(msg?'<br>':'')+'🎲 Has sacado un <b>'+d+'</b> '+DICE[d]+' → casilla <b>'+pos+'</b>.';p.bpos=pos;
-    if(pos===63){lapDone(p,63,'Siritinga');msg+='<br>🏝️ <b>¡Has llegado a Siritinga!</b> +100 doblones. Empiezas otra vuelta desde la salida.';break;}
+    if(pos===63){lapDone(p,63,'Siritinga');msg+='<br>🏝️ <b>¡Has llegado a Siritinga!</b> +'+pm(100)+'. Empiezas otra vuelta desde la salida.';break;}
     const ri=OCA.rem.indexOf(pos);
     if(ri>=0){const to=ri<OCA.rem.length-1?OCA.rem[ri+1]:63;p.bpos=to;msg+='<br>🌊 <b>De remolino a remolino y tiro porque me lleva la corriente.</b> Saltas a la '+to+'.';
-      if(to===63){lapDone(p,63,'Siritinga');msg+='<br>🏝️ <b>¡Has llegado a Siritinga!</b> +100 doblones. Empiezas otra vuelta.';break;}continue;}
+      if(to===63){lapDone(p,63,'Siritinga');msg+='<br>🏝️ <b>¡Has llegado a Siritinga!</b> +'+pm(100)+'. Empiezas otra vuelta.';break;}continue;}
     if(pos===6){p.bpos=12;msg+='<br>🌉 <b>De puente a puente y tiro porque me lleva la corriente.</b>';continue;}
     if(pos===26||pos===53){p.bpos=pos===26?53:26;msg+='<br>🎲 <b>De dados a dados.</b> Vas a la '+p.bpos+'.';break;}
     if(pos===19){p.skip=1;p.skipWhy='en la taberna';msg+='<br>🍺 <b>Taberna del puerto:</b> descansas un turno.';break;}
@@ -2111,7 +2132,7 @@ function snkMove(p){
   if(SNK.up[pos]){msg+='<br>🪢 <b>¡Una cuerda!</b> Subes a la '+SNK.up[pos]+'.';pos=SNK.up[pos];}
   else if(SNK.down[pos]){msg+='<br>🐍 <b>¡La serpiente marina!</b> Bajas a la '+SNK.down[pos]+'.';addFeed('🐍 La serpiente marina atrapa a <b>'+esc(p.name)+'</b>');pos=SNK.down[pos];}
   p.bpos=pos;
-  if(pos===50){lapDone(p,50,'el final');msg+='<br>🏝️ <b>¡Has llegado al final!</b> +100 doblones. Empiezas otra vuelta.';}
+  if(pos===50){lapDone(p,50,'el final');msg+='<br>🏝️ <b>¡Has llegado al final!</b> +'+pm(100)+'. Empiezas otra vuelta.';}
   return msg;
 }
 function lapDone(p,n,where){p.laps=(p.laps||0)+1;p.gold+=100;p.bpos=0;if(p.laps===1){p.finish=++H.bg.fin;}addFeed('🏝️ <b>'+esc(p.name)+'</b> llega a '+where+(p.laps>1?' por '+p.laps+'.ª vez':''));}
@@ -2128,16 +2149,16 @@ function mercMove(p){
   if(p.skip>0){p.skip--;return {msg:'⛓️ Sigues en el calabozo: esta vez no tiras.'};}
   const d=d6(),from=p.bpos||0,to=(from+d)%MERC.length;p.bpos=to;
   let msg='🎲 Has sacado un <b>'+d+'</b> '+DICE[d]+' → <b>'+MERC[to].n+'</b>.';
-  if(to<from){p.gold+=40;msg+='<br>⚓ Pasas por la salida: +40 doblones.';}
+  if(to<from){p.gold+=40;msg+='<br>⚓ Pasas por la salida: '+pm(40)+'.';}
   const sq=MERC[to];
   if(sq.k==='isla'){const own=H.bg.own[to];
-    if(!own){if(dobN(p)>=sq.price)return {msg,buy:to};msg+='<br>Esta isla cuesta '+sq.price+' doblones y aún no te llega.';}
+    if(!own){if(dobN(p)>=sq.price)return {msg,buy:to};msg+='<br>Esta isla cuesta '+sq.price+' 🪙 monedas y aún no te llegan.';}
     else if(own===p.key)msg+='<br>¡Es tu isla! Descansas tranquilo.';
-    else{const o=H.players[own],r=Math.min(p.gold,rent(sq));p.gold-=r;if(o){o.gold+=r;hsend(o,{t:'hit',text:'🏝️ '+p.name+' te paga '+r+' doblones por pasar por '+sq.n,gold:o.gold});}msg+='<br>🏝️ Es de '+(o?o.name:'otro jugador')+': le pagas <b>'+r+'</b> doblones.';}
+    else{const o=H.players[own],r=Math.min(p.gold,rent(sq));p.gold-=r;if(o){o.gold+=r;hsend(o,{t:'hit',text:'🏝️ '+p.name+' te paga '+r+' 🪙 monedas por pasar por '+sq.n,gold:o.gold});}msg+='<br>🏝️ Es de '+(o?o.name:'otro jugador')+': le pagas <b>'+r+'</b> 🪙 monedas.';}
   }
-  else if(sq.k==='cofre'){const v=pick([20,30,40,60,-20]);p.gold=Math.max(0,p.gold+v);msg+=v>0?'<br>💰 Cofre: +'+v+' doblones.':'<br>💸 Cofre trampa: pierdes 20 doblones.';}
-  else if(sq.k==='tormenta'){const l=Math.min(p.gold,30);p.gold-=l;msg+='<br>⛈️ Tormenta: pierdes '+l+' doblones.';}
-  else if(sq.k==='viento'){p.gold+=30;msg+='<br>💨 Viento a favor: +30 doblones.';}
+  else if(sq.k==='cofre'){const v=pick([20,30,40,60,-20]);p.gold=Math.max(0,p.gold+v);msg+=v>0?'<br>🪙 Cofre: '+pm(v)+'.':'<br>💸 Cofre trampa: '+pmL(20)+'.';}
+  else if(sq.k==='tormenta'){const l=Math.min(p.gold,30);p.gold-=l;msg+='<br>⛈️ Tormenta: '+pmL(l)+'.';}
+  else if(sq.k==='viento'){p.gold+=30;msg+='<br>💨 Viento a favor: '+pm(30)+'.';}
   else if(sq.k==='calabozo'){p.skip=1;msg+='<br>⛓️ Calabozo: pierdes un turno.';}
   return {msg};
 }
@@ -2237,11 +2258,11 @@ const BG={
     late(p){p.bpos=0;p.skip=0;p.gold=100;},
     answer(p,ok,right){if(!ok){p.phase='done';hsend(p,{t:'result',ok,right});return;}
       p.gold+=gain(p,10);const r=mercMove(p);
-      if(r.buy!=null){const sq=MERC[r.buy];p.phase='act';p.act={k:'buy',sq:r.buy,html:'<b>¡Correcto!</b> +10 doblones<br>'+r.msg+'<br><br>La isla <b>'+esc(sq.n)+'</b> no tiene dueño. ¿La compras por <b>'+sq.price+'</b> doblones? Quien pase por ella te pagará <b>'+rent(sq)+'</b>.',gold:p.gold};hsend(p,{t:'act',...p.act});}
+      if(r.buy!=null){const sq=MERC[r.buy];p.phase='act';p.act={k:'buy',sq:r.buy,html:'<b>¡Correcto!</b> '+pm(10)+'<br>'+r.msg+'<br><br>La isla <b>'+esc(sq.n)+'</b> no tiene dueño. ¿La compras por <b>'+sq.price+'</b> 🪙 monedas? Quien pase por ella te pagará <b>'+rent(sq)+'</b> 🪙.',gold:p.gold};hsend(p,{t:'act',...p.act});}
       else{p.phase='done';hsend(p,{t:'result',ok,right,msg:r.msg,gold:p.gold});}
       renderBoard();},
     do(p,d){const sq=MERC[p.act.sq];let text;
-      if(d.yes&&!H.bg.own[p.act.sq]&&dobN(p)>=sq.price){p.gold-=sq.price;H.bg.own[p.act.sq]=p.key;text='Ahora '+sq.n+' es tuya. Cada vez que alguien pase por ella, te pagará '+rent(sq)+' doblones.';addFeed('🏝️ <b>'+esc(p.name)+'</b> compra '+esc(sq.n));}
+      if(d.yes&&!H.bg.own[p.act.sq]&&dobN(p)>=sq.price){p.gold-=sq.price;H.bg.own[p.act.sq]=p.key;text='Ahora '+sq.n+' es tuya. Cada vez que alguien pase por ella, te pagará '+rent(sq)+' 🪙 monedas.';addFeed('🏝️ <b>'+esc(p.name)+'</b> compra '+esc(sq.n));}
       else text='No compras la isla. ¡A seguir navegando!';
       p.phase='done';p.act=null;hsend(p,{t:'info',title:d.yes?'🏝️ ¡Isla comprada!':'⛵ Sigues tu rumbo',text,gold:p.gold});renderBoard();},
     rank:()=>allP().sort((a,b)=>(b.gold+propVal(b))-(a.gold+propVal(a))),
@@ -2266,8 +2287,8 @@ const BG={
       let title,text;const si=B.occ[i];
       if(si<0){B.shot[i]=1;title='💦 ¡Agua!';text='Tu disparo a '+cellName(i)+' ha caído al mar.';}
       else{const s=B.ships[si];s.hits++;B.shot[i]=2;p.gold+=20;
-        if(s.hits>=s.cells.length){s.cells.forEach(c=>B.shot[c]=3);p.gold+=40;title='🔥 ¡Hundido!';text='¡Has hundido un barco de '+s.cells.length+' casillas! +60 doblones';addFeed('🔥 <b>'+esc(p.name)+'</b> hunde un barco de la '+H.teams[R].name);}
-        else{title='💥 ¡Tocado!';text='¡Has dado a un barco en '+cellName(i)+'! +20 doblones';}}
+        if(s.hits>=s.cells.length){s.cells.forEach(c=>B.shot[c]=3);p.gold+=40;title='🔥 ¡Hundido!';text='¡Has hundido un barco de '+s.cells.length+' casillas! '+pm(60);addFeed('🔥 <b>'+esc(p.name)+'</b> hunde un barco de la '+H.teams[R].name);}
+        else{title='💥 ¡Tocado!';text='¡Has dado a un barco en '+cellName(i)+'! '+pm(20);}}
       p.phase='done';p.act=null;hsend(p,{t:'info',title,text,gold:p.gold});renderBoard();
       if(B.ships.every(s=>s.hits>=s.cells.length)){H.bg.win=p.team;setTimeout(endGame,1500);}},
     panel(){const g=t=>{const B=H.bg.b[t],left=B.ships.filter(s=>s.hits<s.cells.length).length;
@@ -2288,7 +2309,7 @@ const BG={
     do(p,d){const g=H.bg.g,c=Math.max(0,Math.min(6,d.c|0));let r=-1;for(let k=5;k>=0;k--)if(!g[k*7+c]){r=k;break;}
       if(r<0){p.act.g=g;p.act.html='Esa columna está llena. ¡Elige otra!';hsend(p,{t:'act',...p.act});return;}
       g[r*7+c]=p.team;let title='🪙 ¡Cofre colocado!',text='Has soltado tu cofre en la columna '+(c+1)+'.';
-      if(c4Win(g,r,c,p.team)){H.bg.score[p.team]++;p.gold+=50;title='🎉 ¡Cuatro en línea!';text='¡Has conseguido cuatro en línea para la '+H.teams[p.team].name+'! +50 doblones. Empieza un tablero nuevo.';addFeed('🎉 <b>'+esc(p.name)+'</b> hace cuatro en línea para la '+H.teams[p.team].name);H.bg.last=g.slice();H.bg.g=new Array(42).fill('');}
+      if(c4Win(g,r,c,p.team)){H.bg.score[p.team]++;p.gold+=50;title='🎉 ¡Cuatro en línea!';text='¡Has conseguido cuatro en línea para la '+H.teams[p.team].name+'! '+pm(50)+'. Empieza un tablero nuevo.';addFeed('🎉 <b>'+esc(p.name)+'</b> hace cuatro en línea para la '+H.teams[p.team].name);H.bg.last=g.slice();H.bg.g=new Array(42).fill('');}
       else if(g.every(x=>x)){H.bg.g=new Array(42).fill('');text+=' El tablero estaba lleno: empieza uno nuevo.';}
       p.phase='done';p.act=null;hsend(p,{t:'info',title,text,gold:p.gold});renderBoard();
       if(H.bg.score[p.team]>=5)setTimeout(endGame,1500);},
@@ -2310,8 +2331,8 @@ const BG={
       if(!mv){const all=dmMoves(b,p.team);if(!all.length){p.phase='done';p.act=null;hsend(p,{t:'info',title:'Sin movimientos',text:'Tu tripulación ya no puede mover.',gold:p.gold});return;}
         p.act.b=b;p.act.moves=all;p.act.html='Un compañero ha movido antes y el tablero ha cambiado. ¡Elige otro movimiento!';hsend(p,{t:'act',...p.act});return;}
       let pc=b[mv.from];b[mv.from]='';let title='♟️ ¡Pieza movida!',text='Tu tripulación avanza.';
-      if(mv.cap!=null){b[mv.cap]='';p.gold+=25;title='⚔️ ¡Pieza comida!';text='¡Has comido una pieza rival! +25 doblones';addFeed('⚔️ <b>'+esc(p.name)+'</b> come una pieza de la '+H.teams[rival(p.team)].name);}
-      const r=Math.floor(mv.to/8);if(pc==='r'&&r===0||pc==='a'&&r===7){pc=pc.toUpperCase();p.gold+=15;text+=' 👑 ¡Tu pieza se ha coronado! Ahora puede moverse hacia atrás. +15 doblones';}
+      if(mv.cap!=null){b[mv.cap]='';p.gold+=25;title='⚔️ ¡Pieza comida!';text='¡Has comido una pieza rival! '+pm(25);addFeed('⚔️ <b>'+esc(p.name)+'</b> come una pieza de la '+H.teams[rival(p.team)].name);}
+      const r=Math.floor(mv.to/8);if(pc==='r'&&r===0||pc==='a'&&r===7){pc=pc.toUpperCase();p.gold+=15;text+=' 👑 ¡Tu pieza se ha coronado! Ahora puede moverse hacia atrás. '+pm(15);}
       b[mv.to]=pc;p.phase='done';p.act=null;hsend(p,{t:'info',title,text,gold:p.gold});renderBoard();
       if(!dmCount(b,rival(p.team)))setTimeout(endGame,1500);},
     panel(){const b=H.bg.b,t=H.teams;
@@ -2329,10 +2350,10 @@ const BG={
     tick(){if(Date.now()>=H.bg.next)bingoCall();},
     do(p,d){const B=p.bingo,i=d.i|0;if(!B||B.marks[i]||B.done)return;
       const ans=B.card[i],ok=H.bg.called.some(k=>H.qs[k].a===ans);
-      if(!ok){p.gold=Math.max(0,p.gold-5);hsend(p,{t:'bmark',i,ok:false,msg:'«'+ans+'» todavía no es la respuesta de ninguna pregunta. −5 doblones',gold:p.gold});renderBoard();return;}
-      B.marks[i]=true;p.gold+=gain(p,10);let msg='¡Bien! +10 doblones';
-      const L=bingoLines(p);if(L>B.lines){p.gold+=30*(L-B.lines);msg='🎉 ¡Línea! +'+30*(L-B.lines)+' doblones';addFeed('🎉 <b>'+esc(p.name)+'</b> canta ¡línea!');B.lines=L;}
-      if(B.marks.every(x=>x)){B.done=true;H.bg.bingos++;const bonus=H.bg.bingos===1?150:H.bg.bingos===2?100:60;p.gold+=bonus;p.finish=H.bg.bingos;msg='🏆 ¡BINGO! +'+bonus+' doblones';addFeed('🏆 <b>'+esc(p.name)+'</b> canta ¡BINGO!');}
+      if(!ok){p.gold=Math.max(0,p.gold-5);hsend(p,{t:'bmark',i,ok:false,msg:'«'+ans+'» todavía no es la respuesta de ninguna pregunta. '+pmL(5),gold:p.gold});renderBoard();return;}
+      B.marks[i]=true;p.gold+=gain(p,10);let msg='¡Bien! '+pm(10);
+      const L=bingoLines(p);if(L>B.lines){p.gold+=30*(L-B.lines);msg='🎉 ¡Línea! '+pm(30*(L-B.lines));addFeed('🎉 <b>'+esc(p.name)+'</b> canta ¡línea!');B.lines=L;}
+      if(B.marks.every(x=>x)){B.done=true;H.bg.bingos++;const bonus=H.bg.bingos===1?150:H.bg.bingos===2?100:60;p.gold+=bonus;p.finish=H.bg.bingos;msg='🏆 ¡BINGO! '+pm(bonus);addFeed('🏆 <b>'+esc(p.name)+'</b> canta ¡BINGO!');}
       hsend(p,{t:'bmark',i,ok:true,msg,gold:p.gold,done:B.done});renderBoard();},
     panel(){const B=H.bg,q=B.cur!=null?H.qs[B.cur]:null;
       return `<div class="row" style="justify-content:space-between"><h2>🎱 Bingo del tesoro</h2><span class="hint">Pregunta ${B.called.length} · la siguiente en <b id="bgNext">${Math.max(0,Math.ceil((B.next-Date.now())/1000))}</b> s · ${B.bingos} bingo${B.bingos===1?'':'s'}</span></div>
@@ -2348,10 +2369,10 @@ const BG={
     begin(){domNewOpen();},
     do(p,d){const D=H.bg,i=d.i|0,tile=p.hand[i];if(tile==null)return;
       if(D.lock[p.key]>Date.now())return;
-      if(tile!==H.qs[D.open].a){p.gold=Math.max(0,p.gold-5);D.lock[p.key]=Date.now()+2500;hsend(p,{t:'dmark',ok:false,msg:'Esa ficha no encaja. −5 doblones. Espera un momento…',gold:p.gold});renderBoard();return;}
-      p.hand.splice(i,1);p.gold+=gain(p,20);D.chain.push({q:H.qs[D.open].q,a:tile,by:p.name});let msg='¡Encaja! +20 doblones';
+      if(tile!==H.qs[D.open].a){p.gold=Math.max(0,p.gold-5);D.lock[p.key]=Date.now()+2500;hsend(p,{t:'dmark',ok:false,msg:'Esa ficha no encaja. '+pmL(5)+'. Espera un momento…',gold:p.gold});renderBoard();return;}
+      p.hand.splice(i,1);p.gold+=gain(p,20);D.chain.push({q:H.qs[D.open].q,a:tile,by:p.name});let msg='¡Encaja! '+pm(20);
       addFeed('🁫 <b>'+esc(p.name)+'</b> coloca «'+esc(tile)+'»');
-      if(!p.hand.length){p.doms++;p.gold+=80;msg='🏆 ¡Dominó! Te has quedado sin fichas: +80 doblones. Te repartimos fichas nuevas.';addFeed('🏆 <b>'+esc(p.name)+'</b> hace ¡dominó!');domDeal(p);}
+      if(!p.hand.length){p.doms++;p.gold+=80;msg='🏆 ¡Dominó! Te has quedado sin fichas: '+pm(80)+'. Te repartimos fichas nuevas.';addFeed('🏆 <b>'+esc(p.name)+'</b> hace ¡dominó!');domDeal(p);}
       hsend(p,{t:'dmark',ok:true,msg,gold:p.gold});renderBoard();domNewOpen();},
     panel(){const D=H.bg,q=H.qs[D.open];
       return `<div class="row" style="justify-content:space-between"><h2>🁫 El dominó de las respuestas</h2><span class="hint">${D.chain.length} fichas en la mesa</span></div>
@@ -2457,6 +2478,7 @@ const SLOTS_V=[
 ];
 const slotOf=n=>SLOTS_V.find(s=>s.ok(n));
 /* mejoras del personaje (300 ilustraciones de Óscar) */
+const USZ={"1":[110,78],"2":[106,88],"3":[97,97],"4":[110,72],"5":[103,79],"6":[106,86],"7":[93,92],"8":[93,89],"9":[101,91],"10":[110,68],"11":[104,93],"12":[107,93],"13":[109,91],"14":[92,87],"15":[101,84],"16":[110,90],"17":[95,104],"18":[103,93],"19":[105,63],"20":[93,88],"21":[96,97],"22":[99,91],"23":[106,80],"24":[110,80],"25":[109,89],"26":[104,82],"27":[106,81],"28":[110,87],"29":[110,74],"30":[99,93],"31":[97,100],"32":[91,103],"33":[98,108],"34":[105,103],"35":[108,104],"36":[107,102],"37":[101,103],"38":[100,95],"39":[110,66],"40":[102,98],"41":[97,102],"42":[110,90],"43":[95,103],"44":[109,80],"45":[109,96],"46":[82,106],"47":[101,104],"48":[94,103],"49":[105,91],"50":[89,104],"51":[110,93],"52":[88,101],"53":[110,62],"54":[108,81],"55":[102,99],"56":[100,96],"57":[93,101],"58":[92,96],"59":[110,92],"60":[67,101],"61":[105,96],"62":[94,77],"63":[105,64],"64":[101,102],"65":[108,89],"66":[108,92],"67":[98,103],"68":[84,102],"69":[55,104],"70":[106,90],"71":[110,84],"72":[110,85],"73":[105,75],"74":[110,85],"75":[110,83],"76":[110,62],"77":[93,83],"78":[110,83],"79":[110,92],"80":[105,89],"81":[102,82],"82":[97,91],"83":[100,82],"84":[77,88],"85":[85,93],"86":[110,95],"87":[76,91],"88":[102,89],"89":[110,91],"90":[100,91],"91":[110,76],"92":[63,86],"93":[76,83],"94":[77,83],"95":[99,71],"96":[59,86],"97":[92,98],"98":[83,84],"99":[88,81],"100":[80,83],"101":[97,104],"102":[98,104],"103":[103,104],"104":[109,92],"105":[108,100],"106":[110,85],"107":[106,95],"108":[94,85],"109":[110,101],"110":[106,106],"111":[106,91],"112":[107,110],"113":[104,103],"114":[107,103],"115":[101,107],"116":[110,79],"117":[96,104],"118":[110,70],"119":[89,99],"120":[102,80],"121":[100,105],"122":[106,86],"123":[107,94],"124":[103,92],"125":[103,102],"126":[91,104],"127":[110,77],"128":[100,101],"129":[72,110],"130":[98,85],"131":[105,103],"132":[110,82],"133":[76,110],"134":[58,104],"135":[77,108],"136":[75,106],"137":[91,106],"138":[107,66],"139":[102,100],"140":[110,102],"141":[105,107],"142":[105,100],"143":[103,103],"144":[93,105],"145":[109,107],"146":[105,99],"147":[110,90],"148":[105,81],"149":[106,77],"150":[108,94],"151":[110,92],"152":[105,88],"153":[94,106],"154":[104,103],"155":[90,100],"156":[110,93],"157":[80,96],"158":[107,73],"159":[91,93],"160":[103,97],"161":[104,91],"162":[106,96],"163":[103,107],"164":[84,109],"165":[80,97],"166":[80,102],"167":[110,82],"168":[83,89],"169":[95,88],"170":[100,92],"171":[90,75],"172":[107,89],"173":[110,84],"174":[94,96],"175":[82,90],"176":[66,98],"177":[94,96],"178":[105,95],"179":[110,79],"180":[84,95],"181":[92,83],"182":[98,83],"183":[98,79],"184":[109,79],"185":[92,79],"186":[98,80],"187":[97,76],"188":[81,80],"189":[101,73],"190":[63,79],"191":[103,64],"192":[96,58],"193":[96,55],"194":[78,50],"195":[100,56],"196":[88,49],"197":[87,59],"198":[95,56],"199":[98,59],"200":[109,61],"201":[80,98],"202":[80,93],"203":[91,99],"204":[78,99],"205":[82,99],"206":[81,97],"207":[86,101],"208":[97,97],"209":[84,99],"210":[71,98],"211":[80,66],"212":[89,103],"213":[92,104],"214":[89,103],"215":[103,102],"216":[104,95],"217":[104,101],"218":[96,102],"219":[109,93],"220":[95,101],"221":[93,97],"222":[89,97],"223":[90,95],"224":[86,97],"225":[96,96],"226":[99,97],"227":[81,92],"228":[83,97],"229":[96,96],"230":[94,95],"231":[83,104],"232":[83,104],"233":[83,105],"234":[78,103],"235":[66,103],"236":[78,104],"237":[84,105],"238":[81,105],"239":[81,104],"240":[77,102],"241":[107,107],"242":[103,110],"243":[103,105],"244":[104,103],"245":[83,100],"246":[87,110],"247":[99,107],"248":[105,102],"249":[94,105],"250":[105,107],"251":[90,100],"252":[110,92],"253":[105,101],"254":[103,98],"255":[110,92],"256":[108,101],"257":[108,78],"258":[106,90],"259":[106,80],"260":[107,77],"261":[97,84],"262":[92,100],"263":[94,102],"264":[105,100],"265":[104,77],"266":[110,73],"267":[86,91],"268":[91,100],"269":[95,83],"270":[99,92],"271":[106,76],"272":[108,90],"273":[104,77],"274":[104,89],"275":[91,88],"276":[99,87],"277":[86,86],"278":[102,90],"279":[86,72],"280":[89,85],"281":[99,79],"282":[67,79],"283":[91,76],"284":[84,78],"285":[83,74],"286":[88,73],"287":[89,78],"288":[107,70],"289":[103,81],"290":[92,75],"291":[102,80],"292":[94,81],"293":[103,77],"294":[94,77],"295":[105,75],"296":[104,78],"297":[102,77],"298":[107,77],"299":[95,81],"300":[100,82]};
 const UP_NAMES=('Sombrero explorador|Casco vikingo|Casco caballero|Tricornio pirata|Corona real|Diadema lunar|Gorro de lana|Capucha|Turbante|Sombrero vaquero|Capa roja|Capa de hojas|Poncho|Chaleco|Túnica|Abrigo polar|Impermeable|Bufanda|Cinturón|Faja|Botas de cuero|Botas de nieve|Sandalias|Zapatillas|Guantes|Manoplas|Rodilleras|Coderas|Hombreras|Brazales|Escudo de madera|Escudo de hierro|Escudo de cristal|Armadura de cuero|Cota de malla|Coraza de acero|Yelmo alado|Visera|Gafas protectoras|Máscara de polvo|Mochila viajera|Alforjas|Bolsa de monedas|Riñonera|Estuche de mapas|Carcaj de pergaminos|Funda de cantimplora|Bolsa impermeable|Cofrecillo|Zurrón|Mapa del tesoro|Brújula dorada|Catalejo pirata|Prismáticos|Lupa|Cuaderno de viaje|Pluma|Tintero|Pergamino|Reloj de arena|Cantimplora|Taza|Plato de camping|Cubiertos|Olla|Sartén|Tetera|Cazo|Termo|Fiambrera|Tienda de campaña|Saco de dormir|Esterilla|Hamaca|Manta|Almohada|Taburete|Mesa portátil|Toldo|Mosquitera|Cuerda enrollada|Gancho de escalada|Arnés|Mosquetón|Piolet|Raquetas de nieve|Bastón de marcha|Remo corto|Aletas de buceo|Salvavidas|Linterna|Farol|Antorcha mágica|Botiquín|Silbato|Campana|Bandera|Insignia|Llave antigua|Herradura|Azada|Rastrillo|Pala jardinera|Regadera|Tijeras de podar|Semillero|Saco de semillas|Maceta|Carretilla|Cesta de cosecha|Gorro de chef|Delantal|Cuchara de madera|Batidor|Espátula|Rodillo|Mortero|Colador|Báscula de cocina|Molde de pastel|Estetoscopio|Termómetro médico|Venda|Tirita|Maletín médico|Otoscopio|Mascarilla médica|Guantes médicos|Muleta|Compresa fría|Bata científica|Gafas de laboratorio|Microscopio|Probeta|Matraz|Tubo de ensayo|Pipeta|Placa de Petri|Imán|Balanza|Martillo|Destornillador|Llave inglesa|Alicates|Serrucho|Taladro|Tornillo de banco|Cinta métrica|Nivel|Caja de herramientas|Casco de bombero|Manguera|Extintor|Hacha de rescate|Escalera plegable|Megáfono|Baliza|Linterna frontal|Detector de humo|Manta ignífuga|Boina de pintor|Paleta de colores|Pincel|Caballete|Lienzo|Lápices|Acuarelas|Bote de pintura|Esponja|Cuaderno de dibujo|Balón de fútbol|Guantes de portero|Botas de fútbol|Conos deportivos|Cronómetro|Medalla|Trofeo|Cuerda de saltar|Aro|Peto deportivo|Silla de montar|Brida suave|Cepillo de crin|Manta de montura|Protector de casco|Alforja de pegaso|Arnés de alas|Funda de cuerno|Collar ajustable|Cascabel|Peine de pelaje|Cepillo de escamas|Lima de garras|Crema de patas|Paño de plumas|Pulsera tentáculo|Anillo de rama|Musgo curativo|Pulidor de cristal|Nido portátil|Bastón de fuego|Varita de hielo|Cetro del viento|Tridente marino|Vara de raíces|Bastón lunar|Cetro solar|Varita arcoíris|Báculo de tormenta|Bastón de cristal|Amuleto de dragón|Talismán unicornio|Medallón fénix|Emblema grifo|Colgante kraken|Monóculo cíclope|Broche arbóreo|Collar lunar|Diadema cristalina|Pluma de pegaso|Cristal de fuego|Cristal de hielo|Cristal de agua|Cristal de tierra|Cristal de aire|Cristal solar|Cristal lunar|Cristal eléctrico|Cristal de sombra|Cristal arcoíris|Poción de fuerza|Poción de rapidez|Poción de curación|Poción de flotación|Poción de invisibilidad|Poción de calma|Poción de brillo|Poción de calor|Poción de frescor|Poción de crecimiento|Libro de hechizos|Grimorio del bosque|Atlas estelar|Pergamino de runas|Orbe adivinador|Espejo mágico|Llave de portal|Bolsa sin fondo|Reloj encantado|Cofre viviente|Botas de salto|Guantes magnéticos|Capa camaleón|Escudo de burbujas|Alas mecánicas|Propulsor dorsal|Patines flotantes|Brazal de energía|Corona telepática|Cinturón antigravedad|Casco espacial|Traje espacial|Guante robótico|Brazo auxiliar|Visor nocturno|Visor térmico|Auricular traductor|Radio de muñeca|Pulsera GPS|Tableta holográfica|Dron explorador|Robot ayudante|Esfera luminosa|Proyector de mapas|Escáner portátil|Detector de cristales|Sensor meteorológico|Baliza de regreso|Cámara submarina|Lámpara submarina|Generador de escarcha|Purificador portátil|Recolector solar|Batería de cristal|Núcleo de energía|Reparador de armadura|Dispensador de semillas|Regador de nubes|Amplificador de rugido|Traductor animal|Armadura de dragón|Casco de unicornio|Protección de alas|Guante de cíclope|Cinturón de kraken|Coraza de gólem|Corona de hidra|Botas de yeti|Sello de tortuga isla|Manto de zorro solar').split('|');
 const uid=n=>'u'+String(n).padStart(3,'0');
 const upTier=n=>n<=50?1:n<=100?2:n<=150?2:n<=200?3:n<=250?4:5;
@@ -2720,7 +2742,7 @@ function renderGarage(){
 
 /* ---------- modos de juego ---------- */
 const MODES={
-  tesoro:{icon:'💰',name:'Cofres del tesoro',desc:'El clásico: responde, abre cofres, roba doblones a tus compañeros.',hw:true,min:1},
+  tesoro:{icon:'💰',name:'Cofres del tesoro',desc:'El clásico: responde, abre cofres, roba monedas a tus compañeros.',hw:true,min:1},
   fiesta:{icon:'🎃',name:'Juego de temporada',desc:'Ahora: Noche de Halloween. Calabazas con caramelos… y algún susto.',hw:true,min:1},
   saboteador:{icon:'⛵',name:'El saboteador del galeón',desc:'Llevad el galeón hasta Siritinga. Un saboteador secreto lo hunde. ¡Descubridlo!',hw:false,min:4},
   bandera:{icon:'🚩',name:'Captura la bandera',desc:'Dos tripulaciones. Avanza, dispara cañonazos y roba la bandera rival.',hw:false,min:2},
@@ -2738,7 +2760,7 @@ const SEASONS={halloween:{name:'Noche de Halloween'}};
 function modeLabel(m,s){return m==='fiesta'?(SEASONS[s]||SEASONS.halloween).name:MODES[m].name;}
 function theme(m){
   const h=m==='fiesta';
-  return {hallo:h,cur:h?'caramelos':'doblones',pick:h?'Elige una calabaza':'Elige un cofre',go:h?'¡A por las calabazas!':'¡A por los cofres!',svg:h?pumpkinSVG:chestSVG,thing:h?'Calabaza':'Cofre'};
+  return {hallo:h,cur:h?'caramelos':'monedas',pick:h?'Elige una calabaza':'Elige un cofre',go:h?'¡A por las calabazas!':'¡A por los cofres!',svg:h?pumpkinSVG:chestSVG,thing:h?'Calabaza':'Cofre'};
 }
 let SET={mode:'tesoro',how:'vivo'};
 function renderModes(){
@@ -2936,7 +2958,7 @@ function onAnswer(p,ok){
         const n=Math.max(1,allP().filter(x=>x.conn||H.local).length),step=(fast?10:7)/n;
         const lv0=cyLevel(C);C.pos=Math.min(C.levels*C.L,C.pos+step);const lv1=cyLevel(C);
         msg=(fast?'🔥 ¡Racha de '+p.streak+'! ':'🏃 ')+'¡Tu clase avanza por el laberinto!';
-        if(C.pos>=C.levels*C.L){C.done=true;C.finished=1;allP().forEach(x=>{x.gold+=100;hsend(x,{t:'hit',text:'🏛️ ¡Habéis encontrado la salida del laberinto! +100 doblones para todos',gold:x.gold});});msg+='<br>🏛️ <b>¡Toda la clase ha escapado del cíclope!</b>';addFeed('🏛️ <b>¡La clase ha encontrado la salida del laberinto!</b>');}
+        if(C.pos>=C.levels*C.L){C.done=true;C.finished=1;allP().forEach(x=>{x.gold+=100;hsend(x,{t:'hit',text:'🏛️ ¡Habéis encontrado la salida del laberinto! '+pm(100)+' para todos',gold:x.gold});});msg+='<br>🏛️ <b>¡Toda la clase ha escapado del cíclope!</b>';addFeed('🏛️ <b>¡La clase ha encontrado la salida del laberinto!</b>');}
         else if(lv1>lv0){C.cyp=Math.min(C.cyp,(lv1-1)*C.L-14);msg+='<br>⭐ <b>¡Nivel '+lv0+' superado!</b> La clase está en el nivel '+lv1+' de '+C.levels+'.';addFeed('⭐ La clase llega al nivel '+lv1);}
         cySync();
       }else msg='🏛️ Ya habéis salido del laberinto. ¡Sigue sumando oro!';
@@ -2971,8 +2993,8 @@ function onPick(p,i){
     if(pr.k==='add'){gv.gold+=pr.v;r='+'+pr.v+' '+T.cur;}
     else if(pr.k==='mul'){gv.gold*=pr.v;r=T.cur+' ×'+pr.v;}
     else if(pr.k==='lose'){const l=Math.floor(gv.gold*pr.v/100);gv.gold-=l;r='pierde '+l+' '+T.cur;}
-    else if(pr.k==='dadd'){r='+'+dobAdd(gv,pr.v)+' doblones';}
-    else if(pr.k==='dlose'){r='pierde '+(-dobAdd(gv,-pr.v))+' doblones';}
+    else if(pr.k==='dadd'){r='+'+dobAdd(gv,pr.v)+' 💰 doblones para su bolsa';}
+    else if(pr.k==='dlose'){r='pierde '+(-dobAdd(gv,-pr.v))+' 💰 doblones de su bolsa';}
     else r='nada';
     text='🎀 Tu premio es para '+gv.name+': '+r;
     hsend(gv,{t:'hit',text:'🎀 '+p.name+' te ha dado el premio de su '+T.thing.toLowerCase()+': '+r,gold:gv.gold});
@@ -2981,20 +3003,20 @@ function onPick(p,i){
   }
   if(pr.k==='dsteal'){
     const opts=others(p).filter(x=>dobOf(x)>0);
-    if(!opts.length){const g=dobAdd(p,10);text='Nadie tiene doblones para quitar: +'+g+' doblones';}
+    if(!opts.length){const g=dobAdd(p,10);text='Nadie tiene doblones en la bolsa: +'+g+' 💰 doblones para tu bolsa';}
     else{
       p.phase='target';p.pend=pr;
-      hsend(p,{t:'reveal',labels,i,text:'¡Puedes quitarle '+pr.v+' doblones a alguien!',gold:p.gold,wait:true});
+      hsend(p,{t:'reveal',labels,i,text:'¡Puedes quitarle '+pr.v+' 💰 doblones de la bolsa a alguien!',gold:p.gold,wait:true});
       setTimeout(()=>hsend(p,{t:'choose',kind:'dsteal',list:opts.map(x=>({key:x.key,name:x.name,gold:dobOf(x),av:x.av}))}),1300);
       return;
     }
   }
-  else if(pr.k==='dadd'){const g=dobAdd(p,pr.v);text='¡+'+g+' doblones para tu pirata!';addFeed('<b>'+esc(p.name)+'</b> ha ganado '+g+' doblones');}
-  else if(pr.k==='dlose'){const g=-dobAdd(p,-pr.v);text=g?(T.hallo?'¡Buuu! ':'¡Oh, no! ')+'Pierdes '+g+' doblones':'Pierdes doblones… ¡pero no tenías!';}
-  else if(pr.k==='dnone')text='0 doblones: ni ganas ni pierdes';
+  else if(pr.k==='dadd'){const g=dobAdd(p,pr.v);text='¡+'+g+' 💰 doblones para tu bolsa!';addFeed('<b>'+esc(p.name)+'</b> ha ganado '+g+' 💰 doblones');}
+  else if(pr.k==='dlose'){const g=-dobAdd(p,-pr.v);text=g?(T.hallo?'¡Buuu! ':'¡Oh, no! ')+'Pierdes '+g+' 💰 doblones de tu bolsa':'Pierdes doblones… ¡pero tu bolsa estaba vacía!';}
+  else if(pr.k==='dnone')text='0 💰 doblones: ni ganas ni pierdes';
   else if(pr.k==='steal'||pr.k==='swap'){
     const opts=others(p).filter(x=>pr.k==='swap'||x.gold>0);
-    if(!opts.length){p.gold+=20;text='No hay a quién robar: +20 '+T.cur;}
+    if(!opts.length){p.gold+=20;text='No hay a quién robar: '+pm(20,T);}
     else{
       p.phase='target';p.pend=pr;
       hsend(p,{t:'reveal',labels,i,text:pr.k==='steal'?'¡Puedes robar '+T.cur+'!':'¡Puedes intercambiar tus '+T.cur+'!',gold:p.gold,wait:true});
@@ -3002,9 +3024,9 @@ function onPick(p,i){
       return;
     }
   }
-  else if(pr.k==='add'){const g=gain(p,pr.v);p.gold+=g;text='+'+g+' '+T.cur+(g>pr.v?' (¡doble por el turbo!)':'');}
+  else if(pr.k==='add'){const g=gain(p,pr.v);p.gold+=g;text=pm(g,T)+(g>pr.v?' (¡doble por el turbo!)':'');}
   else if(pr.k==='mul'){const g=p.gold;p.gold=g*pr.v;text=g?'¡Se multiplican por '+pr.v+'!':'×'+pr.v+'… ¡pero tenías 0!';if(g)addFeed('<b>'+esc(p.name)+'</b> ha multiplicado sus '+T.cur+' por '+pr.v);}
-  else if(pr.k==='lose'){const l=Math.floor(p.gold*pr.v/100);p.gold-=l;text=(T.hallo?'¡Buuu! ':'¡Oh, no! ')+'Pierdes '+l+' '+T.cur;}
+  else if(pr.k==='lose'){const l=Math.floor(p.gold*pr.v/100);p.gold-=l;text=(T.hallo?'¡Buuu! ':'¡Oh, no! ')+pmL(l,T);}
   else text=T.hallo?'La calabaza estaba vacía':'El cofre estaba vacío';
   p.phase='done';
   hsend(p,{t:'reveal',labels,i,text,gold:p.gold});
@@ -3012,7 +3034,7 @@ function onPick(p,i){
 }
 function onTarget(p,key){
   const T=T_();const v=H.players[key];const pr=p.pend;if(!v||v===p)return;let text,vt;
-  if(pr.k==='dsteal'){const s=Math.min(pr.v,dobOf(v));dobAdd(v,-s);dobAdd(p,s);text='Le has quitado '+s+' doblones a '+v.name;vt=p.name+' te ha quitado '+s+' doblones';addFeed('<b>'+esc(p.name)+'</b> le ha quitado '+s+' doblones a <b>'+esc(v.name)+'</b>');}
+  if(pr.k==='dsteal'){const s=Math.min(pr.v,dobOf(v));dobAdd(v,-s);dobAdd(p,s);text='Le has quitado '+s+' 💰 doblones de la bolsa a '+v.name;vt=p.name+' te ha quitado '+s+' 💰 doblones de tu bolsa';addFeed('<b>'+esc(p.name)+'</b> le ha quitado '+s+' doblones a <b>'+esc(v.name)+'</b>');}
   else if(pr.k==='steal'){const s=Math.floor(v.gold*pr.v/100);v.gold-=s;p.gold+=s;text='Le has robado '+s+' '+T.cur+' a '+v.name;vt=p.name+' te ha robado '+s+' '+T.cur;addFeed('<b>'+esc(p.name)+'</b> le ha robado '+s+' '+T.cur+' a <b>'+esc(v.name)+'</b>');}
   else{[p.gold,v.gold]=[v.gold,p.gold];text='Has intercambiado tus '+T.cur+' con '+v.name;vt=p.name+' ha intercambiado sus '+T.cur+' contigo';addFeed('<b>'+esc(p.name)+'</b> ha intercambiado sus '+T.cur+' con <b>'+esc(v.name)+'</b>');}
   p.phase='done';p.pend=null;
@@ -3268,7 +3290,7 @@ function endMini(){
   const total=Object.values(m.hits).reduce((s,x)=>s+x,0);
   const n=Math.max(1,allP().length),back=Math.min(40,Math.round(total/n*2));if(!C.done){C.cyp-=back;cySync();}
   allP().forEach(p=>{const h=m.hits[p.key]||0;p.gold+=h*2;
-    hsend(p,{t:'msg',title:'🥥 ¡'+h+' cocos!',text:'Tu clase ha lanzado '+total+' cocos. '+(C.done?'':'El cíclope retrocede '+back+' pasos. ')+'+'+(h*2)+' doblones.'});});
+    hsend(p,{t:'msg',title:'🥥 ¡'+h+' cocos!',text:'Tu clase ha lanzado '+total+' cocos. '+(C.done?'':'El cíclope retrocede '+back+' pasos. ')+pm(h*2)+'.'});});
   addFeed('🥥 La clase ha lanzado <b>'+total+'</b> cocos al cíclope');
   C.last=Date.now();renderBoard();
   setTimeout(()=>{if(H.state!=='playing')return;allP().forEach(p=>{p.phase='idle';sendQuestion(p);});},3000);
@@ -3287,7 +3309,7 @@ function onCard(p,i){
   else{
     me.p+=base*1.5;text='¡Tu tripulación avanza!';
     if(me.p>=100){
-      me.cap++;p.gold+=60;me.p=0;rv.p=0;text='🚩 ¡Has capturado la bandera rival! +60 doblones';
+      me.cap++;p.gold+=60;me.p=0;rv.p=0;text='🚩 ¡Has capturado la bandera rival! '+pm(60);
       addFeed('🚩 <b>'+esc(p.name)+'</b> captura la bandera para la '+me.name);
       allP().forEach(x=>{if(x!==p)hsend(x,{t:'hit',text:p.name+' ha capturado la bandera para la '+me.name,gold:x.gold});});
     }
@@ -3322,7 +3344,7 @@ function endGame(){
   if(H.mode==='ciclope'){const C=H.cy;title=C.done?'¡La clase ha <span>escapado</span>!':'¡El cíclope <span>sigue ahí</span>!';sub=C.done?'Habéis encontrado la salida del laberinto ('+C.levels+' niveles)':'La clase ha llegado al nivel '+cyLevel(C)+' de '+C.levels+' · el cíclope os ha atrapado '+C.caught+(C.caught===1?' vez':' veces');
     allP().forEach(p=>{perTitle[p.key]={title:C.done?'¡Habéis escapado del cíclope!':'La clase ha llegado al nivel '+cyLevel(C)+' de '+C.levels,text:''};});}
   const rr=ranking(),GT=groupTotals(),pct=(H.pct||50)/100;
-  const gsum=Object.entries(GT).map(([g,v])=>groupName(g)+': '+fmt(v.pts)+' puntos'+(v.n?' → '+fmt(Math.min(500,Math.round(v.pts*pct/v.n)))+' doblones cada uno':'')).join(' · ');
+  const gsum=Object.entries(GT).map(([g,v])=>groupName(g)+': '+fmt(v.pts)+' puntos'+(v.n?' → '+fmt(Math.min(500,Math.round(v.pts*pct/v.n)))+' 💰 doblones cada uno':'')).join(' · ');
   if(gsum)sub=(sub?sub+' — ':'')+gsum;
   rr.forEach((p,i)=>{
     const g=groupOf(p),pts=Math.max(0,Math.round(p.gold));
@@ -3521,7 +3543,7 @@ async function joinGame(){
   const to=setTimeout(()=>{if(P===me&&!P.joined){fail('No encuentro esa partida. Revisa el código y que la partida siga abierta en la pantalla del maestro.');c.destroy();}},10000);
   P.clearTo=()=>clearTimeout(to);
 }
-function setGold(g){$('hudPts').textContent='⭐ '+fmt(g);}
+function setGold(g){$('hudPts').innerHTML='⭐ <b>'+fmt(g)+'</b><small>puntos</small>';}
 function setDob(v){$('hudGold').textContent=fmt(v);$('hudGold').dataset.v=v;if($('tricks').classList.contains('on'))renderTricks();}
 function hudAv(){$('hudAv').innerHTML=avatarSVG(PROF.av,34);}
 let voteTimer=null;
@@ -3612,7 +3634,7 @@ function playerMsg(d){
   if(d.t==='choose'){
     $('targetTitle').textContent=d.kind==='steal'?'¿A quién le robas?':d.kind==='dsteal'?'¿A quién le quitas doblones?':'¿Con quién haces el intercambio?';
     $('targets').innerHTML='';
-    d.list.sort((a,b)=>b.gold-a.gold).forEach(x=>{const b=document.createElement('button');b.className='target';b.innerHTML=avatarSVG(x.av,44)+'<span>'+esc(x.name)+'<small>'+(d.kind==='dsteal'?fmt(x.gold)+' doblones':money(x.gold,P.T.cur))+'</small></span>';b.onclick=()=>{$('targets').querySelectorAll('button').forEach(y=>y.disabled=true);send({t:'target',key:x.key});};$('targets').appendChild(b);});
+    d.list.sort((a,b)=>b.gold-a.gold).forEach(x=>{const b=document.createElement('button');b.className='target';b.innerHTML=avatarSVG(x.av,44)+'<span>'+esc(x.name)+'<small>'+(d.kind==='dsteal'?fmt(x.gold)+' 💰 doblones':money(x.gold,P.T.cur))+'</small></span>';b.onclick=()=>{$('targets').querySelectorAll('button').forEach(y=>y.disabled=true);send({t:'target',key:x.key});};$('targets').appendChild(b);});
     show('s-target');return;
   }
   if(d.t==='stolen'){setGold(d.gold);show('s-chests');$('chestMsg').textContent=d.text;$('chestNext').style.visibility='visible';return;}
@@ -3642,7 +3664,7 @@ function playerMsg(d){
     if(P.hw){PROF.pend=(PROF.pend||0)+earned;saveProfile();}
     $('pendAv').innerHTML=avatarSVG(PROF.av,120);
     $('pendPlace').textContent=d.title||(d.place===1?'¡Has ganado!':'Puesto '+d.place+' de '+d.total);
-    $('pendGold').innerHTML=(d.text?esc(d.text)+'<br>':'')+(d.place&&d.title?'Puesto '+d.place+' de '+d.total+' · ':'')+(d.group?'Has aportado ⭐ ':'Has conseguido ⭐ ')+fmt(d.gold)+' puntos'+(d.caughtN!=null?' · El cíclope te ha atrapado '+d.caughtN+(d.caughtN===1?' vez':' veces'):'')+'<br>'+(d.group?'Puntos del equipo repartidos a partes iguales':(d.pct||50)+' % de tus puntos')+': <b>+'+earned+' doblones</b> para tu pirata'+(P.hw?'<br><small>Se guardarán en tu pirata la próxima vez que juegues en clase.</small>':'');
+    $('pendGold').innerHTML=(d.text?esc(d.text)+'<br>':'')+(d.place&&d.title?'Puesto '+d.place+' de '+d.total+' · ':'')+(d.group?'Has aportado ⭐ ':'Has conseguido ⭐ ')+fmt(d.gold)+' puntos'+(d.caughtN!=null?' · El cíclope te ha atrapado '+d.caughtN+(d.caughtN===1?' vez':' veces'):'')+'<br>'+(d.group?'Puntos del equipo repartidos a partes iguales':(d.pct||50)+' % de tus puntos')+' → <b>💰 +'+earned+' doblones</b> para tu bolsa'+(P.hw?'<br><small>Se guardarán en tu pirata la próxima vez que juegues en clase.</small>':'');
     $('pendShop').style.display=P.hw?'none':'';
     const box=$('pendBox');
     if(d.hw){box.style.display='block';box.innerHTML='<b>Copia esta línea y pégala en la entrega de Canvas:</b><div class="result-code" id="hwLine" style="margin-top:8px">'+esc(d.hw)+'</div><div class="row" style="margin-top:8px"><button class="btn small" onclick="copyText($(\'hwLine\').textContent)">Copiar</button></div>';}
@@ -3701,7 +3723,7 @@ function openPirate(ctx){
   pirCtx=ctx;
   const wait=ctx==='lobby'||ctx==='late';
   $('pirTitle').textContent=ctx==='lobby'?'¡Ya estás dentro!':ctx==='late'?'¡La partida ya ha empezado!':'Mi pirata';
-  $('pirSub').textContent=ctx==='lobby'?'Prepara a tu pirata mientras empieza la partida.':ctx==='late'?'Elige tu pirata y entra a jugar.':'Gasta tus doblones en la tienda del puerto.';
+  $('pirSub').textContent=ctx==='lobby'?'Prepara a tu pirata mientras empieza la partida.':ctx==='late'?'Elige tu pirata y entra a jugar.':'Gasta tus 💰 doblones en pergaminos y en tu residencia.';
   $('pirBack').style.display=wait?'none':'';
   $('pirReady').style.display=wait?'':'none';
   $('pirReady').textContent=ctx==='late'?'¡A jugar!':'¡Listo! Este es mi pirata';
