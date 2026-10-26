@@ -651,7 +651,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 26 · 25/10/2026 · Conexión directa en clase</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 27 · 25/10/2026 · Indicador de conexión directa</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -2989,9 +2989,11 @@ function lateJoin(p){
 function renderLobby(){
   if(!H)return;
   const ps=allP().sort((a,b)=>a.joinN-b.joinN);
-  $('chips').innerHTML=ps.map(p=>'<button class="chip" data-k="'+esc(p.key)+'" style="opacity:'+(p.conn?1:.4)+'">'+avMini(p.av,40)+esc(p.name)+(p.ready?' <span style="color:var(--ok)">✓</span>':'')+'</button>').join('');
+  $('chips').innerHTML=ps.map(p=>'<button class="chip" data-k="'+esc(p.key)+'" style="opacity:'+(p.conn?1:.4)+'">'+avMini(p.av,40)+esc(p.name)+(p.ready?' <span style="color:var(--ok)">✓</span>':'')+(p.conn&&p.conn.rtc?' <span title="Conexión directa">⚡</span>':'')+'</button>').join('');
   $('chips').querySelectorAll('.chip').forEach(b=>b.onclick=()=>kick(b.dataset.k));
-  $('lobbyCount').textContent=ps.length?ps.length+' jugador'+(ps.length>1?'es':'')+' · toca un nombre para expulsarlo':'Esperando jugadores…';
+  const nd=ps.filter(p=>p.conn&&p.conn.rtc).length;
+  $('lobbyCount').textContent=ps.length?ps.length+' jugador'+(ps.length>1?'es':'')+' · ⚡ conexión directa: '+nd+' de '+ps.length+' · toca un nombre para expulsarlo':'Esperando jugadores…';
+  clearTimeout(renderLobby.t);if(H.state==='lobby'&&ps.some(p=>p.conn&&!p.conn.rtc))renderLobby.t=setTimeout(renderLobby,2000);
   $('startBtn').disabled=!ps.length;
 }
 function kick(k){const p=H.players[k];if(!p)return;hsend(p,{t:'kicked'});setTimeout(()=>p.conn&&p.conn.close(),300);delete H.players[k];renderLobby();}
