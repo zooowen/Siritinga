@@ -651,7 +651,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 24 · 25/10/2026 · Más servidores de conexión</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 25 · 25/10/2026 · Conexión más rápida</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -1091,17 +1091,21 @@ const Net=(()=>{
     function attach(cl){
       if(dead){try{cl.end(true);}catch(e){}return;}
       clients.push(cl);
-      cl.subscribe(base+'/h',{qos:1});
+      cl.subscribe(base+'/h',{qos:0});
       let chain=Promise.resolve();
       cl.on('message',(t,payload)=>{chain=chain.then(async()=>{
         let m;try{m=await unseal(key,payload);}catch(e){return;}
         const id=String(m.f||'').slice(0,40);if(!/^[a-z0-9]+$/i.test(id))return;
         let c=conns[id];
-        if(m.d&&m.d.t==='__bye'){if(c&&c.cl===cl)c.close();return;}
-        if(c&&c.open&&m.n!=null){if(m.n<=(c.seq||0))return;}   // el mismo mensaje puede llegar por varios servidores
+        if(m.d&&m.d.t==='__bye'&&m.n==null){   // aviso automático: ese servidor ha perdido al alumno
+          if(c){c.paths.delete(cl);if(!c.paths.size)c.close();}return;}
+        if(c&&c.open){c.paths.add(cl);if(m.n!=null&&m.n<=(c.seq||0))return;}   // el mismo mensaje llega por varios servidores: vale el primero
+        if(m.d&&m.d.t==='__bye'){if(c)c.close();return;}
         if(!c||!c.open){
-          c=conns[id]=mkConn(async msg=>{cl.publish(base+'/p/'+id,await seal(key,msg),{qos:1});});
-          c.cl=cl;c.last=Date.now();if(m.n!=null)c.seq=m.n;onConn(c);
+          // el maestro responde por todos los servidores que comparte con el alumno; el alumno se queda con la copia que llega antes
+          const paths=new Set([cl]);let hs=0;
+          c=conns[id]=mkConn(async msg=>{hs++;const pl=await seal(key,{n:hs,d:msg});paths.forEach(x=>{try{x.publish(base+'/p/'+id,pl,{qos:0});}catch(e){}});});
+          c.paths=paths;c.last=Date.now();if(m.n!=null)c.seq=m.n;onConn(c);
         }
         if(m.n!=null)c.seq=Math.max(c.seq||0,m.n);
         c.last=Date.now();
@@ -1121,16 +1125,18 @@ const Net=(()=>{
     const will={topic:base+'/h',payload:await seal(key,{f:id,d:{t:'__bye'}}),qos:1};
     // se conecta a todos los servidores a la vez y envía por todos: así siempre coincide con alguno del maestro
     const cls=[];let seq=0,dead=false,chain=Promise.resolve();
-    const c=mkConn(async msg=>{seq++;const pl=await seal(key,{f:id,n:seq,d:msg});cls.forEach(x=>{try{x.publish(base+'/h',pl,{qos:1});}catch(e){}});});
+    let last=0;const c=mkConn(async msg=>{seq++;const pl=await seal(key,{f:id,n:seq,d:msg});cls.forEach(x=>{try{x.publish(base+'/h',pl,{qos:0});}catch(e){}});});
     function attach(x){
       if(dead){try{x.end(true);}catch(e){}return;}
-      cls.push(x);x.subscribe(base+'/p/'+id,{qos:1});
-      x.on('message',(t,payload)=>{chain=chain.then(async()=>{let d;try{d=await unseal(key,payload);}catch(e){return;}c.emit('data',d);}).catch(()=>{});});
+      cls.push(x);x.subscribe(base+'/p/'+id,{qos:0});
+      x.on('message',(t,payload)=>{chain=chain.then(async()=>{let d;try{d=await unseal(key,payload);}catch(e){return;}
+        if(d&&d.n!=null&&'d' in d){if(d.n<=last)return;last=d.n;d=d.d;}
+        c.emit('data',d);}).catch(()=>{});});
     }
     const P=BROKERS.map((url,i)=>connectBroker(url,id+'_'+i,will).then(attach,()=>{}));
     await Promise.race([Promise.all(P),new Promise(r=>{const iv=setInterval(()=>{if(cls.length){clearInterval(iv);setTimeout(r,1200);}},50);})]);
     if(!cls.length){dead=true;throw new Error('sin servidor');}
-    const ping=setInterval(()=>c.send({t:'__ping'}),8000);
+    const ping=setInterval(()=>c.send({t:'__ping'}),6000);
     c.destroy=()=>{clearInterval(ping);c.send({t:'__bye'});setTimeout(()=>{c.open=false;dead=true;cls.forEach(x=>{try{x.end(true);}catch(e){}});},400);};
     return c;
   }
