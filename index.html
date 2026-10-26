@@ -651,7 +651,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 25 · 25/10/2026 · Conexión más rápida</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 26 · 25/10/2026 · Conexión directa en clase</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -1083,61 +1083,99 @@ const Net=(()=>{
       setTimeout(()=>{if(!ok){try{cl.end(true);}catch(e){}rej(new Error('timeout'));}},7000);
     });
   }
+  /* ----- conexión directa (WebRTC): una vez que maestro y alumno se encuentran por el servidor,
+     hablan directamente por la red del colegio, que es mucho más rápido. Si la red no lo permite,
+     todo sigue funcionando por los servidores. ----- */
+  const ICE=[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun.cloudflare.com:3478'}];
+  const RTC_OK=typeof RTCPeerConnection!=='undefined'&&!qp.get('nortc');
+  function gathered(pc){return new Promise(r=>{if(pc.iceGatheringState==='complete')return r();const f=()=>{if(pc.iceGatheringState==='complete'){pc.removeEventListener('icegatheringstatechange',f);r();}};pc.addEventListener('icegatheringstatechange',f);setTimeout(r,2500);});}
   /* ----- maestro ----- */
   async function host(code,onConn){
     const key=await keyFor(code),base=await topicFor(code),conns={},clients=[];
     // se conecta a todos los servidores a la vez; en cuanto uno responde, la partida ya funciona
     let dead=false;
+    const sender=(src,id)=>src.publish?pl=>src.publish(base+'/p/'+id,pl,{qos:0}):pl=>{if(src.readyState==='open')src.send(pl);};
+    async function rtcAnswer(c,sdp){
+      if(!RTC_OK)return;
+      try{
+        if(c.pc)try{c.pc.close();}catch(e){}
+        const pc=c.pc=new RTCPeerConnection({iceServers:ICE});
+        pc.ondatachannel=e=>{const dc=e.channel;dc.binaryType='arraybuffer';let ch=Promise.resolve();
+          dc.onopen=()=>{c.paths.set(dc,sender(dc,c.id));c.rtc=true;};
+          dc.onclose=()=>{c.paths.delete(dc);c.rtc=false;};
+          dc.onmessage=ev=>{ch=ch.then(()=>handle(dc,ev.data)).catch(()=>{});};};
+        await pc.setRemoteDescription(sdp);await pc.setLocalDescription(await pc.createAnswer());await gathered(pc);
+        c.send({t:'__rtc',sdp:pc.localDescription.toJSON()});
+      }catch(e){}
+    }
+    async function handle(src,payload){
+      let m;try{m=await unseal(key,payload);}catch(e){return;}
+      const id=String(m.f||'').slice(0,40);if(!/^[a-z0-9]+$/i.test(id))return;
+      let c=conns[id];
+      if(m.d&&m.d.t==='__bye'&&m.n==null){   // aviso automático: ese servidor ha perdido al alumno
+        if(c){c.paths.delete(src);if(!c.paths.size)c.close();}return;}
+      if(c&&c.open){if(!c.paths.has(src))c.paths.set(src,sender(src,id));if(m.n!=null&&m.n<=(c.seq||0))return;}   // el mismo mensaje llega por varios caminos: vale el primero
+      if(m.d&&m.d.t==='__bye'){if(c){c.close();if(c.pc)try{c.pc.close();}catch(e){}}return;}
+      if(!c||!c.open){
+        // el maestro responde por todos los caminos que comparte con el alumno; el alumno se queda con la copia que llega antes
+        const paths=new Map([[src,sender(src,id)]]);let hs=0;
+        c=conns[id]=mkConn(async msg=>{hs++;const pl=await seal(key,{n:hs,d:msg});paths.forEach(f=>{try{f(pl);}catch(e){}});});
+        c.id=id;c.paths=paths;c.last=Date.now();if(m.n!=null)c.seq=m.n;onConn(c);
+      }
+      if(m.n!=null)c.seq=Math.max(c.seq||0,m.n);
+      c.last=Date.now();
+      if(m.d&&m.d.t==='__ping')return;
+      if(m.d&&m.d.t==='__rtc'){rtcAnswer(c,m.d.sdp);return;}
+      c.emit('data',m.d);
+    }
     function attach(cl){
       if(dead){try{cl.end(true);}catch(e){}return;}
       clients.push(cl);
       cl.subscribe(base+'/h',{qos:0});
       let chain=Promise.resolve();
-      cl.on('message',(t,payload)=>{chain=chain.then(async()=>{
-        let m;try{m=await unseal(key,payload);}catch(e){return;}
-        const id=String(m.f||'').slice(0,40);if(!/^[a-z0-9]+$/i.test(id))return;
-        let c=conns[id];
-        if(m.d&&m.d.t==='__bye'&&m.n==null){   // aviso automático: ese servidor ha perdido al alumno
-          if(c){c.paths.delete(cl);if(!c.paths.size)c.close();}return;}
-        if(c&&c.open){c.paths.add(cl);if(m.n!=null&&m.n<=(c.seq||0))return;}   // el mismo mensaje llega por varios servidores: vale el primero
-        if(m.d&&m.d.t==='__bye'){if(c)c.close();return;}
-        if(!c||!c.open){
-          // el maestro responde por todos los servidores que comparte con el alumno; el alumno se queda con la copia que llega antes
-          const paths=new Set([cl]);let hs=0;
-          c=conns[id]=mkConn(async msg=>{hs++;const pl=await seal(key,{n:hs,d:msg});paths.forEach(x=>{try{x.publish(base+'/p/'+id,pl,{qos:0});}catch(e){}});});
-          c.paths=paths;c.last=Date.now();if(m.n!=null)c.seq=m.n;onConn(c);
-        }
-        if(m.n!=null)c.seq=Math.max(c.seq||0,m.n);
-        c.last=Date.now();
-        if(m.d&&m.d.t==='__ping')return;
-        c.emit('data',m.d);
-      }).catch(()=>{});});
+      cl.on('message',(t,payload)=>{chain=chain.then(()=>handle(cl,payload)).catch(()=>{});});
     }
     const tries=BROKERS.map(u=>connectBroker(u,'h'+code+'_'+Math.random().toString(36).slice(2,8)).then(attach,()=>{}));
     await Promise.race([Promise.all(tries),new Promise(r=>{const iv=setInterval(()=>{if(clients.length){clearInterval(iv);setTimeout(r,1500);}},100);})]);
     if(!clients.length){dead=true;throw new Error('sin servidor');}
-    const hb=setInterval(()=>{const now=Date.now();Object.values(conns).forEach(c=>{if(c.open&&now-c.last>30000)c.close();});},5000);
-    return {destroy(){dead=true;clearInterval(hb);clients.forEach(c=>{try{c.end(true);}catch(e){}});},get brokers(){return clients.length;}};
+    const hb=setInterval(()=>{const now=Date.now();Object.values(conns).forEach(c=>{if(c.open&&now-c.last>30000){c.close();if(c.pc)try{c.pc.close();}catch(e){}}});},5000);
+    return {destroy(){dead=true;clearInterval(hb);Object.values(conns).forEach(c=>{if(c.pc)try{c.pc.close();}catch(e){}});clients.forEach(c=>{try{c.end(true);}catch(e){}});},get brokers(){return clients.length;},get direct(){return Object.values(conns).filter(c=>c.open&&c.rtc).length;}};
   }
   /* ----- alumno ----- */
   async function join(code){
     const key=await keyFor(code),base=await topicFor(code),id='a'+Math.random().toString(36).slice(2,12);
     const will={topic:base+'/h',payload:await seal(key,{f:id,d:{t:'__bye'}}),qos:1};
     // se conecta a todos los servidores a la vez y envía por todos: así siempre coincide con alguno del maestro
-    const cls=[];let seq=0,dead=false,chain=Promise.resolve();
-    let last=0;const c=mkConn(async msg=>{seq++;const pl=await seal(key,{f:id,n:seq,d:msg});cls.forEach(x=>{try{x.publish(base+'/h',pl,{qos:0});}catch(e){}});});
+    const cls=[];let seq=0,dead=false,chain=Promise.resolve(),pc=null,dc=null;
+    let last=0;const c=mkConn(async msg=>{seq++;const pl=await seal(key,{f:id,n:seq,d:msg});
+      if(dc&&dc.readyState==='open')try{dc.send(pl);}catch(e){}
+      cls.forEach(x=>{try{x.publish(base+'/h',pl,{qos:0});}catch(e){}});});
+    function recv(payload){chain=chain.then(async()=>{let d;try{d=await unseal(key,payload);}catch(e){return;}
+      if(d&&d.n!=null&&'d' in d){if(d.n<=last)return;last=d.n;d=d.d;}
+      if(d&&d.t==='__rtc'){if(pc&&d.sdp)try{await pc.setRemoteDescription(d.sdp);}catch(e){}return;}
+      c.emit('data',d);}).catch(()=>{});}
     function attach(x){
       if(dead){try{x.end(true);}catch(e){}return;}
       cls.push(x);x.subscribe(base+'/p/'+id,{qos:0});
-      x.on('message',(t,payload)=>{chain=chain.then(async()=>{let d;try{d=await unseal(key,payload);}catch(e){return;}
-        if(d&&d.n!=null&&'d' in d){if(d.n<=last)return;last=d.n;d=d.d;}
-        c.emit('data',d);}).catch(()=>{});});
+      x.on('message',(t,payload)=>recv(payload));
     }
     const P=BROKERS.map((url,i)=>connectBroker(url,id+'_'+i,will).then(attach,()=>{}));
     await Promise.race([Promise.all(P),new Promise(r=>{const iv=setInterval(()=>{if(cls.length){clearInterval(iv);setTimeout(r,1200);}},50);})]);
     if(!cls.length){dead=true;throw new Error('sin servidor');}
+    async function rtcStart(){
+      if(!RTC_OK||dead)return;
+      try{
+        pc=new RTCPeerConnection({iceServers:ICE});
+        const ch=pc.createDataChannel('g',{ordered:true});ch.binaryType='arraybuffer';
+        ch.onopen=()=>{dc=ch;c.direct=true;};ch.onclose=()=>{if(dc===ch)dc=null;c.direct=false;};
+        ch.onmessage=ev=>recv(ev.data);
+        await pc.setLocalDescription(await pc.createOffer());await gathered(pc);
+        if(!dead)c.send({t:'__rtc',sdp:pc.localDescription.toJSON()});
+      }catch(e){}
+    }
+    setTimeout(rtcStart,600);
     const ping=setInterval(()=>c.send({t:'__ping'}),6000);
-    c.destroy=()=>{clearInterval(ping);c.send({t:'__bye'});setTimeout(()=>{c.open=false;dead=true;cls.forEach(x=>{try{x.end(true);}catch(e){}});},400);};
+    c.destroy=()=>{clearInterval(ping);c.send({t:'__bye'});setTimeout(()=>{c.open=false;dead=true;try{pc&&pc.close();}catch(e){}cls.forEach(x=>{try{x.end(true);}catch(e){}});},400);};
     return c;
   }
   return {host,join,brokers:BROKERS};
