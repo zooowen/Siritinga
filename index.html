@@ -651,7 +651,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 23 · 25/10/2026 · Mi residencia, criaturas sin carta y créditos de los dibujos</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 24 · 25/10/2026 · Más servidores de conexión</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -1053,7 +1053,8 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
    ============================================================ */
 const Net=(()=>{
   const qp=new URLSearchParams(location.search);
-  const BROKERS=qp.get('mq')?[qp.get('mq')]:['wss://broker.emqx.io:8084/mqtt','wss://test.mosquitto.org:8081/mqtt'];
+  const BROKERS=qp.get('mq')?[qp.get('mq')]:['wss://broker.hivemq.com:8884/mqtt','wss://broker.emqx.io:8084/mqtt','wss://public.cloud.shiftr.io:443','wss://test.mosquitto.org:8081/mqtt'];
+  const CREDS={'wss://public.cloud.shiftr.io:443':{username:'public',password:'public'}};
   const enc=new TextEncoder(),dec=new TextDecoder();
   const keyCache={};
   async function keyFor(code){
@@ -1076,7 +1077,7 @@ const Net=(()=>{
   function connectBroker(url,clientId,will){
     return new Promise((res,rej)=>{
       let ok=false,cl;
-      try{cl=mqtt.connect(url,{clientId,clean:true,connectTimeout:6000,reconnectPeriod:2000,keepalive:20,will,protocolVersion:4});}catch(e){rej(e);return;}
+      try{cl=mqtt.connect(url,{clientId,clean:true,connectTimeout:6000,reconnectPeriod:2000,keepalive:20,will,protocolVersion:4,...(CREDS[url]||{})});}catch(e){rej(e);return;}
       cl.on('connect',()=>{if(!ok){ok=true;res(cl);}});
       cl.on('error',()=>{});
       setTimeout(()=>{if(!ok){try{cl.end(true);}catch(e){}rej(new Error('timeout'));}},7000);
@@ -1085,42 +1086,52 @@ const Net=(()=>{
   /* ----- maestro ----- */
   async function host(code,onConn){
     const key=await keyFor(code),base=await topicFor(code),conns={},clients=[];
-    const tries=await Promise.allSettled(BROKERS.map(u=>connectBroker(u,'h'+code+'_'+Math.random().toString(36).slice(2,8))));
-    tries.forEach(t=>{if(t.status==='fulfilled')clients.push(t.value);});
-    if(!clients.length)throw new Error('sin servidor');
-    clients.forEach(cl=>{
+    // se conecta a todos los servidores a la vez; en cuanto uno responde, la partida ya funciona
+    let dead=false;
+    function attach(cl){
+      if(dead){try{cl.end(true);}catch(e){}return;}
+      clients.push(cl);
       cl.subscribe(base+'/h',{qos:1});
       let chain=Promise.resolve();
       cl.on('message',(t,payload)=>{chain=chain.then(async()=>{
         let m;try{m=await unseal(key,payload);}catch(e){return;}
         const id=String(m.f||'').slice(0,40);if(!/^[a-z0-9]+$/i.test(id))return;
         let c=conns[id];
-        if(m.d&&m.d.t==='__bye'){if(c)c.close();return;}
+        if(m.d&&m.d.t==='__bye'){if(c&&c.cl===cl)c.close();return;}
+        if(c&&c.open&&m.n!=null){if(m.n<=(c.seq||0))return;}   // el mismo mensaje puede llegar por varios servidores
         if(!c||!c.open){
           c=conns[id]=mkConn(async msg=>{cl.publish(base+'/p/'+id,await seal(key,msg),{qos:1});});
-          c.last=Date.now();onConn(c);
+          c.cl=cl;c.last=Date.now();if(m.n!=null)c.seq=m.n;onConn(c);
         }
+        if(m.n!=null)c.seq=Math.max(c.seq||0,m.n);
         c.last=Date.now();
         if(m.d&&m.d.t==='__ping')return;
         c.emit('data',m.d);
       }).catch(()=>{});});
-    });
+    }
+    const tries=BROKERS.map(u=>connectBroker(u,'h'+code+'_'+Math.random().toString(36).slice(2,8)).then(attach,()=>{}));
+    await Promise.race([Promise.all(tries),new Promise(r=>{const iv=setInterval(()=>{if(clients.length){clearInterval(iv);setTimeout(r,1500);}},100);})]);
+    if(!clients.length){dead=true;throw new Error('sin servidor');}
     const hb=setInterval(()=>{const now=Date.now();Object.values(conns).forEach(c=>{if(c.open&&now-c.last>30000)c.close();});},5000);
-    return {destroy(){clearInterval(hb);clients.forEach(c=>{try{c.end(true);}catch(e){}});},brokers:clients.length};
+    return {destroy(){dead=true;clearInterval(hb);clients.forEach(c=>{try{c.end(true);}catch(e){}});},get brokers(){return clients.length;}};
   }
   /* ----- alumno ----- */
   async function join(code){
     const key=await keyFor(code),base=await topicFor(code),id='a'+Math.random().toString(36).slice(2,12);
     const will={topic:base+'/h',payload:await seal(key,{f:id,d:{t:'__bye'}}),qos:1};
-    let cl=null;
-    for(const url of BROKERS){try{cl=await connectBroker(url,id,will);break;}catch(e){}}
-    if(!cl)throw new Error('sin servidor');
-    const c=mkConn(async msg=>{cl.publish(base+'/h',await seal(key,{f:id,d:msg}),{qos:1});});
-    cl.subscribe(base+'/p/'+id,{qos:1});
-    let chain=Promise.resolve();
-    cl.on('message',(t,payload)=>{chain=chain.then(async()=>{let d;try{d=await unseal(key,payload);}catch(e){return;}c.emit('data',d);}).catch(()=>{});});
+    // se conecta a todos los servidores a la vez y envía por todos: así siempre coincide con alguno del maestro
+    const cls=[];let seq=0,dead=false,chain=Promise.resolve();
+    const c=mkConn(async msg=>{seq++;const pl=await seal(key,{f:id,n:seq,d:msg});cls.forEach(x=>{try{x.publish(base+'/h',pl,{qos:1});}catch(e){}});});
+    function attach(x){
+      if(dead){try{x.end(true);}catch(e){}return;}
+      cls.push(x);x.subscribe(base+'/p/'+id,{qos:1});
+      x.on('message',(t,payload)=>{chain=chain.then(async()=>{let d;try{d=await unseal(key,payload);}catch(e){return;}c.emit('data',d);}).catch(()=>{});});
+    }
+    const P=BROKERS.map((url,i)=>connectBroker(url,id+'_'+i,will).then(attach,()=>{}));
+    await Promise.race([Promise.all(P),new Promise(r=>{const iv=setInterval(()=>{if(cls.length){clearInterval(iv);setTimeout(r,1200);}},50);})]);
+    if(!cls.length){dead=true;throw new Error('sin servidor');}
     const ping=setInterval(()=>c.send({t:'__ping'}),8000);
-    c.destroy=()=>{clearInterval(ping);c.send({t:'__bye'});setTimeout(()=>{c.open=false;try{cl.end(true);}catch(e){}},400);};
+    c.destroy=()=>{clearInterval(ping);c.send({t:'__bye'});setTimeout(()=>{c.open=false;dead=true;cls.forEach(x=>{try{x.end(true);}catch(e){}});},400);};
     return c;
   }
   return {host,join,brokers:BROKERS};
