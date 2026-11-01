@@ -947,8 +947,9 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
   <div class="card" style="max-width:420px">
     <label for="joinCode">Código de la partida</label>
     <input type="text" id="joinCode" inputmode="numeric" maxlength="5" autocomplete="off">
-    <label for="joinName">Tu nombre</label>
-    <input type="text" id="joinName" maxlength="14" autocomplete="off">
+    <label for="joinName">Tu código de clase</label>
+    <input type="text" id="joinName" maxlength="3" autocomplete="off" placeholder="Por ejemplo: V07" style="text-transform:uppercase">
+    <p class="hint" style="margin:4px 0 0">Escribe tu código, no tu nombre.</p>
     <div class="err" id="joinErr"></div>
     <div class="row"><button class="btn gold" id="joinBtn" onclick="joinGame()">Entrar</button></div>
   </div>
@@ -961,8 +962,9 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
   <div class="card" style="max-width:460px;text-align:center">
     <h2 id="hwTitle"></h2>
     <p class="hint" id="hwDesc"></p>
-    <label for="hwStudent">Tu nombre y apellido</label>
-    <input type="text" id="hwStudent" maxlength="24" autocomplete="off">
+    <label for="hwStudent">Tu código de clase</label>
+    <input type="text" id="hwStudent" maxlength="3" autocomplete="off" placeholder="Por ejemplo: V07" style="text-transform:uppercase">
+    <p class="hint" style="margin:4px 0 0">Escribe tu código, no tu nombre.</p>
     <div class="err" id="hwErr"></div>
     <div class="row"><button class="btn gold" onclick="startHomework()">Empezar</button></div>
   </div>
@@ -2929,7 +2931,7 @@ function hostMsg(conn,d){
   if(!H||!d||typeof d!=='object')return;
   if(d.t==='join'){
     const name=String(d.name||'').trim().replace(/\s+/g,' ').slice(0,24);
-    if(!name){conn.send({t:'reject',why:'Escribe tu nombre.'});return;}
+    if(!/^[A-Z]\d{2}$/i.test(name)){conn.send({t:'reject',why:'Escribe tu código de clase: una letra y dos números, por ejemplo V07. No escribas tu nombre.'});return;}
     const key=norm(name);
     let p=H.players[key];
     if(p&&p.conn&&p.conn.open&&p.conn!==conn){conn.send({t:'reject',why:'Ese nombre ya está en uso. Prueba con otro.'});return;}
@@ -3567,8 +3569,8 @@ function readHomework(){
   try{const d=JSON.parse(b64d(m[1]));if(!d||!d.id||!d.q)return null;d.qs=parseBank(d.q);if(d.qs.length<4)return null;if(!MODES[d.m]||!MODES[d.m].hw)d.m='tesoro';d.n=Math.max(5,Math.min(50,d.n|0||15));return d;}catch(e){return null;}
 }
 function startHomework(){
-  const name=$('hwStudent').value.trim().replace(/\s+/g,' ');
-  if(name.length<2){$('hwErr').textContent='Escribe tu nombre.';return;}
+  const name=$('hwStudent').value.trim().replace(/\s+/g,'').toUpperCase();
+  if(!/^[A-Z]\d{2}$/.test(name)){$('hwErr').textContent='Escribe tu código de clase: una letra y dos números, por ejemplo V07. No escribas tu nombre.';return;}
   // servidor local dentro de esta misma página
   const hostSide={open:true,send:m=>setTimeout(()=>playerMsg(m),0)};
   H={local:true,photos:HW.ph!==0,tarea:true,n:HW.n,id:HW.id,qs:HW.qs,mode:HW.m,season:HW.s||'halloween',players:{},state:'lobby',feed:[],joinN:0,dur:0,endsAt:0};
@@ -3602,9 +3604,9 @@ $('hwStudent').addEventListener('keydown',e=>{if(e.key==='Enter')startHomework()
 function send(m){if(P&&P.conn&&P.conn.open)P.conn.send(m);}
 function joinMsg(){return {t:'join',name:P.name,av:PROF.av,prof:{owned:PROF.owned,wallet:PROF.wallet},pend:PROF.pend};}
 async function joinGame(){
-  const code=$('joinCode').value.trim(), name=$('joinName').value.trim().replace(/\s+/g,' ');
+  const code=$('joinCode').value.trim(), name=$('joinName').value.trim().replace(/\s+/g,'').toUpperCase();
   if(!/^\d{5}$/.test(code)){$('joinErr').textContent='El código tiene 5 números.';return;}
-  if(!name){$('joinErr').textContent='Escribe tu nombre.';return;}
+  if(!/^[A-Z]\d{2}$/.test(name)){$('joinErr').textContent='Escribe tu código de clase: una letra y dos números, por ejemplo V07. No escribas tu nombre.';return;}
   if(typeof mqtt==='undefined'){$('joinErr').textContent='No se pudo cargar la conexión. Revisa que haya internet y recarga la página.';return;}
   $('joinErr').textContent='Conectando…';$('joinBtn').disabled=true;
   if(P&&P.conn&&P.conn.destroy)P.conn.destroy();
