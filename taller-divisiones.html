@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Taller de divisiones</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Cuaderno de cuadros: hoja cuadriculada, tinta azul de bolígrafo, corrección en rojo y subrayador amarillo. Pestañas arriba, una actividad cada vez. */
+:root{
+  --paper:#f5f8fd; --grid:rgba(60,100,170,.09); --card:#ffffff; --fg:#1a2433; --muted:#5b6679;
+  --line:#d6deeb; --ink:#2446a6; --ink-soft:#e6ecfb; --red:#c4302b; --red-soft:#fde8e6;
+  --green:#23803b; --green-soft:#e3f4e6; --hl:#fff1a8;
+  --f-display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-num:"JetBrains Mono",ui-monospace,"Cascadia Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#111723; --grid:rgba(140,170,230,.07); --card:#19202e; --fg:#e7ecf4; --muted:#9ba7bb;
+  --line:#2b3547; --ink:#93b1ff; --ink-soft:#22305a; --red:#ff8178; --red-soft:#3d2224;
+  --green:#71d38b; --green-soft:#1d3526; --hl:#4b4419; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#111723; --grid:rgba(140,170,230,.07); --card:#19202e; --fg:#e7ecf4; --muted:#9ba7bb;
+  --line:#2b3547; --ink:#93b1ff; --ink-soft:#22305a; --red:#ff8178; --red-soft:#3d2224;
+  --green:#71d38b; --green-soft:#1d3526; --hl:#4b4419; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px;color:var(--fg);font-family:var(--f-body);font-size:17px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+h1{font-family:var(--f-display);font-weight:600;font-size:clamp(28px,6vw,40px);line-height:1.1;margin:0;color:var(--ink);text-wrap:balance}
+.sub{margin:4px 0 0;color:var(--muted)}
+.stars{font-family:var(--f-display);font-size:18px;background:var(--card);border:2px solid var(--line);border-radius:999px;padding:6px 14px;white-space:nowrap}
+.stars b{color:#d99a00}
+nav{display:flex;flex-wrap:wrap;gap:8px}
+nav button{font:700 15px var(--f-body);border:2px solid var(--line);background:var(--card);color:var(--fg);border-radius:12px;padding:8px 12px;cursor:pointer;display:flex;gap:6px;align-items:center}
+nav button[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--card)}
+nav button .st{color:#d99a00}
+nav button:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+section{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:22px clamp(16px,4vw,28px);display:flex;flex-direction:column;gap:16px}
+h2{font-family:var(--f-display);font-weight:600;font-size:26px;margin:0;text-wrap:balance}
+.intro{margin:0;color:var(--muted);max-width:62ch}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{font:800 16px var(--f-body);border:none;border-radius:12px;padding:10px 16px;cursor:pointer;background:var(--ink);color:var(--card)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+input.num{font:700 20px var(--f-num);width:7.5ch;padding:6px 8px;border:2px solid var(--line);border-radius:10px;background:var(--paper);color:var(--fg);text-align:center}
+input.num.ok{border-color:var(--green);background:var(--green-soft)}
+input.num.bad{border-color:var(--red);background:var(--red-soft)}
+.fb{min-height:1.5em;margin:0;font-weight:700}
+.fb.ok{color:var(--green)} .fb.bad{color:var(--red)} .fb.info{color:var(--ink)}
+.card{border:2px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.card.solved{border-color:var(--green)}
+.card p{margin:0}
+.n{font-family:var(--f-num);font-weight:700}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
+.tag{font:800 12px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.toggle{display:flex;gap:6px;flex-wrap:wrap}
+.toggle label{border:2px solid var(--line);border-radius:10px;padding:6px 10px;cursor:pointer;font-weight:700}
+.toggle input{accent-color:var(--ink)}
+/* Pizarra de la división */
+.board-wrap{overflow-x:auto;padding:6px 0}
+.board{display:grid;--cell:1.55em;font:700 26px var(--f-num);width:max-content}
+.c{width:var(--cell);height:1.45em;display:flex;align-items:center;justify-content:center}
+.c.dv{border-top:3px solid var(--fg)}
+.c.first{border-left:3px solid var(--fg);border-top-left-radius:10px}
+.c.ul{border-bottom:3px solid var(--fg)}
+.c.cur{background:var(--hl);border-radius:4px}
+.c.q{color:var(--ink)}
+.c.bd{color:var(--ink)}
+.c.minus{color:var(--muted)}
+.ask{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:19px;font-weight:700}
+.counter{color:var(--muted);font-weight:700}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{font:600 16px var(--f-body);text-align:left;border:2px solid var(--line);background:var(--paper);color:var(--fg);border-radius:10px;padding:9px 12px;cursor:pointer}
+.opt.ok{border-color:var(--green);background:var(--green-soft)}
+.opt.bad{border-color:var(--red);background:var(--red-soft);text-decoration:line-through}
+.work{font-family:var(--f-body);background:var(--paper);border-left:4px solid var(--red);border-radius:6px;padding:8px 12px}
+.slots{display:flex;flex-wrap:wrap;gap:8px}
+.slot{width:46px;height:54px;border-bottom:4px solid var(--ink);display:flex;align-items:center;justify-content:center;font:600 32px var(--f-display);color:var(--ink)}
+.slot.on{background:var(--ink-soft);border-radius:8px 8px 0 0}
+.tiles{display:flex;flex-wrap:wrap;gap:10px}
+.tile{width:54px;height:54px;font:700 26px var(--f-num);border-radius:12px;border:2px solid var(--ink);background:var(--ink-soft);color:var(--ink);cursor:pointer}
+.tile:disabled{opacity:.25;cursor:default}
+.build{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font:700 26px var(--f-num)}
+.bs{width:48px;height:56px;border:2px dashed var(--muted);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--paper);color:var(--fg);font:inherit}
+.bs.full{border-style:solid;border-color:var(--ink)}
+details{color:var(--muted);font-size:15px}
+details summary{cursor:pointer;font-weight:800}
+details p{max-width:65ch}
+code{font-family:var(--f-num);font-size:.9em;background:var(--ink-soft);padding:1px 5px;border-radius:5px;color:var(--fg)}
+@media (prefers-reduced-motion:no-preference){.pop{animation:pop .35s ease-out}@keyframes pop{0%{transform:scale(.7)}70%{transform:scale(1.1)}100%{transform:scale(1)}}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Taller de divisiones</h1>
+      <p class="sub">Seis retos de división larga. Trabaja a tu ritmo: el ordenador te dice al momento si vas bien.</p>
+    </div>
+    <div class="stars" id="stars" aria-live="polite">★ 0 / 6</div>
+  </header>
+  <nav id="tabs" role="tablist" aria-label="Actividades"></nav>
+
+  <!-- 1 -->
+  <section id="paso-a-paso" role="tabpanel">
+    <h2>1. Paso a paso</h2>
+    <p class="intro">Recuerda: <b>Dulce Mamá Reparte Bizcochos</b>. Dividir, multiplicar, restar y bajar. Escribe cada número y pulsa Intro. Termina 3 divisiones para ganar la estrella.</p>
+    <div class="row">
+      <div class="toggle" role="radiogroup" aria-label="Nivel">
+        <label><input type="radio" name="lvl" id="lvl1" value="1"> Divisor de 1 cifra</label>
+        <label><input type="radio" name="lvl" id="lvl2" value="2" checked> Divisor de 2 cifras</label>
+      </div>
+      <button class="btn ghost" id="new1">Nueva división</button>
+      <span class="counter" id="count1">Terminadas: 0 / 3</span>
+    </div>
+    <div class="board-wrap"><div class="board" id="board" aria-label="División en la pizarra"></div></div>
+    <div class="ask" id="ask1">
+      <label for="in1" id="lab1"></label>
+      <input class="num" id="in1" inputmode="numeric" autocomplete="off">
+      <button class="btn" id="chk1">Comprobar</button>
+    </div>
+    <p class="fb" id="fb1" aria-live="polite"></p>
+  </section>
+
+  <!-- 2 -->
+  <section id="problemas" role="tabpanel" hidden>
+    <h2>2. Problemas de la vida real</h2>
+    <p class="intro">Lee con calma, piensa qué hay que repartir y resuelve la división en tu cuaderno. Luego escribe solo el número.</p>
+    <div class="grid2" id="list2"></div>
+  </section>
+
+  <!-- 3 -->
+  <section id="detectives" role="tabpanel" hidden>
+    <h2>3. Detectives del error</h2>
+    <p class="intro">Unos compañeros han hecho estas divisiones. Busca qué ha fallado y escribe el cociente correcto. Cuidado: una de ellas está perfecta.</p>
+    <div class="grid2" id="list3"></div>
+  </section>
+
+  <!-- 4 -->
+  <section id="codigo" role="tabpanel" hidden>
+    <h2>4. Código secreto</h2>
+    <p class="intro">Cada división correcta descubre una letra. Resuélvelas todas para leer la palabra escondida.</p>
+    <div class="slots" id="slots4" aria-live="polite"></div>
+    <div class="grid2" id="list4"></div>
+    <div class="row"><button class="btn ghost" id="new4">Otra palabra</button></div>
+    <p class="fb" id="fb4" aria-live="polite"></p>
+  </section>
+
+  <!-- 5 -->
+  <section id="reto" role="tabpanel" hidden>
+    <h2>5. Reto de cifras</h2>
+    <p class="intro">Usa las seis cifras una sola vez para formar una división de 4 cifras entre 2 cifras. El objetivo: conseguir el cociente más grande que puedas. Toca una cifra para colocarla y toca una casilla para quitarla.</p>
+    <div class="tiles" id="tiles5"></div>
+    <div class="build" id="build5"></div>
+    <div class="ask" id="ask5" hidden>
+      <label for="q5">Cociente</label><input class="num" id="q5" inputmode="numeric" autocomplete="off">
+      <label for="r5">Resto</label><input class="num" id="r5" inputmode="numeric" autocomplete="off">
+      <button class="btn" id="chk5">Comprobar</button>
+    </div>
+    <p class="fb" id="fb5" aria-live="polite"></p>
+    <div class="row"><button class="btn ghost" id="new5">Nuevas cifras</button></div>
+  </section>
+
+  <!-- 6 -->
+  <section id="resto" role="tabpanel" hidden>
+    <h2>6. ¿Qué hago con el resto?</h2>
+    <p class="intro">A veces el resto se ignora, a veces obliga a sumar uno más y a veces ¡es la respuesta! Elige la opción que tiene sentido en cada historia.</p>
+    <div class="grid2" id="list6"></div>
+    <div class="row"><button class="btn ghost" id="new6">Nuevas historias</button></div>
+  </section>
+
+  <details>
+    <summary>Para el maestro: cómo usarlo en Canvas</summary>
+    <p>Comparte esta página con el botón Compartir y pega el enlace en un módulo de Canvas como «URL externa» o dentro de una Página. Cada actividad tiene su propio enlace: añade al final <code>#paso-a-paso</code>, <code>#problemas</code>, <code>#detectives</code>, <code>#codigo</code>, <code>#reto</code> o <code>#resto</code>.</p>
+    <p>Las estrellas se guardan en el navegador de cada ordenador, no se envían notas a Canvas. Si quieres registro, pide al alumnado una captura de pantalla con sus estrellas como entrega.</p>
+  </details>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const rand=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const num=v=>{const s=String(v).trim().replace(/[\s.]/g,'');return /^\d+$/.test(s)?Number(s):null};
+function fb(el,msg,kind){el.textContent=msg;el.className='fb '+(kind||'')}
+
+/* ---------- Estrellas y pestañas ---------- */
+const TABS=[['paso-a-paso','Paso a paso'],['problemas','Problemas'],['detectives','Detectives'],['codigo','Código secreto'],['reto','Reto de cifras'],['resto','¿Y el resto?']];
+let stars={};
+try{stars=JSON.parse(localStorage.getItem('taller-div-estrellas')||'{}')||{}}catch(e){stars={}}
+function award(id){
+  if(stars[id])return;
+  stars[id]=1;
+  try{localStorage.setItem('taller-div-estrellas',JSON.stringify(stars))}catch(e){}
+  drawStars();
+}
+function drawStars(){
+  const n=TABS.filter(t=>stars[t[0]]).length;
+  $('#stars').innerHTML='<b>★</b> '+n+' / 6';
+  TABS.forEach(([id])=>{const s=document.querySelector('#tab-'+id+' .st');if(s)s.textContent=stars[id]?'★':''});
+}
+const nav=$('#tabs');
+TABS.forEach(([id,name])=>{
+  const b=document.createElement('button');
+  b.id='tab-'+id;b.setAttribute('role','tab');b.innerHTML=name+'<span class="st"></span>';
+  b.onclick=()=>{location.hash=id;show(id)};
+  nav.appendChild(b);
+});
+function show(id){
+  if(!TABS.some(t=>t[0]===id))id='paso-a-paso';
+  TABS.forEach(([t])=>{document.getElementById(t).hidden=t!==id;document.getElementById('tab-'+t).setAttribute('aria-selected',t===id)});
+}
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+
+/* ---------- 1. Paso a paso ---------- */
+const A1={solved:0};
+function gen1(){
+  const two=$('#lvl2').checked;let d,N;
+  do{d=two?rand(11,48):rand(2,9);const q=two?rand(12,199):rand(21,999);const r=Math.random()<.4?0:rand(1,d-1);N=d*q+r}while(N<100||N>9999);
+  const dg=String(N).split('').map(Number);
+  let i=0,p=0;
+  while(i<dg.length&&p*10+dg[i]<d){p=p*10+dg[i];i++}
+  p=p*10+dg[i];let end=i;i++;
+  const steps=[];
+  for(;;){const q=Math.floor(p/d),m=q*d,r=p-m,st={p,q,m,r,end,next:null};steps.push(st);
+    if(i<dg.length){st.next=dg[i];p=r*10+dg[i];end=i;i++}else break}
+  Object.assign(A1,{d,N,dg,steps,k:0,phase:'q',done:false});
+  render1();prompt1();fb($('#fb1'),'');
+}
+function render1(){
+  const {d,dg,steps,k,phase,done}=A1,L=String(d).length,off=L+1,cols=off+dg.length;
+  const rows=[];const row=()=>Array.from({length:cols},()=>({ch:'',cls:[]}));
+  const put=(r,str,endCol,cls)=>{str=String(str);for(let j=0;j<str.length;j++){const c=r[endCol-str.length+1+j];if(c){c.ch=str[j];if(cls)c.cls.push(cls)}}};
+  const qRow=row();rows.push(qRow);
+  const dRow=row();rows.push(dRow);
+  put(dRow,d,L-1);
+  dg.forEach((v,j)=>{const c=dRow[off+j];c.ch=v;c.cls.push('dv');if(j===0)c.cls.push('first')});
+  const hl=(r,from,to)=>{for(let c=from;c<=to;c++)if(r[c])r[c].cls.push('cur')};
+  if(!done&&k===0){const s=steps[0];hl(dRow,off+s.end-String(s.p).length+1,off+s.end)}
+  steps.forEach((s,j)=>{
+    const shownQ=done||j<k||(j===k&&phase!=='q');
+    if(shownQ)put(qRow,s.q,off+s.end,'q');
+    const shownM=done||j<k||(j===k&&phase==='r');
+    if(!shownM)return;
+    const mr=row();const e=off+s.end;
+    put(mr,s.m,e);
+    const w=Math.max(String(s.p).length,String(s.m).length);
+    for(let c=e-w+1;c<=e;c++)mr[c].cls.push('ul');
+    const mc=mr[e-String(s.m).length];if(mc){mc.ch='−';mc.cls.push('minus')}
+    rows.push(mr);
+    if(!(done||j<k))return;
+    const rr=row();put(rr,s.r,e);
+    if(s.next!==null){put(rr,s.next,e+1,'bd');if(!done&&j+1===k)hl(rr,e-String(s.r).length+1,e+1)}
+    rows.push(rr);
+  });
+  const b=$('#board');b.style.gridTemplateColumns='repeat('+cols+',var(--cell))';
+  b.innerHTML=rows.map(r=>r.map(c=>'<div class="c '+c.cls.join(' ')+'">'+c.ch+'</div>').join('')).join('');
+}
+function prompt1(){
+  const {d,steps,k,phase,done}=A1;
+  $('#ask1').hidden=done;if(done)return;
+  const s=steps[k],lab=$('#lab1');
+  if(phase==='q')lab.textContent='¿Cuántas veces cabe '+d+' en '+s.p+'?';
+  if(phase==='m')lab.textContent='Multiplica: '+d+' × '+s.q+' =';
+  if(phase==='r')lab.textContent='Resta: '+s.p+' − '+s.m+' =';
+  const inp=$('#in1');inp.value='';inp.className='num';inp.focus({preventScroll:true});
+}
+function check1(){
+  if(A1.done)return;
+  const v=num($('#in1').value),f=$('#fb1'),{d}=A1,s=A1.steps[A1.k];
+  if(v===null){fb(f,'Escribe un número.','bad');return}
+  if(A1.phase==='q'){
+    if(v===s.q){A1.phase='m';fb(f,s.q===0?'¡Exacto! No cabe ninguna vez, así que ponemos un 0 en el cociente.':'¡Eso es! Ahora multiplica.','ok')}
+    else if(v*d>s.p){fb(f,'Te pasas: '+d+' × '+v+' = '+v*d+', y eso es más que '+s.p+'.','bad');return}
+    else{fb(f,'Prueba con un número más grande: '+s.p+' − '+v*d+' = '+(s.p-v*d)+', y ahí todavía cabe el '+d+'.','bad');return}
+  }else if(A1.phase==='m'){
+    if(v===s.m){A1.phase='r';fb(f,'¡Bien multiplicado! Ahora resta.','ok')}
+    else{fb(f,'Repasa la multiplicación '+d+' × '+s.q+'. Si te ayuda, súmalo '+s.q+' veces.','bad');return}
+  }else{
+    if(v!==s.r){fb(f,'Revisa la resta '+s.p+' − '+s.m+'. Empieza por las unidades.','bad');return}
+    if(s.next!==null){A1.k++;A1.phase='q';fb(f,'¡Muy bien! Bajamos el '+s.next+' y ahora tenemos '+(s.r*10+s.next)+'.','ok')}
+    else{
+      A1.done=true;A1.solved++;
+      const Q=A1.steps.map(x=>x.q).join('').replace(/^0+(?=\d)/,'');
+      fb(f,'¡Terminada! '+A1.N+' ÷ '+d+' = '+Number(Q)+(s.r?' y resto '+s.r:', resto 0')+'. Comprobación: '+d+' × '+Number(Q)+(s.r?' + '+s.r:'')+' = '+A1.N+'.','ok');
+      $('#count1').textContent='Terminadas: '+Math.min(A1.solved,3)+' / 3'+(A1.solved>3?' (+'+(A1.solved-3)+')':'');
+      if(A1.solved>=3)award('paso-a-paso');
+    }
+  }
+  render1();prompt1();
+}
+$('#chk1').onclick=check1;
+$('#in1').addEventListener('keydown',e=>{if(e.key==='Enter')check1()});
+$('#new1').onclick=gen1;
+document.querySelectorAll('input[name="lvl"]').forEach(r=>r.onchange=gen1);
+
+/* ---------- 2. Problemas ---------- */
+const P2=[
+ {t:'Para la excursión al Dinosaur National Monument van 1248 alumnos. Cada autobús lleva 48 personas. ¿Cuántos autobuses hacen falta?',a:26,u:'autobuses',h:'Divide 1248 entre 48. Estima: 48 es casi 50, y 1250 ÷ 50 = 25.'},
+ {t:'La biblioteca ha recibido 864 libros nuevos. En cada estantería caben 36. ¿Cuántas estanterías se llenan?',a:24,u:'estanterías',h:'Haz 864 ÷ 36. ¿Cuántas veces cabe 36 en 86?'},
+ {t:'Una granja de Utah recoge 1575 huevos y los guarda en cartones de 12. ¿Cuántos cartones se llenan del todo?',a:131,u:'cartones',h:'Haz 1575 ÷ 12 y fíjate solo en el cociente.'},
+ {t:'Con los huevos de antes: ¿cuántos huevos quedan sueltos, sin cartón?',a:3,u:'huevos',h:'Lo que sobra es el resto de 1575 ÷ 12.'},
+ {t:'En la feria de ciencias se recaudan 2340 $ y se reparten a partes iguales entre 15 clases. ¿Cuánto dinero recibe cada clase?',a:156,u:'$',h:'Haz 2340 ÷ 15. Comprueba: 15 × tu respuesta tiene que dar 2340.'},
+ {t:'Un camión recorre 3450 millas en 23 días, siempre la misma distancia cada día. ¿Cuántas millas hace al día?',a:150,u:'millas',h:'Haz 3450 ÷ 23. ¿Cuántas veces cabe 23 en 34?'}
+];
+const S2=new Set();
+$('#list2').innerHTML=P2.map((p,i)=>`<div class="card" id="c2-${i}"><span class="tag">Problema ${i+1}</span><p>${p.t}</p>
+<div class="row"><input class="num" id="i2-${i}" inputmode="numeric" aria-label="Respuesta del problema ${i+1}"><span>${p.u}</span>
+<button class="btn" data-i="${i}">Comprobar</button><button class="btn ghost" data-h="${i}">Pista</button></div><p class="fb" id="f2-${i}" aria-live="polite"></p></div>`).join('');
+function check2(i){
+  const v=num($('#i2-'+i).value),f=$('#f2-'+i),inp=$('#i2-'+i);
+  if(v===null){fb(f,'Escribe un número.','bad');return}
+  if(v===P2[i].a){inp.className='num ok';fb(f,'¡Correcto! '+v+' '+P2[i].u+'.','ok');$('#c2-'+i).classList.add('solved');S2.add(i);if(S2.size===P2.length)award('problemas')}
+  else{inp.className='num bad';fb(f,'Todavía no. Comprueba multiplicando o pide una pista.','bad')}
+}
+$('#list2').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.i!==undefined)check2(+b.dataset.i);
+  if(b.dataset.h!==undefined){const i=+b.dataset.h;fb($('#f2-'+i),'Pista: '+P2[i].h,'info')}});
+$('#list2').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id.startsWith('i2-'))check2(+e.target.id.slice(3))});
+
+/* ---------- 3. Detectives ---------- */
+const PERF='¡Está perfecta! No hay ningún error.';
+const D3=[
+ {s:'945 ÷ 9 = 15',w:'Hizo 9 ÷ 9 = 1. Bajó el 4 y, como el 9 no cabe en 4, bajó también el 5: 45 ÷ 9 = 5. Resultado: 15.',ok:'Se le olvidó poner un 0 en el cociente cuando el 9 no cabía en 4.',bad:['Se equivocó al restar.',PERF],a:105},
+ {s:'672 ÷ 16',w:'Empezó con 67 ÷ 16 = 3. Multiplicó 16 × 3 = 48 y restó 67 − 48 = 19. Siguió adelante con ese 19.',ok:'El resto (19) es mayor que el divisor: en 67 el 16 cabe 4 veces.',bad:['Multiplicó mal: 16 × 3 no es 48.',PERF],a:42},
+ {s:'1458 ÷ 27 = 54',w:'145 ÷ 27 = 5; 27 × 5 = 135; 145 − 135 = 10. Bajó el 8: 108 ÷ 27 = 4; 27 × 4 = 108; resto 0.',ok:PERF,bad:['Se equivocó al restar 145 − 135.','Le falta un 0 en el cociente.'],a:54},
+ {s:'2184 ÷ 21 = 14',w:'21 ÷ 21 = 1, resto 0. Bajó el 8; como el 21 no cabe en 8, bajó también el 4: 84 ÷ 21 = 4. Resultado: 14.',ok:'Le falta el 0 del cociente al bajar el 8.',bad:['Multiplicó mal 21 × 4.',PERF],a:104},
+ {s:'836 ÷ 22 = 37 resto 22',w:'83 ÷ 22 = 3; 22 × 3 = 66; 83 − 66 = 17. Bajó el 6: 176 ÷ 22 = 7; 22 × 7 = 154; 176 − 154 = 22.',ok:'El resto no puede ser igual al divisor: el 22 cabía una vez más.',bad:['Se equivocó al restar 83 − 66.',PERF],a:38}
+];
+const S3=new Set();
+$('#list3').innerHTML=D3.map((c,i)=>{const opts=shuffle([c.ok,...c.bad]);
+ return `<div class="card" id="c3-${i}"><span class="tag">Caso ${'ABCDE'[i]}</span><p class="n">${c.s}</p><p class="work">${c.w}</p>
+ <p><b>¿Qué ha pasado?</b></p><div class="opts">${opts.map(o=>`<button class="opt" data-c="${i}" data-ok="${o===c.ok?1:0}">${o}</button>`).join('')}</div>
+ <div class="row" id="r3-${i}" hidden><label for="i3-${i}">${c.ok===PERF?'Confirma el cociente:':'Cociente correcto:'}</label><input class="num" id="i3-${i}" inputmode="numeric"><button class="btn" data-k="${i}">Comprobar</button></div>
+ <p class="fb" id="f3-${i}" aria-live="polite"></p></div>`}).join('');
+function check3(i){
+  const v=num($('#i3-'+i).value),f=$('#f3-'+i),inp=$('#i3-'+i);
+  if(v===null){fb(f,'Escribe un número.','bad');return}
+  if(v===D3[i].a){inp.className='num ok';fb(f,'¡Caso resuelto! El cociente es '+v+'.','ok');$('#c3-'+i).classList.add('solved');S3.add(i);if(S3.size===D3.length)award('detectives')}
+  else{inp.className='num bad';fb(f,'Haz tú la división en el cuaderno y comprueba multiplicando.','bad')}
+}
+$('#list3').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.c!==undefined){const i=+b.dataset.c;
+    if(b.dataset.ok==='1'){b.classList.add('ok');b.parentElement.querySelectorAll('.opt').forEach(o=>o.disabled=true);$('#r3-'+i).hidden=false;fb($('#f3-'+i),'¡Bien visto, detective!','ok');$('#i3-'+i).focus()}
+    else{b.classList.add('bad');b.disabled=true;fb($('#f3-'+i),'Mmm, no es eso. Repasa cada paso con calma.','bad')}}
+  if(b.dataset.k!==undefined)check3(+b.dataset.k)});
+$('#list3').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id.startsWith('i3-'))check3(+e.target.id.slice(3))});
+
+/* ---------- 4. Código secreto ---------- */
+const WORDS=['GENIAL','CEREBRO','ESTRELLA','CAMPEONA','BRILLANTE','VALIENTE'];
+let W4=null;
+function gen4(){
+  const word=W4?shuffle(WORDS.filter(w=>w!==W4.word))[0]:'GENIAL';
+  const items=word.split('').map(ch=>{const d=rand(12,59),q=rand(21,98);return{ch,d,q,N:d*q,ok:false}});
+  W4={word,items};
+  $('#slots4').innerHTML=items.map((_,i)=>`<div class="slot" id="s4-${i}"></div>`).join('');
+  $('#list4').innerHTML=items.map((it,i)=>`<div class="card" id="c4-${i}"><span class="tag">Letra ${i+1}</span><div class="row"><span class="n">${it.N} ÷ ${it.d} =</span><input class="num" id="i4-${i}" inputmode="numeric" aria-label="Resultado de ${it.N} entre ${it.d}"><button class="btn" data-i="${i}">Comprobar</button></div><p class="fb" id="f4-${i}" aria-live="polite"></p></div>`).join('');
+  fb($('#fb4'),'');
+}
+function check4(i){
+  const it=W4.items[i],v=num($('#i4-'+i).value),f=$('#f4-'+i),inp=$('#i4-'+i);
+  if(v===null){fb(f,'Escribe un número.','bad');return}
+  if(v===it.q){it.ok=true;inp.className='num ok';fb(f,'¡Letra desbloqueada!','ok');$('#c4-'+i).classList.add('solved');const s=$('#s4-'+i);s.textContent=it.ch;s.classList.add('on','pop');
+    if(W4.items.every(x=>x.ok)){fb($('#fb4'),'¡Lo has descubierto! La palabra es '+W4.word+'.','ok');award('codigo')}}
+  else{inp.className='num bad';fb(f,'Esa no es. Comprueba: '+it.d+' × '+v+' = '+it.d*v+'.','bad')}
+}
+$('#list4').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.dataset.i!==undefined)check4(+b.dataset.i)});
+$('#list4').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id.startsWith('i4-'))check4(+e.target.id.slice(3))});
+$('#new4').onclick=gen4;
+
+/* ---------- 5. Reto de cifras ---------- */
+let R5=null;
+function best5(dg){
+  let best=null;const idx=[0,1,2,3,4,5];
+  const perm=(arr,pre)=>{if(!arr.length){const N=Number(pre.slice(0,4).map(i=>dg[i]).join('')),d=Number(pre.slice(4).map(i=>dg[i]).join(''));const q=Math.floor(N/d);if(!best||q>best.q)best={N,d,q,r:N-q*d};return}
+    arr.forEach((v,j)=>perm(arr.filter((_,k)=>k!==j),pre.concat(v)))};
+  perm(idx,[]);return best;
+}
+function gen5(){
+  const dg=shuffle([1,2,3,4,5,6,7,8,9]).slice(0,6);
+  R5={dg,slots:Array(6).fill(null),solved:false};draw5();fb($('#fb5'),'');
+}
+function draw5(){
+  const used=new Set(R5.slots.filter(x=>x!==null));
+  $('#tiles5').innerHTML=R5.dg.map((v,i)=>`<button class="tile" data-t="${i}" ${used.has(i)?'disabled':''} aria-label="Cifra ${v}">${v}</button>`).join('');
+  const sl=i=>`<button class="bs ${R5.slots[i]!==null?'full':''}" data-s="${i}" aria-label="Casilla ${i+1}">${R5.slots[i]!==null?R5.dg[R5.slots[i]]:''}</button>`;
+  $('#build5').innerHTML=sl(0)+sl(1)+sl(2)+sl(3)+'<span>÷</span>'+sl(4)+sl(5);
+  const full=R5.slots.every(x=>x!==null);$('#ask5').hidden=!full;
+  if(full&&!R5.solved){$('#q5').value='';$('#r5').value='';$('#q5').className='num';$('#r5').className='num'}
+}
+$('#tiles5').addEventListener('click',e=>{const b=e.target.closest('.tile');if(!b||R5.solved)return;const k=R5.slots.indexOf(null);if(k<0)return;R5.slots[k]=+b.dataset.t;draw5();if(R5.slots.every(x=>x!==null)){fb($('#fb5'),'Ahora resuelve tu división en el cuaderno.','info');$('#q5').focus()}});
+$('#build5').addEventListener('click',e=>{const b=e.target.closest('.bs');if(!b||R5.solved)return;R5.slots[+b.dataset.s]=null;draw5();fb($('#fb5'),'')});
+function check5(){
+  if(R5.solved)return;
+  const s=R5.slots.map(i=>R5.dg[i]),N=Number(s.slice(0,4).join('')),d=Number(s.slice(4).join(''));
+  const q=Math.floor(N/d),r=N-q*d,vq=num($('#q5').value),vr=num($('#r5').value),f=$('#fb5');
+  if(vq===null||vr===null){fb(f,'Escribe el cociente y el resto (si no sobra nada, pon 0).','bad');return}
+  $('#q5').className='num '+(vq===q?'ok':'bad');$('#r5').className='num '+(vr===r?'ok':'bad');
+  if(vq!==q||vr!==r){fb(f,vq!==q?'El cociente no es correcto. Repasa los pasos.':'El cociente está bien, pero revisa el resto.','bad');return}
+  R5.solved=true;award('reto');
+  const b=best5(R5.dg);
+  if(q>=b.q)fb(f,'¡Bien resuelto y además has encontrado el cociente más grande posible: '+q+'! ¿Sabrías explicar por qué funciona?','ok');
+  else fb(f,'¡Bien resuelto! '+N+' ÷ '+d+' = '+q+' resto '+r+'. Pero se puede conseguir un cociente aún mayor. Pista: piensa en qué cifras van en el divisor. Pulsa «Nuevas cifras» o quita casillas para intentarlo otra vez.','ok');
+  R5.solved=q>=b.q;
+}
+$('#chk5').onclick=check5;
+['#q5','#r5'].forEach(s=>$(s).addEventListener('keydown',e=>{if(e.key==='Enter')check5()}));
+$('#new5').onclick=gen5;
+
+/* ---------- 6. ¿Qué hago con el resto? ---------- */
+const fmt$=x=>x.toFixed(2).replace('.',',')+' $';
+function mk6(type){
+  for(;;){
+    if(type===3){const s=[4,5,10,20,25][rand(0,4)],N=rand(50,400);if(N%s===0)continue;const q=Math.floor(N/s),r=N%s;if(q+1===r||q===r)continue;
+      return{t:`${s} amigos se reparten ${N} $ a partes iguales. ¿Cuánto recibe cada uno?`,opts:[fmt$(q),fmt$(q+1),fmt$(r),fmt$(N/s)],ok:3,why:'El dinero se puede seguir repartiendo en centavos, así que seguimos dividiendo con decimales.'}}
+    const s=rand(6,15),N=rand(110,400),q=Math.floor(N/s),r=N%s;if(r===0||q+1===r||q===r)continue;
+    if(type===0)return{t:`${N} alumnos van de excursión en furgonetas de ${s} plazas. ¿Cuántas furgonetas necesitan como mínimo?`,opts:[q+' furgonetas',(q+1)+' furgonetas',r+' furgonetas'],ok:1,why:`Con ${q} furgonetas, ${r} alumnos se quedarían en tierra. Hay que pedir una más.`};
+    if(type===1)return{t:`Tienes ${N} galletas y las metes en cajas de ${s}. ¿Cuántas cajas llenas consigues?`,opts:[q+' cajas',(q+1)+' cajas',r+' cajas'],ok:0,why:`Las ${r} galletas que sobran no llenan otra caja, así que el resto no cuenta.`};
+    return{t:`Tienes ${N} canicas y haces bolsas de ${s}. ¿Cuántas canicas te sobran?`,opts:[q+' canicas',(q+1)+' canicas',r+' canicas'],ok:2,why:'Lo que sobra es justo el resto de la división.'};
+  }
+}
+let Q6=[];const S6=new Set();
+function gen6(){
+  Q6=shuffle([0,1,2,3]).map(mk6);S6.clear();
+  $('#list6').innerHTML=Q6.map((q,i)=>{const order=shuffle(q.opts.map((_,k)=>k));
+    return `<div class="card" id="c6-${i}"><span class="tag">Historia ${i+1}</span><p>${q.t}</p><div class="opts">${order.map(k=>`<button class="opt" data-q="${i}" data-k="${k}">${q.opts[k]}</button>`).join('')}</div><p class="fb" id="f6-${i}" aria-live="polite"></p></div>`}).join('');
+}
+$('#list6').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b)return;const i=+b.dataset.q,k=+b.dataset.k,q=Q6[i];
+  if(k===q.ok){b.classList.add('ok');b.parentElement.querySelectorAll('.opt').forEach(o=>o.disabled=true);fb($('#f6-'+i),'¡Correcto! '+q.why,'ok');$('#c6-'+i).classList.add('solved');S6.add(i);if(S6.size===Q6.length)award('resto')}
+  else{b.classList.add('bad');b.disabled=true;fb($('#f6-'+i),'Piensa en la historia: ¿qué pasa con lo que sobra?','bad')}});
+$('#new6').onclick=gen6;
+
+/* ---------- Inicio ---------- */
+gen1();gen4();gen5();gen6();drawStars();show(location.hash.slice(1));
+</script>
+</body>
+</html>
