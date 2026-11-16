@@ -258,10 +258,20 @@ body.fx-fiesta .fxparty{display:block}
 body.fx-fiesta #scenebg,body.fx-fiesta #mapbg{animation:disco 1.2s linear infinite}
 body.fx-fiesta{--overlay:linear-gradient(120deg,rgba(255,0,150,.25),rgba(0,200,255,.25),rgba(255,220,0,.25))}
 @keyframes disco{to{filter:hue-rotate(360deg) saturate(1.6)}}
-.fxparty span{position:absolute;top:-60px;animation:fall linear infinite}
+.fxparty span{position:absolute;top:-140px;animation:fall linear infinite;filter:drop-shadow(0 4px 4px rgba(0,0,0,.25))}
+.fxparty span.conf{width:14px;height:24px;border-radius:3px;top:-40px}
+.fxlights{position:absolute;inset:0;background:conic-gradient(from 0deg at 50% -10%,rgba(255,79,163,.35),rgba(58,208,255,.35),rgba(255,210,63,.35),rgba(124,240,107,.35),rgba(176,107,255,.35),rgba(255,79,163,.35));mix-blend-mode:screen;animation:luces 1.4s linear infinite}
+@keyframes luces{to{filter:hue-rotate(360deg)}}
+.fxdisco{position:absolute;left:50%;top:-10px;transform:translateX(-50%);font-size:140px;animation:disco2 2s linear infinite;filter:drop-shadow(0 0 30px #fff)}
+@keyframes disco2{to{transform:translateX(-50%) rotate(360deg)}}
+.fxbaile{position:absolute;bottom:2%;font-size:110px;animation:baile .45s ease-in-out infinite alternate}
+@keyframes baile{from{transform:translateY(0) rotate(-12deg)}to{transform:translateY(-40px) rotate(12deg)}}
+.fxbanner.big{top:150px;font-size:clamp(30px,5vw,54px);padding:12px 30px;background:linear-gradient(90deg,#ff4fa3,#ffd23f,#3ad0ff);color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.25);border:5px solid #fff;animation:latido .5s ease-in-out infinite alternate}
+@keyframes latido{to{transform:translateX(-50%) scale(1.08)}}
 @keyframes fall{to{transform:translateY(115vh) rotate(540deg)}}
 .fxbanner{position:absolute;left:50%;top:70px;transform:translateX(-50%);background:#fff;border-radius:16px;padding:8px 18px;font-size:24px;font-weight:800;box-shadow:0 6px 0 rgba(0,0,0,.25);white-space:nowrap;color:var(--ink)}
 .fxghost{position:fixed;inset:0;z-index:18;display:none;background:rgba(235,235,250,.93);overflow:hidden}
+.fxghost .fxbanner{z-index:2;font-size:30px}
 .fxghost.on{display:block}.fxghost span{position:absolute;animation:boo 1.6s ease-in-out infinite alternate}
 @keyframes boo{from{transform:translate(-20px,10px) scale(.9)}to{transform:translate(20px,-20px) scale(1.15)}}
 body.fx-terremoto .screen.on{animation:quake .12s linear infinite}
@@ -673,7 +683,20 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 .pcard i img{width:84px;height:auto;display:block;margin:0 auto}
 /* ---------- carrera vikinga ---------- */
 .vhero{width:100%;aspect-ratio:1600/278;background-size:cover;background-position:center top;border-radius:18px 18px 0 0;border:4px solid #8a5524;border-bottom:0}
-.vrace{position:relative;border-radius:0 0 18px 18px;overflow:hidden;border:4px solid #8a5524;background-size:100% 100%;background-repeat:no-repeat;height:calc(var(--n) * clamp(62px,10.5vh,104px) / .74)}
+.vrace{position:relative;border-radius:0 0 18px 18px;overflow:hidden;border:4px solid #8a5524;background-size:100% 100%;background-repeat:no-repeat;height:min(calc(var(--n) * clamp(92px,15.5vh,160px) / .74),calc(100vh - 250px));min-height:calc(var(--n) * 70px / .74)}
+.card.wide:has(.vgrid){max-width:min(1820px,97vw);width:97vw;padding:14px}
+.vgrid .vhero{display:none}.vgrid .vrace{border-radius:18px}
+.vgrid{display:grid;grid-template-columns:minmax(0,1fr) clamp(230px,23%,330px);gap:14px;align-items:start}
+.vclock{display:flex;align-items:center;gap:10px;margin-top:8px;font:700 18px 'Lilita One',sans-serif;color:#5a3412}.vclock i{flex:1;height:14px;border-radius:99px;background:#f1e2c9;border:2px solid #8a5524;overflow:hidden}.vclock i b{display:block;height:100%;background:linear-gradient(90deg,#3aa0e0,#1e6fb8);transition:width 1s linear}
+.vside{background:#fff8ec;border:4px solid #8a5524;border-radius:18px;padding:10px 12px;position:sticky;top:10px;max-height:calc(100vh - 40px);overflow:auto}
+.vside h3{margin:2px 0 8px;font:700 22px 'Lilita One',sans-serif;color:#5a3412}
+.vside ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.vtr{display:flex;align-items:center;gap:10px;background:#fff;border:3px solid var(--c);border-radius:14px;padding:6px 10px}
+.vtr i{font-style:normal;font-size:44px;line-height:1}.vtr b{display:block;font:700 18px 'Lilita One',sans-serif;color:#1f1640}.vtr small{display:block;font-weight:700;color:#5a4a70;font-size:14px;line-height:1.25}
+.vtr.fiesta{background:linear-gradient(120deg,#ffe0f3,#e0f7ff,#fff4c2);border-color:#ff4fa3}.vtr.fantasma{background:#eeeef8}
+.vtr.nuevo{animation:vnuevo .9s ease-out 2}@keyframes vnuevo{0%{transform:scale(.8)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+.vvacio{color:#8a6a4a;font-size:15px;line-height:1.35}
+@media (max-width:900px){.vgrid{grid-template-columns:1fr}.vside{position:static;max-height:none}}
 .vlanes{position:absolute;left:0;right:0;top:13%;bottom:13%;display:flex;flex-direction:column}
 .vlane{position:relative;flex:1;border-bottom:2px dashed rgba(255,255,255,.35)}
 .vlane:last-child{border-bottom:0}
@@ -1300,6 +1323,7 @@ const MusicGen=(()=>{
     fiesta:{bpm:[82,98],meter:8,scales:['harm','aeolian'],key:[45,52],progs:[[0,5,3,4],[0,3,5,4],[0,1,0,4],[0,5,1,4]],leads:['celesta','organo','celesta'],perc:'tenebrosa',rh:[[2,2,2,2],[3,1,4],[1,1,2,4],[4,2,2],[2,1,1,4],[6,2]]},
     saboteador:{bpm:[84,96],meter:8,scales:['phryg','aeolian','harm'],key:[43,50],progs:[[0,1,0,6],[0,5,1,0],[0,6,5,1],[0,3,1,0]],leads:['pellizco','celesta','pellizco'],perc:'sigilo',rh:[[2,2,2,2],[1,1,2,2,2],[3,3,2],[4,4],[2,1,1,2,2]]},
     ciclope:{bpm:[120,134],meter:8,scales:['phryg','harm'],key:[41,47],progs:[[0,1,0,6],[0,6,5,1],[0,5,6,1],[0,1,3,1]],leads:['pellizco','acordeon','violin'],perc:'marcha',rh:[[1,1,2,1,1,2],[2,2,2,2],[1,1,1,1,4],[2,1,1,2,2],[3,1,2,2]]},
+    party:{bpm:[128,142],meter:8,scales:['major','mixo'],key:[53,60],progs:[[0,4,5,3],[0,5,3,4],[0,3,4,4],[0,4,0,5]],leads:['acordeon','flauta','violin'],perc:'marcha',rh:[[1,1,1,1,2,2],[2,1,1,2,2],[1,1,2,1,1,2],[2,2,1,1,2]]},
     bandera:{bpm:[124,140],meter:8,scales:['major','mixo'],key:[50,57],progs:[[0,3,4,0],[0,4,5,3],[0,5,3,4],[0,1,4,0],[0,3,0,4]],leads:['flauta','acordeon','violin'],perc:'marcha',rh:[[2,2,2,2],[1,1,2,1,1,2],[3,1,2,2],[2,1,1,2,2],[1,1,1,1,2,2]]}
   };
   function init(){
@@ -1456,7 +1480,9 @@ const Music=(()=>{
   function stop(){on=false;token++;MusicGen.stop();if(audio)audio.pause();}
   function setTheme(t){const before=wanted();theme=t;if(on&&(kind()==='auto'||kind()==='gen')&&wanted()!==before){list=[];next();}else if(kind()==='gen')MusicGen.setTheme(MUSIC_GEN_OF[t]||'tesoro');}
   function setKind(k){try{localStorage.setItem('siritingaMusicaTipo',k);}catch(e){}list=[];if(on){stop();start();}}
-  return {start,stop,setTheme,setKind,kind,isOn:()=>on,theme:()=>theme};
+  // Música propia de fiesta (truco «Momento de fiesta»): solo suena si la música está encendida
+  function party(yes){if(!on)return;if(yes){if(audio)audio.pause();MusicGen.start();MusicGen.setTheme('party');}else{MusicGen.stop();playing=null;list=[];next();}}
+  return {start,stop,setTheme,setKind,kind,party,isOn:()=>on,theme:()=>theme};
 })();
 const MUSIC_GEN_OF={tesoro:'tesoro',fiesta:'fiesta',saboteador:'saboteador',bandera:'bandera',ciclope:'ciclope'};
 
@@ -2238,6 +2264,7 @@ function onTrick(p,d){
     case 'premio':p.giveTo=v.key;msg='El premio de tu próximo '+(H.mode==='fiesta'?'calabaza':'cofre')+' será para '+v.name;break;
   }
   addFeed('🎩 <b>'+esc(p.name)+'</b> ha usado <b>'+t.n+'</b>'+(v?' con <b>'+esc(v.name)+'</b>':''));
+  H.trickLog=[{k:d.k,i:t.i,n:t.n,from:p.name,to:v?v.name:'',amt,team:p.team,at:now}].concat(H.trickLog||[]).slice(0,7);if(H.mode==='vikingos')renderPanel();
   res(true,msg);
 }
 const turbo=p=>p.turboUntil&&Date.now()<p.turboUntil;
@@ -2246,15 +2273,17 @@ const gain=(p,n)=>turbo(p)?n*2:n;
 /* ---------- efectos (alumnos y pantalla del maestro) ---------- */
 const FXT={};
 function applyFx(k,secs,from){
-  const b=document.body,end=()=>{b.classList.remove('fx-'+k);if(k==='fiesta'){$('fxParty').innerHTML='';try{musicFor(P?P.mode:H?H.mode:'tesoro');}catch(e){}}if(k==='fantasma')$('fxGhost').classList.remove('on');if(k==='turbo')$('hudTurbo').style.display='none';};
+  const b=document.body,end=()=>{b.classList.remove('fx-'+k);if(k==='fiesta'){$('fxParty').innerHTML='';try{Music.party(false);}catch(e){}}if(k==='fantasma')$('fxGhost').classList.remove('on');if(k==='turbo')$('hudTurbo').style.display='none';};
   clearTimeout(FXT[k]);clearInterval(FXT[k+'i']);b.classList.add('fx-'+k);
   if(k==='fiesta'){
-    const em=['🎉','🎊','🎈','✨','🪅','🎶','⭐'];let h='<div class="fxbanner">🎉 ¡Fiesta de '+esc(from)+'! 🎉</div>';
-    for(let i=0;i<46;i++)h+=`<span style="left:${Math.random()*100}%;animation-delay:${(Math.random()*3).toFixed(2)}s;animation-duration:${(2.5+Math.random()*2.5).toFixed(2)}s;font-size:${22+Math.random()*26|0}px">${em[i%em.length]}</span>`;
-    $('fxParty').innerHTML=h;try{Music.setTheme('fiesta');}catch(e){}
+    const em=['🎉','🎊','🎈','✨','🪅','🎶','⭐','🥳','🎵','💃','🕺','🍭'],col=['#ff4fa3','#ffd23f','#3ad0ff','#7cf06b','#b06bff','#ff7a3a'];let h='<div class="fxlights"></div><div class="fxdisco">🪩</div><div class="fxbanner big">🥳 ¡FIESTA de '+esc(from)+'! 🎉</div>';
+    for(let i=0;i<70;i++)h+=`<span style="left:${Math.random()*100}%;animation-delay:${(Math.random()*3).toFixed(2)}s;animation-duration:${(2.2+Math.random()*2.6).toFixed(2)}s;font-size:${54+Math.random()*70|0}px">${em[i%em.length]}</span>`;
+    for(let i=0;i<90;i++)h+=`<span class="conf" style="left:${Math.random()*100}%;animation-delay:${(Math.random()*3).toFixed(2)}s;animation-duration:${(2+Math.random()*2.5).toFixed(2)}s;background:${col[i%col.length]}"></span>`;
+    for(let i=0;i<6;i++)h+=`<b class="fxbaile" style="left:${8+i*16}%;animation-delay:${(i*.15).toFixed(2)}s">${['💃','🕺','🥳','🦄','🐸','🤖'][i]}</b>`;
+    $('fxParty').innerHTML=h;try{Music.party(true);}catch(e){}
   }
   if(k==='fantasma'){
-    const g=$('fxGhost');let h='';for(let i=0;i<14;i++)h+=`<span style="left:${Math.random()*90}%;top:${Math.random()*85}%;animation-delay:${(Math.random()*2).toFixed(2)}s;font-size:${50+Math.random()*60|0}px">👻</span>`;
+    const g=$('fxGhost');let h='';for(let i=0;i<18;i++)h+=`<span style="left:${-10+Math.random()*90}%;top:${-10+Math.random()*85}%;animation-delay:${(Math.random()*2).toFixed(2)}s;font-size:${140+Math.random()*150|0}px">👻</span>`;
     let s=secs;g.innerHTML=h+`<div class="fxbanner">👻 ¡Fantasmas de ${esc(from)}! <b id="ghostN">${s}</b></div>`;g.classList.add('on');
     FXT[k+'i']=setInterval(()=>{s--;const n=$('ghostN');if(n)n.textContent=Math.max(0,s);},1000);
   }
@@ -2476,7 +2505,7 @@ function vikShipSVG(c,cls=''){
   </svg>`;
 }
 function vikBoat(k,cls=''){const im=IMG['drakar_'+k];if(im)return `<img class="vship ${cls}" src="${im}" alt="">`;const T=(H&&H.teams&&H.teams[k])||{};const v=VIK_TEAMS.find(x=>x[0]===k);return vikShipSVG(T.color||(v?v[2]:'#888'),cls);}
-function vikStep(p){const t=H.teams[p.team],n=Math.max(1,allP().filter(x=>x.team===p.team).length);return 100/(n*9);}
+function vikStep(p){const n=Math.max(1,allP().filter(x=>x.team===p.team).length);const aciertos=Math.max(6,(H.dur||180000)/1000/13*0.7);return 100/(n*aciertos);}  // la carrera dura todo el tiempo de la partida
 
 const BG={
   oca:{
@@ -2611,7 +2640,7 @@ const BG={
   },
 
   vikingos:{
-    teams:true,desc:'Cada respuesta correcta hace remar a tu drakar. ¡El primero que cruce la meta gana la carrera!',
+    teams:true,desc:'Cada respuesta correcta hace remar a tu drakar. La carrera dura todo el tiempo de la partida: ¡el drakar que llegue primero a la meta gana!',
     init(){H.bg={fx:{},order:[],won:null};Object.values(H.teams).forEach(t=>{t.p=0;t.fin=0;});allP().forEach(p=>{if(!p.team||!H.teams[p.team])p.team=vikSmallest();});vikSync();},
     late(p){if(!p.team||!H.teams[p.team])p.team=vikSmallest();},
     answer(p,ok,right){
@@ -2626,7 +2655,7 @@ const BG={
         if(T.p>=100&&!T.fin){T.fin=H.bg.order.push(p.team);
           addFeed('🏁 <b>El '+esc(T.name)+'</b> cruza la meta en '+T.fin+'.º lugar');
           allP().forEach(x=>{if(x.team===p.team){x.gold+=T.fin===1?80:T.fin===2?40:20;hsend(x,{t:'hit',text:'🏁 ¡Vuestro drakar ha cruzado la meta en '+T.fin+'.º lugar!',gold:x.gold});}});
-          if(T.fin===1){H.bg.won=p.team;H.bg.winAt=Date.now();renderPanel();setTimeout(endGame,3500);}
+          if(H.bg.order.length>=Object.keys(H.teams).length){H.bg.won=H.bg.order[0];H.bg.winAt=Date.now();renderPanel();setTimeout(endGame,3500);}else renderPanel();
         }else{const pos=Object.keys(H.teams).sort((a,b)=>H.teams[b].p-H.teams[a].p).indexOf(p.team)+1;msg+='<br>Vais en '+pos+'.ª posición ('+Math.round(T.p)+' %).';}
       }else msg='🏁 ¡Tu drakar ya ha cruzado la meta! '+pm(10);
       p.phase='done';hsend(p,{t:'result',ok,right,msg,gold:p.gold});renderBoard();},
@@ -2634,8 +2663,9 @@ const BG={
       const now=Date.now(),ks=Object.keys(H.teams),rank=ks.slice().sort((a,b)=>H.teams[b].p-H.teams[a].p);
       let box=$('vikRace');
       if(!box||box.dataset.n!==String(ks.length)){
-        $('modePanel').innerHTML=`<div class="vhero" style="background-image:url(${IMG.vik_cabecera})"></div>
-          <div id="vikRace" class="vrace" data-n="${ks.length}" style="background-image:url(${IMG.vik_rio});--n:${ks.length}"><div class="vlanes">${ks.map((k,i)=>`<div class="vlane" data-k="${k}" style="--c:${H.teams[k].color}"><div class="vtrail"></div><div class="vboat">${vikBoat(k)}<span class="vfx"></span><span class="vpos"></span></div><span class="vtag"><b>${H.teams[k].e} ${esc(H.teams[k].short)}</b><span class="vcrew"></span></span></div>`).join('')}</div></div>`;
+        $('modePanel').innerHTML=`<div class="vgrid"><div class="vmain"><div class="vhero" style="background-image:url(${IMG.vik_cabecera})"></div>
+          <div id="vikRace" class="vrace" data-n="${ks.length}" style="background-image:url(${IMG.vik_rio});--n:${ks.length}"><div class="vlanes">${ks.map((k,i)=>`<div class="vlane" data-k="${k}" style="--c:${H.teams[k].color}"><div class="vtrail"></div><div class="vboat">${vikBoat(k)}<span class="vfx"></span><span class="vpos"></span></div><span class="vtag"><b>${H.teams[k].e} ${esc(H.teams[k].short)}</b><span class="vcrew"></span></span></div>`).join('')}</div></div><div class="vclock"><span>⏳</span><i><b id="vikBar"></b></i><em id="vikLeft"></em></div></div>
+          <aside class="vside"><h3>🎁 Trucos y regalos</h3><ol id="vikTricks"></ol></aside></div>`;
         box=$('vikRace');
       }
       ks.forEach(k=>{const T=H.teams[k],L=box.querySelector('.vlane[data-k="'+k+'"]'),fx=H.bg.fx[k]||{};
@@ -2644,6 +2674,9 @@ const BG={
         L.classList.toggle('slow',fx.slow>now);L.classList.toggle('fast',fx.fast>now);L.classList.toggle('done',!!T.fin);
         L.querySelector('.vpos').textContent=T.fin?'🏁 '+T.fin+'.º':(rank.indexOf(k)+1)+'.º';
         const crew=allP().filter(p=>p.team===k);L.querySelector('.vcrew').innerHTML=avStack(crew,22)+'<small>'+Math.round(T.p)+' %</small>';});
+      const tl=$('vikTricks');if(tl){const L=H.trickLog||[];tl.innerHTML=L.length?L.map((x,j)=>`<li class="vtr ${x.k}${j===0&&now-x.at<6000?' nuevo':''}" style="--c:${(H.teams[x.team]||{}).color||'#7a5cff'}"><i>${x.i}</i><span><b>${esc(x.n)}</b><small>${esc(x.from)}${x.to?' → '+esc(x.to):x.k==='fiesta'?' → ¡para todos!':x.k==='tormenta'?' → los demás drakares':x.k==='viento'?' → su drakar':''}${x.amt?' ('+x.amt+' 🪙)':''}</small></span></li>`).join(''):'<li class="vvacio">Aquí aparecerán las fiestas, los fantasmas, los regalos y los demás trucos que se compren.</li>';}
+      const left=Math.max(0,(H.endsAt||now)-now),bar=$('vikBar'),lt=$('vikLeft');if(bar){bar.style.width=(H.dur?Math.min(100,100-left/H.dur*100):0)+'%';lt.textContent=Math.floor(left/60000)+':'+String(Math.floor(left/1000)%60).padStart(2,'0');}
+      if(!BG.vikingos.tc)BG.vikingos.tc=setTimeout(()=>{BG.vikingos.tc=0;if(H.mode==='vikingos'&&H.state==='playing')renderPanel();},1000);
       let w=box.querySelector('.vwin');if(H.bg.won&&!w){w=document.createElement('div');w.className='vwin';w.style.setProperty('--c',H.teams[H.bg.won].color);w.innerHTML=`${vikBoat(H.bg.won,'vbig')}<b>¡El ${esc(H.teams[H.bg.won].name)} gana la carrera!</b>`;box.appendChild(w);}
       if(Object.values(H.bg.fx).some(f=>f.fast>now||f.slow>now)&&!BG.vikingos.t)BG.vikingos.t=setTimeout(()=>{BG.vikingos.t=0;renderPanel();},1000);
       return null;},
