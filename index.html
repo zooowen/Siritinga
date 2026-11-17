@@ -365,7 +365,7 @@ h1{-webkit-text-stroke:4px var(--wood2);paint-order:stroke fill;text-shadow:0 7p
 #board .bar:nth-child(-n+3) .pos{font-size:0}#board .bar:nth-child(-n+3) .pos::before{font-size:24px}
 .feed li{border-bottom:1px dashed #d9c08a}
 .pod .blk{background-image:linear-gradient(rgba(255,255,255,.35),rgba(0,0,0,.08));box-shadow:inset 0 4px 0 rgba(255,255,255,.4)}
-.chip{box-shadow:0 4px 0 rgba(0,0,0,.25);animation:pop .35s cubic-bezier(.2,1.6,.4,1)}
+.chip{box-shadow:0 4px 0 rgba(0,0,0,.25)}
 /* asignaturas, juegos y modos */
 .subj{background:linear-gradient(#fff,#fff8e6);box-shadow:0 6px 0 var(--sc),0 10px 16px rgba(0,0,0,.15)}
 .subj i{font-size:64px;filter:drop-shadow(0 4px 0 rgba(0,0,0,.15))}
@@ -783,7 +783,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 40 · 16/11/2026 · Juego de divisiones largas (4 cifras entre 2 cifras)</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 41 · 17/11/2026 · Las cosas ya no vibran al pulsar: cada animación sale una sola vez</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -2860,6 +2860,30 @@ function coinBurst(n=24){
     document.body.appendChild(c);setTimeout(()=>c.remove(),1400);}
 }
 function nope(){const s=document.querySelector('.screen.on');if(!s)return;s.classList.remove('nope');void s.offsetWidth;s.classList.add('nope');}
+/* ----- animaciones de entrada solo la primera vez -----
+   Al pulsar algo, la pantalla se vuelve a dibujar y las animaciones de entrada
+   (fichas del lobby, barcos hundidos, casillas del bingo…) se repetían y parecía que todo vibraba.
+   Ahora cada elemento se anima solo la primera vez que aparece. */
+(()=>{
+  const SEL='.fsh.sunk,.ffire,.flog li.nuevo,.vtr.nuevo,.chip,.crew img,.fseg.sunk,.fgrid .f2,.bgc.on,.c4c.rojo,.c4c.azul,.fig.new img,.fig.new .card,.vpart,.feed li.new,.pod,.emobtn.on';
+  const seen=new Set(),done=new WeakMap();
+  function sig(el){
+    let p=el,path=[];
+    while(p&&p!==document.body&&!p.id){const par=p.parentNode;path.push(par?[...par.children].indexOf(p):0);p=par;}
+    const root=p&&p.id?p.id:'';
+    const who=el.matches('.chip,li,.vtr')?'t:'+el.textContent.trim():path.join('.');
+    return root+'|'+el.className+'|'+who+'|'+(el.getAttribute('src')||'').slice(-40);
+  }
+  function check(el){
+    if(!(el instanceof Element))return;
+    const list=el.matches(SEL)?[el]:[];list.push(...el.querySelectorAll(SEL));
+    list.forEach(x=>{const s=sig(x);if(done.get(x)===s)return;done.set(x,s);if(seen.has(s))x.style.animation='none';else{seen.add(s);if(x.style.animation==='none')x.style.animation='';}});
+  }
+  new MutationObserver(ms=>ms.forEach(m=>{
+    if(m.type==='attributes')check(m.target);else m.addedNodes.forEach(check);
+  })).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
+})();
+
 function diceFx(n){
   const o=document.createElement('div');o.className='dicefx';o.innerHTML='<b>'+n+'</b>';document.body.appendChild(o);
   setTimeout(()=>{o.style.transition='opacity .3s';o.style.opacity='0';},1100);setTimeout(()=>o.remove(),1450);
