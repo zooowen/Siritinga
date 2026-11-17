@@ -341,6 +341,20 @@ h1{-webkit-text-stroke:4px var(--wood2);paint-order:stroke fill;text-shadow:0 7p
 .qtext{color:var(--wood2)}
 #s-q .card{position:relative}
 /* sacudida al fallar */
+.finfx{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;overflow:hidden;
+ background:radial-gradient(circle at 50% 45%,rgba(255,214,90,.96),rgba(214,120,20,.97) 55%,rgba(90,40,10,.98));animation:finin .35s ease-out both;pointer-events:none}
+.finfx.out{animation:finout .7s ease-in forwards}
+@keyframes finin{from{opacity:0}to{opacity:1}}@keyframes finout{to{opacity:0;transform:scale(1.15)}}
+.finfx .fbands{position:absolute;left:0;right:0;height:46px;background:repeating-conic-gradient(#111 0 25%,#fff 0 50%) 0 0/46px 46px;opacity:.9}
+.finfx .fbands.t{top:0;animation:fband 1s linear infinite}.finfx .fbands.b{bottom:0;animation:fband 1s linear infinite reverse}
+@keyframes fband{to{background-position:92px 0}}
+.finfx .fflag{font-size:clamp(90px,16vw,170px);animation:fwave .5s ease-in-out infinite alternate;filter:drop-shadow(0 10px 8px rgba(0,0,0,.35))}
+@keyframes fwave{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+.finfx h2{margin:0;font:400 clamp(46px,9vw,110px)/1 'Lilita One',sans-serif;color:#fff;-webkit-text-stroke:5px #5a2e0a;text-shadow:0 8px 0 #5a2e0a,0 16px 24px rgba(0,0,0,.4);text-align:center;animation:fstamp .7s cubic-bezier(.2,1.6,.4,1) both;padding:0 16px}
+.finfx p{margin:0;font:700 clamp(22px,3.6vw,36px) 'Lilita One',sans-serif;color:#fff8e0;text-shadow:0 3px 0 rgba(0,0,0,.35);animation:fstamp .7s .45s cubic-bezier(.2,1.6,.4,1) both;text-align:center;padding:0 16px}
+@keyframes fstamp{from{transform:scale(2.6) rotate(-8deg);opacity:0}to{transform:none;opacity:1}}
+.finfx i{position:absolute;top:-30px;width:12px;height:20px;border-radius:3px;animation:ffall linear forwards}
+@keyframes ffall{to{transform:translateY(115vh) rotate(720deg)}}
 .nope{animation:nope .45s}
 @keyframes nope{0%,100%{translate:0}20%{translate:-14px 0}40%{translate:12px 0}60%{translate:-8px 0}80%{translate:5px 0}}
 /* lluvia de monedas */
@@ -783,7 +797,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 41 · 17/11/2026 · Las cosas ya no vibran al pulsar: cada animación sale una sola vez</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 42 · 17/11/2026 · El final de la partida se nota: telón, bandera, confeti y fanfarria</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -2852,6 +2866,26 @@ function boardMsg(d){
 }
 
 /* ---------- efectos visuales del alumno ---------- */
+
+/* ----- final de partida bien visible: telón dorado con bandera, «¡Fin de la partida!», confeti y fanfarria ----- */
+function finale(sub,sound){
+  document.querySelectorAll('.finfx').forEach(e=>e.remove());
+  const el=document.createElement('div');el.className='finfx';
+  el.innerHTML='<div class="fbands t"></div><div class="fflag">🏁</div><h2>¡Fin de la partida!</h2>'+(sub&&!/fin de la partida/i.test(sub)?'<p>'+sub+'</p>':'')+'<div class="fbands b"></div>';
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const cols=['#ff4fa3','#3ad0ff','#ffd23f','#7cf06b','#b06bff','#fff','#ef4b5f'];
+    for(let k=0;k<90;k++){const c=document.createElement('i');c.style.left=Math.random()*100+'%';c.style.background=cols[k%cols.length];
+      c.style.animationDuration=(1.8+Math.random()*2.2)+'s';c.style.animationDelay=(Math.random()*1.4)+'s';el.appendChild(c);}
+  }
+  document.body.appendChild(el);
+  if(sound)try{const A=new (window.AudioContext||window.webkitAudioContext)(),t=A.currentTime+.05;
+    [[523,0,.16],[659,.16,.16],[784,.32,.16],[1047,.48,.55],[784,.78,.14],[1047,.94,.9]].forEach(([f,s,d])=>{
+      [1,2].forEach((m,j)=>{const o=A.createOscillator(),g=A.createGain();o.type=j?'triangle':'sawtooth';o.frequency.value=f*m;
+        g.gain.setValueAtTime(.0001,t+s);g.gain.exponentialRampToValueAtTime(j?.06:.12,t+s+.03);g.gain.exponentialRampToValueAtTime(.0001,t+s+d);
+        o.connect(g);g.connect(A.destination);o.start(t+s);o.stop(t+s+d+.05);});});
+    setTimeout(()=>A.close(),3000);}catch(e){}
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),750);},3800);
+}
 function coinBurst(n=24){
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   const x=innerWidth/2,y=innerHeight*0.42;
@@ -2865,7 +2899,7 @@ function nope(){const s=document.querySelector('.screen.on');if(!s)return;s.clas
    (fichas del lobby, barcos hundidos, casillas del bingo…) se repetían y parecía que todo vibraba.
    Ahora cada elemento se anima solo la primera vez que aparece. */
 (()=>{
-  const SEL='.fsh.sunk,.ffire,.flog li.nuevo,.vtr.nuevo,.chip,.crew img,.fseg.sunk,.fgrid .f2,.bgc.on,.c4c.rojo,.c4c.azul,.fig.new img,.fig.new .card,.vpart,.feed li.new,.pod,.emobtn.on';
+  const SEL='.fsh.sunk,.ffire,.flog li.nuevo,.vtr.nuevo,.chip,.crew img,.fseg.sunk,.fgrid .f2,.bgc.on,.c4c.rojo,.c4c.azul,.fig.new img,.fig.new .card,.vpart,.feed li.new,.emobtn.on';
   const seen=new Set(),done=new WeakMap();
   function sig(el){
     let p=el,path=[];
@@ -3839,7 +3873,7 @@ function endGame(){
   let msg='🧭 La expedición de '+esc(cls.name)+' avanza <b>'+fmt(gain)+'</b> puntos.';
   if(k1>k0)msg+=k1===MAP_STOPS.length-1?' <b>¡Habéis encontrado la ciudad perdida de Siritinga!</b>':' <b>¡Nueva isla descubierta: '+MAP_STOPS[k1].n+'!</b>';
   $('endMap').innerHTML=mapSVG(after,{marks:true})+'<div class="mapinfo"><span>'+msg+'</span><span>'+(nx?'Próxima parada: <b>'+nx.n+'</b> (faltan '+fmt(nx.need-after)+')':'')+'</span></div>';
-  show('s-hend');
+  show('s-hend');finale(title.replace(/<[^>]+>/g,''),true);
 }
 /* ---------- laberinto griego del cíclope ---------- */
 const LABY=[[70,372],[930,372],[930,272],[70,272],[70,172],[930,172],[930,84],[955,84]];
@@ -4143,7 +4177,7 @@ function playerMsg(d){
     const box=$('pendBox');
     if(d.hw){box.style.display='block';box.innerHTML='<b>Copia esta línea y pégala en la entrega de Canvas:</b><div class="result-code" id="hwLine" style="margin-top:8px">'+esc(d.hw)+'</div><div class="row" style="margin-top:8px"><button class="btn small" onclick="copyText($(\'hwLine\').textContent)">Copiar</button></div>';}
     else box.style.display='none';
-    show('s-pend');return;
+    show('s-pend');finale(d.title||(d.place===1?'¡Has ganado! 🏆':'Puesto '+d.place+' de '+d.total),false);return;
   }
 }
 function setMates(list){
