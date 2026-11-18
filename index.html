@@ -579,6 +579,11 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 /* hundir la flota: buques de guerra */
 .fgrid .f2,.fgrid .f3{overflow:hidden}
 .fsh{position:absolute;top:0;bottom:0;display:block;pointer-events:none}.fsh svg{width:100%;height:100%;display:block}.fsh img.fimg{width:100%;height:100%;object-fit:contain;object-position:center 70%;display:block;transform:scale(1.12);filter:drop-shadow(0 3px 2px rgba(0,0,0,.35))}
+.fsh .fhumo{position:absolute;left:50%;bottom:38%;height:150%;aspect-ratio:1.383;transform:translateX(-50%);background-repeat:no-repeat;background-size:1300% 100%;
+ background-image:var(--humo);animation:fhumo 1.6s steps(1) infinite,fhumoup 3.2s ease-in-out infinite alternate;opacity:.9;pointer-events:none}
+.fsh .fhumo.h2{left:30%;height:110%;animation-delay:-.8s,-1.6s;opacity:.7}
+@keyframes fhumo{0%{background-position:75% 0}25%{background-position:83.333% 0}50%{background-position:91.667% 0}75%{background-position:100% 0}100%{background-position:75% 0}}
+@keyframes fhumoup{from{margin-bottom:0}to{margin-bottom:6%}}
 .fboom{position:fixed;z-index:150;pointer-events:none;background-repeat:no-repeat;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
 .fgrid .f3{overflow:visible;z-index:1}.fsh.sunk{filter:grayscale(.7) brightness(.62);animation:fsink 1s ease-out both}
 @keyframes fsink{from{transform:translateY(-12%);filter:none}to{transform:translateY(9%) rotate(2deg)}}
@@ -801,7 +806,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 48 · 18/11/2026 · Explosión animada al hundir cada barco</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 49 · 18/11/2026 · Los barcos hundidos se quedan echando humo</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -2597,6 +2602,7 @@ function warshipSVG(n){const W=100*n,g='sg'+n,P=[];
     P.push(`<rect x="${W/2+36}" y="36" width="14" height="10" rx="2" fill="#9aa6b2" stroke="#252c33" stroke-width="2"/>`);}
   return `<svg viewBox="0 6 ${W} 74" preserveAspectRatio="none" aria-hidden="true">${P.join('')}</svg>`;}
 
+if(IMG.flota_explosion)document.documentElement.style.setProperty('--humo','url('+IMG.flota_explosion+')');
 /* explosión animada cuando se hunde un barco: se reproduce una vez encima del barco, fotograma a fotograma */
 const FBOOM={n:13,d:[60, 60, 70, 80, 80, 110, 100, 100, 110, 100, 130, 140, 150],ar:1.383};
 function fleetBoom(sh){
@@ -2615,7 +2621,7 @@ function warship(n,v){const k=n<=1?1:n===2?(v?3:2):(v?5:4),src=IMG['flota_acoraz
 function fleetLegend(B){return '<div class="flegend">'+FLEET_SIZES.map(([len,cnt])=>{const L=B.ships.filter(s=>s.cells.length===len),sunk=L.filter(s=>s.hits>=len).length;
   return `<span><div class="fships">${Array.from({length:cnt},(_,k)=>`<i class="fship${k<sunk?' sunk':''}" style="width:${len*30}px">${warship(len,k%2)}</i>`).join('')}</div><small>${cnt-sunk} de ${cnt} barcos de ${len}</small></span>`;}).join('')+'</div>';}
 function fcell(v,i,btn){const [s,k,n,va]=typeof v==='number'?[v,0,1,0]:String(v).split(':').map(Number);
-  const inner=s===1?'<i class="fagua">💦</i>':s>=2?`<span class="fsh${s===3?' sunk':''}" style="width:calc(${n} * 100% + ${n-1} * 3px);left:calc(${-k} * (100% + 3px))">${warship(n,va||0)}</span>${s===2?'<i class="ffire">💥</i>':'<i class="fsmoke">🔥</i>'}`:(btn?cellName(i):'');
+  const inner=s===1?'<i class="fagua">💦</i>':s>=2?`<span class="fsh${s===3?' sunk':''}" style="width:calc(${n} * 100% + ${n-1} * 3px);left:calc(${-k} * (100% + 3px))">${warship(n,va||0)}${s===3&&k===0?'<i class="fhumo"></i><i class="fhumo h2"></i>':''}</span>${s===2?'<i class="ffire">💥</i>':'<i class="fsmoke">🔥</i>'}`:(btn?cellName(i):'');
   return btn?`<button class="f${s}" data-i="${i}" ${s?'disabled':''}>${inner}</button>`:`<div class="f${s}">${inner}</div>`;}
 const cellName=i=>COLS[i%FN]+(Math.floor(i/FN)+1);
 /* con muchos alumnos, cada jugada de equipo necesita varios aciertos de la tripulación */
