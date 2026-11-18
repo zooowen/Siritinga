@@ -505,6 +505,9 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 .trow small{color:var(--muted);font-weight:700}
 .trow .tbar{height:18px;border-radius:999px;background:rgba(0,0,0,.08);overflow:hidden}.trow .tbar i{display:block;height:100%;background:var(--c);border-radius:999px;transition:width .6s}
 .trow .tpts{font-weight:800;font-size:22px;white-space:nowrap}
+.sethead{display:flex;gap:16px;align-items:center;margin-bottom:6px}.sethead img{width:190px;aspect-ratio:1.68;object-fit:cover;border-radius:14px;box-shadow:0 4px 0 rgba(0,0,0,.15);flex:none}
+.sethead small{text-transform:uppercase;letter-spacing:.06em;font-weight:800;color:var(--muted)}.sethead h2{margin:2px 0 4px}.sethead .hint{margin:0}
+@media (max-width:620px){.sethead{flex-direction:column;align-items:flex-start}.sethead img{width:100%}}
 .okbad{display:flex;gap:6px;flex:none;font-weight:800;font-size:17px;white-space:nowrap}.okbad b{padding:1px 9px;border-radius:999px;font-weight:800}.okbad .ok{background:#d9f7e6;color:#13703f}.okbad .ko{background:#ffe1e5;color:#b3261e}
 .okbad.big{justify-content:center;gap:12px;margin:6px 0 2px;font-size:24px}.okbad.big b{padding:6px 18px;border:3px solid currentColor;box-shadow:0 4px 0 rgba(0,0,0,.18)}
 .podtitle{color:#fff;-webkit-text-stroke:3px var(--wood2);paint-order:stroke fill;font-size:44px;text-shadow:0 5px 0 rgba(0,0,0,.3);margin-top:10px}
@@ -853,7 +856,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 55 · 18/11/2026 · Finales espectaculares: redoble, fuegos artificiales y lluvia de monedas</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 56 · 18/11/2026 · Primero eliges el juego y luego las opciones; las islas empiezan de nuevo</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -885,6 +888,25 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 <!-- MAESTRO: ASIGNATURA -->
 <section class="screen" id="s-subj">
   <div class="card" style="max-width:820px">
+    <div id="subjBox">
+    <h2 style="text-align:center">¿De qué asignatura son las preguntas?</h2>
+    <div class="subjs" id="subjList"></div>
+    <div id="newSubj" class="newsubj" style="display:none">
+      <h3 style="margin-top:0">Nueva asignatura</h3>
+      <label for="nsName">Nombre</label><input type="text" id="nsName" maxlength="30" placeholder="Por ejemplo: Estudios sociales" class="left">
+      <label>Dibujo</label><div class="nsicons" id="nsIcons"></div>
+      <label>Color</label><div class="opts" id="nsColors"></div>
+      <div class="err" id="nsErr"></div>
+      <div class="row"><button class="btn ghost" onclick="$('newSubj').style.display='none'">Cancelar</button><button class="btn green" onclick="createSubject()">Crear asignatura</button></div>
+    </div>
+    </div>
+    <div class="row"><button class="btn ghost" onclick="openOptions()">Volver</button><button class="btn ghost" onclick="openClasses()">Clases y copias de seguridad</button><button class="btn ghost" onclick="openCheck()">Comprobar resultados de una tarea</button></div>
+  </div>
+</section>
+
+<!-- MAESTRO: ELEGIR EL JUEGO (lo primero al entrar) -->
+<section class="screen" id="s-games" style="justify-content:flex-start">
+  <div class="card" style="max-width:1100px">
     <div class="seg playmode" id="playModeSeg">
       <button data-v="libre" class="sel">🎲 Modo libre</button>
       <button data-v="historia">📖 Modo historia</button>
@@ -897,16 +919,9 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn gold" onclick="setPlayMode('libre')">Volver al modo libre</button>
     </div>
     <div id="freeBox">
-    <h2 style="text-align:center">¿De qué asignatura es el juego?</h2>
-    <div class="subjs" id="subjList"></div>
-    <div id="newSubj" class="newsubj" style="display:none">
-      <h3 style="margin-top:0">Nueva asignatura</h3>
-      <label for="nsName">Nombre</label><input type="text" id="nsName" maxlength="30" placeholder="Por ejemplo: Estudios sociales" class="left">
-      <label>Dibujo</label><div class="nsicons" id="nsIcons"></div>
-      <label>Color</label><div class="opts" id="nsColors"></div>
-      <div class="err" id="nsErr"></div>
-      <div class="row"><button class="btn ghost" onclick="$('newSubj').style.display='none'">Cancelar</button><button class="btn green" onclick="createSubject()">Crear asignatura</button></div>
-    </div>
+    <h2 style="text-align:center;margin-bottom:4px">¿A qué jugamos hoy?</h2>
+    <p class="hint" style="text-align:center;margin-top:0">Elige un juego y después preparas las opciones y las preguntas.</p>
+    <div class="modes" id="modeList"></div>
     </div>
     <div class="row"><button class="btn ghost" onclick="show('s-home')">Volver</button><button class="btn ghost" onclick="openClasses()">Clases y copias de seguridad</button><button class="btn ghost" onclick="openCheck()">Comprobar resultados de una tarea</button></div>
   </div>
@@ -948,13 +963,11 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 <!-- MAESTRO: PREPARAR -->
 <section class="screen" id="s-setup" style="justify-content:flex-start">
   <div class="card" style="max-width:920px">
-    <h2>Preparar el juego</h2>
+    <div class="sethead" id="setupHead"></div>
     <div class="row" style="justify-content:flex-start;align-items:flex-end;gap:10px">
       <div style="flex:1;min-width:220px"><label for="clsSel">¿Qué clase va a jugar?</label><select id="clsSel"></select></div>
       <button class="btn small" onclick="openClasses()">Clases y copias de seguridad</button>
     </div>
-    <h3>1. Elige el juego</h3>
-    <div class="modes" id="modeList"></div>
     <div id="seasonRow" style="display:none">
       <label for="season">Fiesta</label>
       <select id="season"><option value="halloween">Halloween</option></select>
@@ -970,7 +983,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <select id="sabN"><option value="auto">Automático (1, o 2 si hay 9 alumnos o más)</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
       <p class="hint">Cada saboteador sabe quiénes son los demás saboteadores.</p>
     </div>
-    <h3>2. ¿Cómo se juega?</h3>
+    <h3>1. ¿Cómo se juega?</h3>
     <div class="seg" id="howSeg">
       <button data-v="vivo" class="sel">En vivo en clase</button>
       <button data-v="tarea">Como tarea</button>
@@ -991,7 +1004,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <label for="hwName">Nombre de la tarea</label>
       <input type="text" id="hwName" maxlength="40" value="Repaso de ciencias">
     </div>
-    <h3>3. Preguntas</h3>
+    <h3>2. Preguntas</h3>
     <div class="banksum" id="bankSum"></div>
     <div id="photoRow">
       <label style="display:flex;gap:8px;align-items:center;font-weight:700"><input type="checkbox" id="usePhotos" checked style="width:22px;height:22px"> Usar fotos reales de uso libre cuando las haya (si no, se ven los dibujos)</label>
@@ -1000,8 +1013,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
     <div style="display:none"><textarea id="bank" spellcheck="false"></textarea><span id="bankCount"></span><p id="picList"></p></div>
     <div class="err" id="setupErr"></div>
     <div class="row">
-      <button class="btn ghost" onclick="openSets()">Volver</button>
-      <button class="btn ghost" onclick="openCheck()">Comprobar resultados de una tarea</button>
+      <button class="btn ghost" onclick="openGames()">← Cambiar de juego</button>
       <button class="btn green" id="createBtn" onclick="createGame()">Crear partida</button>
     </div>
   </div>
@@ -1971,6 +1983,8 @@ function loadClasses(){
   // clase de pruebas (se crea una sola vez; si se borra, no vuelve a aparecer)
   if(!c.rosa){c.rosa=true;if(!c.list.some(x=>x.id==='rosa'))c.list.push({id:'rosa',name:'Clase rosa (pruebas)',exp:0,alumnos:{}});c.sel='rosa';store('siritingaClases',c);}
   c.list.forEach(x=>{if(!x.alumnos||typeof x.alumnos!=='object')x.alumnos={};x.exp=Math.max(0,+x.exp||0);});
+  // noviembre 2026: Óscar pidió que la expedición empezara de nuevo (los piratas y los doblones de cada alumno se conservan)
+  if(!c.islas56){c.islas56=true;c.list.forEach(x=>x.exp=0);store('siritingaClases',c);}
   return c;
 }
 let CL=loadClasses();
@@ -2336,7 +2350,7 @@ const subjOf=k=>SUBJ.find(s=>s.k===k)||SUBJ[1];
 function openSubjects(){
   $('subjList').innerHTML=SUBJ.map(s=>{const n=BANKS.filter(b=>b.subj===s.k).length;
     return `<button class="subj" data-k="${s.k}" style="--sc:${s.c}"><i>${s.i}</i><b>${esc(s.n)}</b><span>${n} juego${n===1?'':'s'} de preguntas</span></button>`;}).join('')+'<button class="subj addsubj" style="--sc:#b8a57a" onclick="openNewSubject()"><i>＋</i><b>Nueva asignatura</b><span>Crea la tuya</span></button>';
-  $('newSubj').style.display='none';setPlayMode('libre');
+  $('newSubj').style.display='none';
   $('subjList').querySelectorAll('.subj[data-k]').forEach(b=>b.onclick=()=>{BSUBJ=b.dataset.k;openSets();});
   show('s-subj');
 }
@@ -2358,14 +2372,14 @@ function openSets(){
     BANKS=BANKS.filter(x=>x.id!==b.dataset.del);saveBanks();openSets();});
   show('s-sets');
 }
-function playBank(id){
-  const b=BANKS.find(x=>x.id===id);if(!b)return;
-  SET.bank=id;$('bank').value=b.text;countBank();
-  $('bankSum').innerHTML=`<span style="font-size:30px">${subjOf(b.subj).i}</span><div style="flex:1"><b>${esc(b.title)}</b><small>${subjOf(b.subj).n}${b.std?' · '+esc(b.std):''} · ${nQs(b)} preguntas</small></div><button class="btn small" onclick="openSets()">Cambiar</button><button class="btn small ghost" onclick="openEditor('${b.id}')">Editar</button>`;
+function useBank(b){
+  BSUBJ=b.subj;try{store('siritingaUltimoBanco',b.id);}catch(e){}
+  SET.bank=b.id;$('bank').value=b.text;countBank();
+  $('bankSum').innerHTML=`<span style="font-size:30px">${subjOf(b.subj).i}</span><div style="flex:1"><b>${esc(b.title)}</b><small>${subjOf(b.subj).n}${b.std?' · '+esc(b.std):''} · ${nQs(b)} preguntas</small></div><button class="btn small" onclick="openSubjects()">Cambiar</button><button class="btn small ghost" onclick="openEditor('${b.id}')">Editar</button>`;
   $('hwName').value=('Repaso: '+b.title).slice(0,40);
   $('photoRow').style.display='block';
-  renderSetupMap();$('setupErr').textContent='';show('s-setup');
 }
+function playBank(id){const b=BANKS.find(x=>x.id===id);if(!b)return;useBank(b);openOptions();}
 /* 3) editor */
 const PIC_OPTS=()=>'<option value="">Sin imagen</option><optgroup label="Fotos y dibujos de ciencias">'+Object.keys(PICS).map(k=>`<option value="${k}">${(typeof PIC_NAMES!=='undefined'&&PIC_NAMES[k])||k}</option>`).join('')+'</optgroup><optgroup label="Fotos">'+Object.keys(PHOTOS).filter(k=>!PICS[k]).map(k=>`<option value="${k}">${PHOTOS[k].d}</option>`).join('')+'</optgroup>'+'<optgroup label="Imágenes de las lecturas">'+Object.keys(QIMG).map(k=>`<option value="${k}">${QIMG_NAMES[k]}</option>`).join('')+'</optgroup>'+'<option value="url">Dirección de una imagen…</option>';
 function qToLine(q){const c=s=>String(s||'').replace(/\|/g,'/').replace(/\s+/g,' ').trim();return [c(q.q),c(q.a),...q.w.map(c)].filter((x,i)=>i<2||x).join(' | ')+(q.pic?' | '+c(q.pic):'');}
@@ -3432,7 +3446,7 @@ function renderModes(){
   const card=([k,m])=>`<button class="mode${SET.mode===k?' sel':''}" data-k="${k}">${IMG['m_'+k]?`<img class="mimg" src="${IMG['m_'+k]}" alt="">`:''}<i>${m.icon}</i><b>${m.name}</b><span>${m.desc}</span><span><b style="font-size:14px">${m.hw?'En vivo o como tarea':'Solo en vivo · mínimo '+m.min+' alumno'+(m.min>1?'s':'')}</b></span></button>`;
   const E=Object.entries(MODES);
   $('modeList').innerHTML='<h4 class="mgroup">Aventuras de Siritinga</h4>'+E.filter(([,m])=>!m.board).map(card).join('')+'<h4 class="mgroup">Juegos de mesa</h4>'+E.filter(([,m])=>m.board).map(card).join('');
-  $('modeList').querySelectorAll('.mode').forEach(b=>b.onclick=()=>{SET.mode=b.dataset.k;if(!MODES[SET.mode].hw)SET.how='vivo';renderModes();});
+  $('modeList').querySelectorAll('.mode').forEach(b=>b.onclick=()=>{SET.mode=b.dataset.k;if(!MODES[SET.mode].hw)SET.how='vivo';openOptions();});
   $('seasonRow').style.display=SET.mode==='fiesta'?'block':'none';
   $('sabRow').style.display=SET.mode==='saboteador'?'block':'none';
   $('vikRow').style.display=SET.mode==='vikingos'?'block':'none';
@@ -3456,7 +3470,17 @@ function renderSetupMap(){renderClassSel();const t=expTotal(),k=mapStop(t),nx=MA
 const PIN_HASH='aacbfa36a89116ef3e252a89381fe939e189bca19af34523b126b43b71f77d9c';
 function normPin(s){return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9ñ]/g,'');}
 function unlocked(){try{return sessionStorage.getItem('siritingaMaestro')===PIN_HASH;}catch(e){return false;}}
-function openSetup(){openSubjects();}
+function openSetup(){openGames();}
+/* 1) elegir el juego */
+function openGames(){renderModes();show('s-games');}
+/* 2) opciones del juego elegido (tiempo, música, clase, preguntas…) */
+function openOptions(){
+  const m=MODES[SET.mode];renderModes();
+  $('setupHead').innerHTML=(IMG['m_'+SET.mode]?`<img src="${IMG['m_'+SET.mode]}" alt="">`:'')+`<div><small>Preparar el juego</small><h2>${m.icon} ${m.name}</h2><p class="hint">${m.desc}</p></div>`;
+  if(!SET.bank){let last=null;try{last=store('siritingaUltimoBanco');}catch(e){}const b=BANKS.find(x=>x.id===last);if(b)useBank(b);}
+  if(!SET.bank)$('bankSum').innerHTML='<span style="font-size:30px">❓</span><div style="flex:1"><b>Todavía no has elegido las preguntas</b><small>Elige la asignatura y el juego de preguntas</small></div><button class="btn small green" onclick="openSubjects()">Elegir preguntas</button>';
+  renderSetupMap();$('setupErr').textContent='';show('s-setup');
+}
 function goTeacher(){if(unlocked()){openSetup();return;}$('pin').value='';$('pinErr').textContent='';show('s-pin');setTimeout(()=>$('pin').focus(),50);}
 async function checkPin(){
   if(!(window.crypto&&crypto.subtle)){$('pinErr').textContent='Este navegador no permite comprobar la contraseña.';return;}
@@ -4463,11 +4487,14 @@ function openClasses(){renderClasses();$('backupMsg').textContent='';show('s-cla
 function renderClasses(){
   $('clsList').innerHTML=CL.list.map(c=>{const n=Object.keys(c.alumnos).length,k=mapStop(c.exp);
     return `<div class="card" style="box-shadow:none;border:3px solid #eee9ff;padding:12px;margin:8px 0;max-width:none">
-      <div class="linkbox"><input type="text" value="${esc(c.name)}" data-id="${c.id}" class="clsName" maxlength="30" style="font-size:20px;text-align:left"><button class="btn small red" data-del="${c.id}">Borrar</button></div>
+      <div class="linkbox"><input type="text" value="${esc(c.name)}" data-id="${c.id}" class="clsName" maxlength="30" style="font-size:20px;text-align:left"><button class="btn small" data-reexp="${c.id}" title="Los piratas y los doblones de los alumnos no se tocan">🧭 Islas de nuevo</button><button class="btn small red" data-del="${c.id}">Borrar</button></div>
       <p class="hint" style="margin-top:6px">🧭 ${fmt(c.exp)} doblones · última isla: <b>${MAP_STOPS[k].n}</b> · ${n} alumno${n===1?'':'s'} en el archivo${c.id===CL.sel?' · <b>clase elegida</b>':''}</p>
       ${n?`<details><summary style="font-size:16px">Ver alumnos</summary><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">${Object.values(c.alumnos).sort((a,b)=>a.name.localeCompare(b.name,'es')).map(r=>`<span class="chip" style="font-size:16px;cursor:default">${avatarSVG(r.av,30)}${esc(r.name)} · ${fmt(r.wallet)} 🪙</span>`).join('')}</div></details>`:''}
     </div>`;}).join('');
   $('clsList').querySelectorAll('.clsName').forEach(i=>i.onchange=()=>{const c=clsById(i.dataset.id);const v=i.value.trim();if(v){c.name=v;saveClasses();}else i.value=c.name;});
+  $('clsList').querySelectorAll('[data-reexp]').forEach(b=>b.onclick=()=>{
+    if(b.dataset.armed!=='1'){b.dataset.armed='1';b.textContent='¿Seguro? Pulsa otra vez';setTimeout(()=>{b.dataset.armed='';b.textContent='🧭 Islas de nuevo';},4000);return;}
+    const c=clsById(b.dataset.reexp);c.exp=0;saveClasses();renderClasses();paintBg();toast('La expedición de '+c.name+' empieza de nuevo en el Puerto de Partida');});
   $('clsList').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
     if(CL.list.length<=1){toast('Tiene que quedar al menos una clase');return;}
     if(b.dataset.armed!=='1'){b.dataset.armed='1';b.textContent='¿Seguro? Pulsa otra vez';setTimeout(()=>{b.dataset.armed='';b.textContent='Borrar';},4000);return;}
