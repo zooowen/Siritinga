@@ -344,6 +344,36 @@ h1{-webkit-text-stroke:4px var(--wood2);paint-order:stroke fill;text-shadow:0 7p
 .finfx{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;overflow:hidden;
  background:radial-gradient(circle at 50% 45%,rgba(255,214,90,.96),rgba(214,120,20,.97) 55%,rgba(90,40,10,.98));animation:finin .35s ease-out both;pointer-events:none}
 .finfx.out{animation:finout .7s ease-in forwards}
+.finfx.act1{background:radial-gradient(circle at 50% 50%,#26305c,#0b0f24 70%)}
+.finfx .ffw{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.finfx .fsun{position:absolute;left:50%;top:46%;width:240vmax;height:240vmax;margin:-120vmax 0 0 -120vmax;opacity:0;
+ background:repeating-conic-gradient(rgba(255,255,255,.28) 0 9deg,rgba(255,255,255,0) 9deg 22.5deg);animation:fsunspin 14s linear infinite}
+.finfx.act2 .fsun{opacity:1;transition:opacity .4s}
+@keyframes fsunspin{to{transform:rotate(360deg)}}
+.finfx .fspot{position:absolute;top:-10%;width:42vmax;height:130%;background:linear-gradient(180deg,rgba(255,244,190,.55),rgba(255,244,190,0) 85%);clip-path:polygon(45% 0,55% 0,100% 100%,0 100%);filter:blur(6px);mix-blend-mode:screen}
+.finfx .fspot.l{left:8%;transform-origin:50% 0;animation:fspotl 1.7s ease-in-out infinite alternate}
+.finfx .fspot.r{right:8%;transform-origin:50% 0;animation:fspotr 1.7s ease-in-out infinite alternate}
+@keyframes fspotl{from{transform:rotate(-28deg)}to{transform:rotate(18deg)}}@keyframes fspotr{from{transform:rotate(28deg)}to{transform:rotate(-18deg)}}
+.finfx.act2 .fspot{display:none}
+.finfx .fintro{position:relative;z-index:3;font-family:"Lilita One","Baloo 2",system-ui,sans-serif;font-size:clamp(34px,6vw,72px);color:#fff;-webkit-text-stroke:6px #1a1f3d;paint-order:stroke fill;text-shadow:0 0 30px rgba(255,220,120,.6);animation:fintro 1.7s ease-in both;text-align:center;padding:0 16px}
+.finfx .fintro span{animation:fdot 1s infinite}.finfx .fintro span:nth-child(2){animation-delay:.2s}.finfx .fintro span:nth-child(3){animation-delay:.4s}
+@keyframes fintro{0%{transform:scale(.6);opacity:0}25%{transform:scale(1);opacity:1}80%{transform:scale(1.08)}100%{transform:scale(1.25);opacity:0}}
+@keyframes fdot{0%,100%{opacity:.2}50%{opacity:1}}
+.finfx.act2 .fintro{display:none}
+.finfx .freveal{display:none;position:relative;z-index:3;flex-direction:column;align-items:center;gap:18px}
+.finfx.act2 .freveal{display:flex}
+.finfx .freveal .fbands{position:fixed;z-index:3}
+.finfx.act2 .fflag{animation:fdrop .9s cubic-bezier(.3,1.6,.5,1) both,fwave .5s .9s ease-in-out infinite alternate}
+@keyframes fdrop{from{transform:translateY(-70vh) rotate(-30deg) scale(.6)}to{transform:none}}
+.finfx.act2 h2{animation:fstamp .7s .25s cubic-bezier(.2,1.6,.4,1) both,fglow 1.6s 1s ease-in-out infinite alternate}
+@keyframes fglow{from{filter:drop-shadow(0 0 0 rgba(255,240,180,0))}to{filter:drop-shadow(0 0 22px rgba(255,240,180,.95))}}
+.finfx .fflash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:4}
+.finfx.act2 .fflash{animation:fflash .6s ease-out}
+@keyframes fflash{0%{opacity:.95}100%{opacity:0}}
+.finfx i.fconf{position:absolute;top:-30px;width:12px;height:20px;border-radius:3px;z-index:2;animation:ffall2 linear forwards}
+.finfx i.fcoin{position:absolute;top:-40px;width:30px;height:30px;border-radius:50%;z-index:2;background:radial-gradient(circle at 35% 30%,#fff6c4,#ffd23f 45%,#c98a12);box-shadow:inset 0 0 0 3px #b67a0c;animation:ffall2 linear forwards}
+@keyframes ffall2{0%{transform:translate(0,0) rotate(0)}50%{transform:translate(var(--sw),55vh) rotate(380deg)}100%{transform:translate(0,115vh) rotate(760deg)}}
+
 @keyframes finin{from{opacity:0}to{opacity:1}}@keyframes finout{to{opacity:0;transform:scale(1.15)}}
 .finfx .fbands{position:absolute;left:0;right:0;height:46px;background:repeating-conic-gradient(#111 0 25%,#fff 0 50%) 0 0/46px 46px;opacity:.9}
 .finfx .fbands.t{top:0;animation:fband 1s linear infinite}.finfx .fbands.b{bottom:0;animation:fband 1s linear infinite reverse}
@@ -823,7 +853,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 54 · 18/11/2026 · Portadas animadas: Carrera vikinga, Cofres del tesoro y El saboteador del galeón</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 55 · 18/11/2026 · Finales espectaculares: redoble, fuegos artificiales y lluvia de monedas</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -2981,22 +3011,60 @@ function boardMsg(d){
 
 /* ----- final de partida bien visible: telón dorado con bandera, «¡Fin de la partida!», confeti y fanfarria ----- */
 function finale(sub,sound,head){
+  /* Final espectacular en tres actos:
+     1) redoble: escenario a oscuras con focos y «Y el resultado es…»
+     2) ¡revelación!: fogonazo, rayos de sol girando, trofeo que cae, título con brillo, fuegos artificiales, confeti y lluvia de monedas
+     3) se desvanece y aparece la pantalla de resultados */
   document.querySelectorAll('.finfx').forEach(e=>e.remove());
-  const el=document.createElement('div');el.className='finfx';
-  el.innerHTML='<div class="fbands t"></div><div class="fflag">'+(head?'🏆':'🏁')+'</div><h2'+(head?' class="win"':'')+'>'+(head||'¡Fin de la <span>partida</span>!')+'</h2>'+(sub&&(head||!/fin de la partida/i.test(sub))?'<p>'+sub+'</p>':'')+'<div class="fbands b"></div>';
-  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
-    const cols=['#ff4fa3','#3ad0ff','#ffd23f','#7cf06b','#b06bff','#fff','#ef4b5f'];
-    for(let k=0;k<90;k++){const c=document.createElement('i');c.style.left=Math.random()*100+'%';c.style.background=cols[k%cols.length];
-      c.style.animationDuration=(1.8+Math.random()*2.2)+'s';c.style.animationDelay=(Math.random()*1.4)+'s';el.appendChild(c);}
-  }
+  const calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const el=document.createElement('div');el.className='finfx act1';
+  el.innerHTML='<canvas class="ffw"></canvas><div class="fsun"></div><div class="fspot l"></div><div class="fspot r"></div>'+
+    '<div class="fintro">Y el resultado es<span>.</span><span>.</span><span>.</span></div>'+
+    '<div class="freveal"><div class="fbands t"></div><div class="fflag">'+(head?'🏆':'🏁')+'</div><h2'+(head?' class="win"':'')+'>'+(head||'¡Fin de la <span>partida</span>!')+'</h2>'+
+    (sub&&(head||!/fin de la partida/i.test(sub))?'<p>'+sub+'</p>':'')+'<div class="fbands b"></div></div><div class="fflash"></div>';
   document.body.appendChild(el);
-  if(sound)try{const A=new (window.AudioContext||window.webkitAudioContext)(),t=A.currentTime+.05;
-    [[523,0,.16],[659,.16,.16],[784,.32,.16],[1047,.48,.55],[784,.78,.14],[1047,.94,.9]].forEach(([f,s,d])=>{
-      [1,2].forEach((m,j)=>{const o=A.createOscillator(),g=A.createGain();o.type=j?'triangle':'sawtooth';o.frequency.value=f*m;
-        g.gain.setValueAtTime(.0001,t+s);g.gain.exponentialRampToValueAtTime(j?.06:.12,t+s+.03);g.gain.exponentialRampToValueAtTime(.0001,t+s+d);
-        o.connect(g);g.connect(A.destination);o.start(t+s);o.stop(t+s+d+.05);});});
-    setTimeout(()=>A.close(),3000);}catch(e){}
-  setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),750);},3800);
+  let A=null;if(sound)try{A=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}
+  const T=calm?300:1700;
+  // ---- sonido: redoble de tambor
+  if(A&&!calm)try{const t0=A.currentTime+.05,len=1.6,buf=A.createBuffer(1,A.sampleRate*len,A.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++){const t=i/A.sampleRate,hit=(t*(14+t*16))%1;d[i]=(Math.random()*2-1)*Math.exp(-hit*18)*(0.25+0.75*t/len);}
+    const s=A.createBufferSource(),f=A.createBiquadFilter(),g=A.createGain();f.type='bandpass';f.frequency.value=900;f.Q.value=.7;g.gain.value=.5;
+    s.buffer=buf;s.connect(f);f.connect(g);g.connect(A.destination);s.start(t0);}catch(e){}
+  setTimeout(()=>{
+    el.classList.remove('act1');el.classList.add('act2');
+    // ---- sonido: platillo + fanfarria + estallidos de fuegos artificiales
+    if(A)try{const t=A.currentTime+.02;
+      const noise=(at,dur,vol,freq)=>{const n=A.createBuffer(1,A.sampleRate*dur,A.sampleRate),dd=n.getChannelData(0);for(let i=0;i<dd.length;i++)dd[i]=(Math.random()*2-1)*Math.pow(1-i/dd.length,3);
+        const s=A.createBufferSource(),f=A.createBiquadFilter(),g=A.createGain();f.type='highpass';f.frequency.value=freq;g.gain.value=vol;s.buffer=n;s.connect(f);f.connect(g);g.connect(A.destination);s.start(at);};
+      noise(t,1.4,.35,5000);
+      [[523,0,.14],[659,.14,.14],[784,.28,.14],[1047,.42,.5],[784,.74,.12],[880,.86,.12],[1047,.98,1.1]].forEach(([fq,s,dd])=>{
+        [1,2,1.5].forEach((m,j)=>{const o=A.createOscillator(),g=A.createGain();o.type=['sawtooth','triangle','square'][j];o.frequency.value=fq*m;
+          g.gain.setValueAtTime(.0001,t+s);g.gain.exponentialRampToValueAtTime([.11,.05,.02][j],t+s+.03);g.gain.exponentialRampToValueAtTime(.0001,t+s+dd);
+          o.connect(g);g.connect(A.destination);o.start(t+s);o.stop(t+s+dd+.05);});});
+      for(let k=0;k<7;k++)noise(t+1.2+k*.45+Math.random()*.2,.5,.22,1200);
+      setTimeout(()=>A.close(),6500);}catch(e){}
+    if(calm)return;
+    // ---- confeti y monedas
+    const cols=['#ff4fa3','#3ad0ff','#ffd23f','#7cf06b','#b06bff','#fff','#ef4b5f'];
+    for(let k=0;k<140;k++){const c=document.createElement('i');c.className=k%5===0?'fcoin':'fconf';c.style.left=Math.random()*100+'%';
+      if(k%5)c.style.background=cols[k%cols.length];c.style.animationDuration=(2.2+Math.random()*2.6)+'s';c.style.animationDelay=(Math.random()*2.4)+'s';
+      c.style.setProperty('--sw',(Math.random()*120-60)+'px');el.appendChild(c);}
+    // ---- fuegos artificiales en un lienzo
+    const cv=el.querySelector('.ffw'),ctx=cv.getContext('2d'),dpr=Math.min(2,devicePixelRatio||1);
+    const fit=()=>{cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;};fit();
+    const P=[],fwc=['#ffd23f','#ff4fa3','#3ad0ff','#7cf06b','#fff4c2','#ff8a3d','#b06bff'];
+    const burst=(x,y)=>{const c=fwc[(Math.random()*fwc.length)|0],c2=fwc[(Math.random()*fwc.length)|0],n=70+(Math.random()*40|0);
+      for(let i=0;i<n;i++){const a=i/n*Math.PI*2,v=(2.2+Math.random()*3.2)*dpr;P.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:1,c:i%3?c:c2,r:(2.4+Math.random()*2.2)*dpr});}};
+    const shells=[];let tStart=performance.now();
+    for(let k=0;k<9;k++)setTimeout(()=>{if(!el.isConnected)return;const x=innerWidth*(.12+Math.random()*.76)*dpr;shells.push({x,y:innerHeight*dpr,vy:-(9+Math.random()*4)*dpr,ty:innerHeight*(.12+Math.random()*.3)*dpr});},k*420+(k?Math.random()*200:0));
+    const loop=()=>{if(!el.isConnected)return;ctx.globalCompositeOperation='destination-out';ctx.fillStyle='rgba(0,0,0,.22)';ctx.fillRect(0,0,cv.width,cv.height);ctx.globalCompositeOperation='source-over';
+      for(let i=shells.length-1;i>=0;i--){const s=shells[i];s.y+=s.vy;s.vy*=.985;ctx.fillStyle='#fff8d0';ctx.beginPath();ctx.arc(s.x,s.y,2.6*dpr,0,7);ctx.fill();if(s.y<=s.ty||s.vy>-1.5*dpr){burst(s.x,s.y);shells.splice(i,1);}}
+      for(let i=P.length-1;i>=0;i--){const p=P[i];p.x+=p.vx;p.y+=p.vy;p.vx*=.975;p.vy=p.vy*.975+.06*dpr;p.life-=.012;if(p.life<=0){P.splice(i,1);continue;}
+        ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fill();}
+      ctx.globalAlpha=1;requestAnimationFrame(loop);};
+    requestAnimationFrame(loop);
+  },T);
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),800);},T+(calm?3500:5600));
 }
 function coinBurst(n=24){
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
