@@ -461,6 +461,13 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 /* clasificación y podio */
 #rankSort button{font-size:15px;padding:8px 10px}
 .bar .pct{min-width:62px;text-align:right;color:var(--muted);font-size:17px}
+.tboard{display:flex;flex-direction:column;gap:10px}
+.trow{display:grid;grid-template-columns:44px minmax(120px,auto) auto 1fr auto;align-items:center;gap:12px;padding:10px 14px;border-radius:14px;background:color-mix(in srgb,var(--c) 14%,#fff);border:3px solid var(--c)}
+.trow .tpos{font:400 26px "Lilita One","Baloo 2",sans-serif;text-align:center;color:var(--c)}
+.trow .tname{font:400 24px "Lilita One","Baloo 2",sans-serif;color:var(--c)}
+.trow small{color:var(--muted);font-weight:700}
+.trow .tbar{height:18px;border-radius:999px;background:rgba(0,0,0,.08);overflow:hidden}.trow .tbar i{display:block;height:100%;background:var(--c);border-radius:999px;transition:width .6s}
+.trow .tpts{font-weight:800;font-size:22px;white-space:nowrap}
 .okbad{display:flex;gap:6px;flex:none;font-weight:800;font-size:17px;white-space:nowrap}.okbad b{padding:1px 9px;border-radius:999px;font-weight:800}.okbad .ok{background:#d9f7e6;color:#13703f}.okbad .ko{background:#ffe1e5;color:#b3261e}
 .okbad.big{justify-content:center;gap:12px;margin:6px 0 2px;font-size:24px}.okbad.big b{padding:6px 18px;border:3px solid currentColor;box-shadow:0 4px 0 rgba(0,0,0,.18)}
 .podtitle{color:#fff;-webkit-text-stroke:3px var(--wood2);paint-order:stroke fill;font-size:44px;text-shadow:0 5px 0 rgba(0,0,0,.3);margin-top:10px}
@@ -809,7 +816,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 50 · 18/11/2026 · «A pique»: tus barcos se hunden y humean, y portada animada</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 51 · 18/11/2026 · Jugando por equipos solo se ve qué equipo va ganando</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -1033,7 +1040,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
   <div class="card wide" id="modePanel" style="display:none"></div>
   <div class="cols">
     <div class="card wide"><h2 id="boardTitle">Clasificación</h2><div class="board" id="board"></div></div>
-    <div class="card"><h2>¿Qué está pasando?</h2><ul class="feed" id="feed"></ul></div>
+    <div class="card" id="feedCard"><h2>¿Qué está pasando?</h2><ul class="feed" id="feed"></ul></div>
   </div>
 </section>
 
@@ -3734,6 +3741,12 @@ function renderBoardNow(){
   const r=ranking(),max=Math.max(1,...r.map(p=>p.gold));
   const GT=groupTotals(),gk=Object.keys(GT).filter(g=>g!=='sab'&&g!=='crew');
   const gh=gk.length?'<div class="gtot">'+gk.map(g=>'<span style="--c:'+GT[g].color+'"><b>'+esc(groupName(g))+'</b> ⭐ '+fmt(GT[g].pts)+'</span>').join('')+'</div>':'';
+  // jugando por equipos: solo se ve qué equipo va ganando (ni alumnos sueltos ni lo que hace cada uno)
+  const porEquipos=!!(H.teams&&gk.length&&gk.every(g=>H.teams[g]));
+  $('feedCard').style.display=porEquipos?'none':'';$('boardTitle').textContent=porEquipos?'Equipos':'Clasificación';
+  if(porEquipos){const L=gk.map(g=>({g,...GT[g]})).sort((a,b)=>b.pts-a.pts),mx=Math.max(1,...L.map(x=>x.pts)),emp=L.length>1&&L[0].pts===L[1].pts;
+    $('board').innerHTML='<div class="tboard">'+L.map((x,i)=>`<div class="trow" style="--c:${x.color}"><span class="tpos">${i===0&&!emp&&x.pts>0?'👑':i+1}</span><b class="tname">${esc(groupName(x.g))}</b><small>${x.n} ${x.n===1?'pirata':'piratas'}</small><div class="tbar"><i style="width:${Math.round(100*x.pts/mx)}%"></i></div><span class="tpts">⭐ ${fmt(x.pts)}</span></div>`).join('')+'</div>'+(L.length>1?`<p class="hint" style="text-align:center;margin:8px 0 0">${emp?'¡Van empatados!':L[0].pts>0?'Va ganando '+(/^Drakar/.test(groupName(L[0].g))?'el ':'la ')+esc(groupName(L[0].g)):''}</p>`:'');
+    renderPanel();return;}
   $('board').innerHTML=gh+(r.slice(0,14).map((p,i)=>barRow(p,i,max)).join('')||'<p class="hint">Nadie todavía</p>');
   renderPanel();
 }
