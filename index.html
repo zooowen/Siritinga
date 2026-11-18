@@ -508,6 +508,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 .sethead{display:flex;gap:16px;align-items:center;margin-bottom:6px}.sethead img{width:190px;aspect-ratio:1.68;object-fit:cover;border-radius:14px;box-shadow:0 4px 0 rgba(0,0,0,.15);flex:none}
 .sethead small{text-transform:uppercase;letter-spacing:.06em;font-weight:800;color:var(--muted)}.sethead h2{margin:2px 0 4px}.sethead .hint{margin:0}
 @media (max-width:620px){.sethead{flex-direction:column;align-items:flex-start}.sethead img{width:100%}}
+.trkp em{font-style:normal;background:#ff4f6d;color:#fff;border-radius:999px;padding:0 6px;margin-left:4px;font-size:.85em}
 .okbad{display:flex;gap:6px;flex:none;font-weight:800;font-size:17px;white-space:nowrap}.okbad b{padding:1px 9px;border-radius:999px;font-weight:800}.okbad .ok{background:#d9f7e6;color:#13703f}.okbad .ko{background:#ffe1e5;color:#b3261e}
 .okbad.big{justify-content:center;gap:12px;margin:6px 0 2px;font-size:24px}.okbad.big b{padding:6px 18px;border:3px solid currentColor;box-shadow:0 4px 0 rgba(0,0,0,.18)}
 .podtitle{color:#fff;-webkit-text-stroke:3px var(--wood2);paint-order:stroke fill;font-size:44px;text-shadow:0 5px 0 rgba(0,0,0,.3);margin-top:10px}
@@ -856,7 +857,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 56 · 18/11/2026 · Primero eliges el juego y luego las opciones; las islas empiezan de nuevo</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 57 · 18/11/2026 · Trucos más caros que se duplican con cada uso; la fiesta trae su propia música</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -1560,6 +1561,7 @@ const Music=(()=>{
   const wanted=()=>{const k=kind();return k==='auto'?(MODE_MUSIC[theme]||'pirata'):k;};
   async function tracksFor(th){if(th==='latina')return LATIN.map(t=>['https://upload.wikimedia.org/wikipedia/commons/'+t[0],t[1],'Kevin MacLeod','CC BY 3.0']);return await commonsTracks(th);}
   async function next(){
+    if(partying)return;
     const th=wanted(),my=++token;
     if(th==='gen'){if(audio)audio.pause();MusicGen.start();MusicGen.setTheme(MUSIC_GEN_OF[theme]||'tesoro');playing='gen';return;}
     MusicGen.stop();
@@ -1575,7 +1577,21 @@ const Music=(()=>{
   function setTheme(t){const before=wanted();theme=t;if(on&&(kind()==='auto'||kind()==='gen')&&wanted()!==before){list=[];next();}else if(kind()==='gen')MusicGen.setTheme(MUSIC_GEN_OF[t]||'tesoro');}
   function setKind(k){try{localStorage.setItem('siritingaMusicaTipo',k);}catch(e){}list=[];if(on){stop();start();}}
   // Música propia de fiesta (truco «Momento de fiesta»): solo suena si la música está encendida
-  function party(yes){if(!on)return;if(yes){if(audio)audio.pause();MusicGen.start();MusicGen.setTheme('party');}else{MusicGen.stop();playing=null;list=[];next();}}
+  let partyA=null,partying=false,resumeAudio=false;
+  const PARTY_URL='https://upload.wikimedia.org/wikipedia/commons/a/a8/Beachfront_Celebration_%28ISRC_USUAN1200022%29.mp3';
+  function party(yes){
+    const host=typeof H!=='undefined'&&H&&H.state;   // en el maestro suena siempre; en los alumnos, solo si tienen la música puesta
+    if(yes){
+      if(!on&&!host)return;
+      partying=true;token++;resumeAudio=!!(audio&&!audio.paused);if(audio)audio.pause();MusicGen.stop();
+      if(!partyA){partyA=new Audio(PARTY_URL);partyA.loop=true;partyA.volume=.55;}
+      try{partyA.currentTime=0;}catch(e){}
+      partyA.play().catch(()=>{MusicGen.start();MusicGen.setTheme('party');});   // sin conexión: fiesta con la música del juego
+    }else{
+      if(!partying)return;partying=false;if(partyA)partyA.pause();MusicGen.stop();
+      if(!on)return;if(resumeAudio&&audio)audio.play().catch(()=>next());else next();
+    }
+  }
   return {start,stop,setTheme,setKind,kind,party,isOn:()=>on,theme:()=>theme};
 })();
 const MUSIC_GEN_OF={tesoro:'tesoro',fiesta:'fiesta',saboteador:'saboteador',bandera:'bandera',ciclope:'ciclope'};
@@ -2444,18 +2460,21 @@ $('playModeSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>setPlayMode
    TRUCOS: se compran con doblones durante una partida en vivo
    ===================================================== */
 const TRICKS={
-  fiesta:{n:'Momento de fiesta',i:'🎉',price:40,d:'Cambia la ambientación y empieza una fiesta para todos durante 15 segundos.'},
-  fantasma:{n:'Fantasmas',i:'👻',price:30,d:'Unos fantasmas tapan la pantalla de quien tú elijas durante 10 segundos.',one:true},
-  turbo:{n:'Turbo doble',i:'⚡',price:30,d:'Durante 10 segundos las preguntas van más rápido y ganas el doble.'},
-  terremoto:{n:'Terremoto',i:'🫨',price:35,d:'Las pantallas de los demás vibran durante 10 segundos.'},
-  giro:{n:'Remolino',i:'🌀',price:35,d:'Las pantallas de los demás giran durante 10 segundos.'},
-  reves:{n:'Al revés',i:'🙃',price:35,d:'Los demás ven las palabras al revés durante 10 segundos.'},
+  fiesta:{n:'Momento de fiesta',i:'🎉',price:80,d:'Cambia la ambientación y empieza una fiesta para todos durante 15 segundos.'},
+  fantasma:{n:'Fantasmas',i:'👻',price:60,d:'Unos fantasmas tapan la pantalla de quien tú elijas durante 10 segundos.',one:true},
+  turbo:{n:'Turbo doble',i:'⚡',price:60,d:'Durante 10 segundos las preguntas van más rápido y ganas el doble.'},
+  terremoto:{n:'Terremoto',i:'🫨',price:70,d:'Las pantallas de los demás vibran durante 10 segundos.'},
+  giro:{n:'Remolino',i:'🌀',price:70,d:'Las pantallas de los demás giran durante 10 segundos.'},
+  reves:{n:'Al revés',i:'🙃',price:70,d:'Los demás ven las palabras al revés durante 10 segundos.'},
   regalo:{n:'Regalar monedas',i:'🎁',price:0,d:'Dale 🪙 monedas a un compañero.',one:true,amt:[10,25,50]},
-  ayuda:{n:'Echar una mano',i:'💡',price:20,d:'En su próxima pregunta, tu compañero verá marcada la respuesta correcta.',one:true,no:['bingo','domino']},
-  viento:{n:'Viento a favor',i:'🌬️',price:40,d:'Durante 15 segundos tu drakar avanza el doble con cada acierto.',modes:['vikingos']},
-  tormenta:{n:'Tormenta',i:'⛈️',price:45,d:'Durante 15 segundos los demás drakares avanzan a la mitad.',modes:['vikingos']},
-  premio:{n:'Premio para otro',i:'🎀',price:15,d:'El premio de tu próximo cofre o calabaza se lo lleva quien tú elijas.',one:true,modes:['tesoro','fiesta']}
+  ayuda:{n:'Echar una mano',i:'💡',price:40,d:'En su próxima pregunta, tu compañero verá marcada la respuesta correcta.',one:true,no:['bingo','domino']},
+  viento:{n:'Viento a favor',i:'🌬️',price:80,d:'Durante 15 segundos tu drakar avanza el doble con cada acierto.',modes:['vikingos']},
+  tormenta:{n:'Tormenta',i:'⛈️',price:90,d:'Durante 15 segundos los demás drakares avanzan a la mitad.',modes:['vikingos']},
+  premio:{n:'Premio para otro',i:'🎀',price:30,d:'El premio de tu próximo cofre o calabaza se lo lleva quien tú elijas.',one:true,modes:['tesoro','fiesta']}
 };
+/* cada vez que alguien usa un truco en la partida, ese truco pasa a costar el doble para todos */
+function trickPrice(k){const t=TRICKS[k];if(!t||!t.price)return t?t.price:0;const n=(H&&H.trickUses&&H.trickUses[k])||0;return Math.round(t.price*Math.pow(2,n));}
+function trickPrices(){const o={};Object.keys(TRICKS).forEach(k=>o[k]=trickPrice(k));return o;}
 const FX_SECS={fiesta:15,fantasma:10,turbo:10,terremoto:10,giro:10,reves:10};
 const trickOk=(k,mode)=>{const t=TRICKS[k];return !!t&&(!t.modes||t.modes.includes(mode))&&!(t.no&&t.no.includes(mode));};
 
@@ -2467,10 +2486,11 @@ function onTrick(p,d){
   if(p.trickAt&&now-p.trickAt<12000)return res(false,'Espera '+Math.ceil((12000-(now-p.trickAt))/1000)+' segundos para usar otro truco.');
   let v=null;
   if(t.one){v=H.players[d.key];if(!v||v===p||!v.rec)return res(false,'Elige a un compañero.');}
-  const amt=t.amt?(t.amt.includes(+d.amt)?+d.amt:t.amt[0]):0,cost=t.price+amt;
+  const amt=t.amt?(t.amt.includes(+d.amt)?+d.amt:t.amt[0]):0,cost=trickPrice(d.k)+amt;
   if(dobN(p)<cost)return res(false,'No tienes 🪙 monedas suficientes. ¡Acierta preguntas para ganar más!');
   p.spent=(p.spent||0)+cost;hsend(p,{t:'hit',text:'',gold:p.gold});  // gastar doblones no quita puntos
   p.trickAt=now;renderBoard();
+  if(t.price){H.trickUses=H.trickUses||{};H.trickUses[d.k]=(H.trickUses[d.k]||0)+1;const tp=trickPrices();allP().forEach(x=>hsend(x,{t:'tprices',p:tp}));}
   const fx=(list,k,extra)=>list.forEach(x=>hsend(x,{t:'fx',k,secs:FX_SECS[k],from:p.name,...(extra||{})}));
   let msg='';
   switch(d.k){
@@ -2515,7 +2535,8 @@ function applyFx(k,secs,from){
 const turboOn=()=>document.body.classList.contains('fx-turbo');
 
 /* ---------- tienda de trucos del alumno ---------- */
-let TRK={sel:null,key:null,list:[]};
+let TRK={sel:null,key:null,list:[]},TPRICE={};
+const tprice=k=>TPRICE[k]!=null?TPRICE[k]:TRICKS[k].price;
 const trkHave=()=>Math.max(0,Math.floor(+($('hudGold').dataset.v||0)));
 function trickBtnVisible(on){$('hudTricks').style.display=on?'inline-flex':'none';}
 function openTricks(){
@@ -2526,8 +2547,8 @@ function renderTricks(){
   $('trkWallet').textContent=fmt(trkHave());
   const t=TRK.sel&&TRICKS[TRK.sel];
   if(!t){
-    $('trkBody').innerHTML='<div class="trkgrid">'+Object.entries(TRICKS).filter(([k])=>trickOk(k,P.mode)).map(([k,x])=>{const can=trkHave()>=x.price+(x.amt?x.amt[0]:0);
-      return `<button class="trk" data-k="${k}" ${can?'':'disabled'}><i>${x.i}</i><b>${x.n}</b><small>${x.d}</small><span class="trkp">🪙 ${x.price?x.price:'Tú decides'}</span></button>`;}).join('')+'</div>';
+    $('trkBody').innerHTML='<div class="trkgrid">'+Object.entries(TRICKS).filter(([k])=>trickOk(k,P.mode)).map(([k,x])=>{const pr=tprice(k),can=trkHave()>=pr+(x.amt?x.amt[0]:0);
+      return `<button class="trk" data-k="${k}" ${can?'':'disabled'}><i>${x.i}</i><b>${x.n}</b><small>${x.d}</small><span class="trkp">🪙 ${pr?fmt(pr):'Tú decides'}${pr>x.price?' <em>×'+Math.round(pr/x.price)+'</em>':''}</span></button>`;}).join('')+'</div><p class="hint" style="text-align:center;margin:8px 0 0">⚠️ Cada vez que alguien usa un truco, ese truco cuesta el doble.</p>';
     $('trkBody').querySelectorAll('.trk').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(TRICKS[k].one||TRICKS[k].amt){TRK.sel=k;renderTricks();}else buyTrick(k);});
     return;
   }
@@ -3593,7 +3614,7 @@ function hostMsg(conn,d){
   if(d.t==='pick'){if(H.mode==='vikingos'&&H.teams&&H.teams[d.team]&&!p.team){p.team=d.team;vikSync();renderLobby();}return;}
   if(d.t==='ready'){p.ready=true;renderLobby();if(p.late&&H.state==='playing'){p.late=false;hsend(p,{t:'start',left:H.endsAt-Date.now()});resumePlayer(p);}return;}
   if(H.state!=='playing')return;
-  if(d.t==='plist'){hsend(p,{t:'plist',list:others(p).map(x=>({key:x.key,name:x.name,av:x.av}))});return;}
+  if(d.t==='plist'){hsend(p,{t:'plist',list:others(p).map(x=>({key:x.key,name:x.name,av:x.av})),prices:trickPrices()});return;}
   if(d.t==='trick'){onTrick(p,d);return;}
   if(d.t==='do'){const g=BG[H.mode];if(g&&g.do&&(g.shared||p.phase==='act'))g.do(p,d);return;}
   if(d.t==='next'&&(p.phase==='idle'||p.phase==='done'))sendQuestion(p);
@@ -4315,7 +4336,8 @@ function playerMsg(d){
   }
   if(boardMsg(d))return;
   if(d.t==='scrollres'){if(d.ok)showPrize(d);else{toast(d.msg,3000);renderScrolls();}return;}
-  if(d.t==='plist'){TRK.list=d.list||[];if($('tricks').classList.contains('on'))renderTricks();return;}
+  if(d.t==='plist'){TRK.list=d.list||[];if(d.prices)TPRICE=d.prices;if($('tricks').classList.contains('on'))renderTricks();return;}
+  if(d.t==='tprices'){TPRICE=d.p||{};if($('tricks').classList.contains('on')&&!TRK.sel)renderTricks();return;}
   if(d.t==='trickres'){if(d.ok){closeTricks();toast('🎩 '+d.msg,3000);}else{toast(d.msg,3000);if($('tricks').classList.contains('on'))renderTricks();}return;}
   if(d.t==='fx'){applyFx(d.k,d.secs||10,d.from||'');return;}
   if(d.t==='result'){
