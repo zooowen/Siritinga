@@ -866,7 +866,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 58 · 19/11/2026 · Contra las respuestas al azar: tiempo para leer, banquillo y fallos que restan</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 59 · 19/11/2026 · Tareas para casa de hasta 100 preguntas, o todas las del juego</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -1010,7 +1010,8 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
     </div>
     <div id="hwOpts" style="display:none">
       <label for="hwN">Número de preguntas</label>
-      <select id="hwN"><option>10</option><option selected>15</option><option>20</option><option>30</option></select>
+      <select id="hwN"><option>10</option><option selected>15</option><option>20</option><option>25</option><option>30</option><option>40</option><option>50</option><option>60</option><option>80</option><option>100</option><option value="0">Todas las del juego de preguntas</option></select>
+      <p class="hint" id="hwNHint">Si eliges más preguntas de las que tiene el juego, algunas se repiten en otro orden.</p>
       <label for="hwName">Nombre de la tarea</label>
       <input type="text" id="hwName" maxlength="40" value="Repaso de ciencias">
     </div>
@@ -4228,7 +4229,7 @@ const SALT='siritinga-cofres-2026';
 function hwCode(id,name,correct,n,gold){return fnv(id+'|'+norm(name)+'|'+correct+'|'+n+'|'+gold+'|'+SALT).toString(36).toUpperCase().padStart(7,'0').slice(-7);}
 function makeHomework(qs){
   const id=fnv(Date.now()+'|'+Math.random()).toString(36).toUpperCase().slice(0,5);
-  const data={v:1,id,ph:$('usePhotos').checked&&$('photoRow').style.display!=='none'?1:0,name:$('hwName').value.trim()||'Repaso',m:SET.mode,s:$('season').value,n:+$('hwN').value,q:$('bank').value};
+  const data={v:1,id,ph:$('usePhotos').checked&&$('photoRow').style.display!=='none'?1:0,name:$('hwName').value.trim()||'Repaso',m:SET.mode,s:$('season').value,n:(+$('hwN').value||parseBank($('bank').value).length||15),q:$('bank').value};
   const link=location.origin+location.pathname+'#tarea='+b64e(JSON.stringify(data));
   const list=store('siritingaTareas')||[];list.unshift({id,name:data.name,mode:data.m,n:data.n,date:new Date().toLocaleDateString('es-ES')});store('siritingaTareas',list.slice(0,40));
   $('hwLink').value=link;
@@ -4264,7 +4265,7 @@ function checkResult(){
 let HW=null;
 function readHomework(){
   const m=location.hash.match(/tarea=([A-Za-z0-9_-]+)/);if(!m)return null;
-  try{const d=JSON.parse(b64d(m[1]));if(!d||!d.id||!d.q)return null;d.qs=parseBank(d.q);if(d.qs.length<4)return null;if(!MODES[d.m]||!MODES[d.m].hw)d.m='tesoro';d.n=Math.max(5,Math.min(50,d.n|0||15));return d;}catch(e){return null;}
+  try{const d=JSON.parse(b64d(m[1]));if(!d||!d.id||!d.q)return null;d.qs=parseBank(d.q);if(d.qs.length<4)return null;if(!MODES[d.m]||!MODES[d.m].hw)d.m='tesoro';d.n=Math.max(5,Math.min(200,d.n|0||15));return d;}catch(e){return null;}
 }
 function startHomework(){
   const name=$('hwStudent').value.trim().replace(/\s+/g,' ');
