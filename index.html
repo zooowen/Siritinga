@@ -509,6 +509,15 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 .sethead small{text-transform:uppercase;letter-spacing:.06em;font-weight:800;color:var(--muted)}.sethead h2{margin:2px 0 4px}.sethead .hint{margin:0}
 @media (max-width:620px){.sethead{flex-direction:column;align-items:flex-start}.sethead img{width:100%}}
 .trkp em{font-style:normal;background:#ff4f6d;color:#fff;border-radius:999px;padding:0 6px;margin-left:4px;font-size:.85em}
+.rlock{grid-column:1/-1;display:flex;flex-direction:column;gap:6px;align-items:center;font-weight:800;color:var(--muted);margin-bottom:4px}
+.rlock i{display:block;width:min(420px,90%);height:10px;border-radius:999px;background:linear-gradient(90deg,var(--gold),#ff9a3d) 0 0/0% 100% no-repeat,rgba(0,0,0,.1);animation:rlock linear forwards}
+@keyframes rlock{to{background-size:100% 100%,auto}}
+#answers.locked .ans{opacity:.55;filter:saturate(.6)}
+.rlock span{background:rgba(255,255,255,.9);color:#5a2e0a;padding:3px 14px;border-radius:999px;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.bench{position:fixed;inset:0;z-index:180;display:flex;align-items:center;justify-content:center;background:rgba(20,16,50,.78);padding:16px}
+.bench .bcard{background:#fff;border-radius:22px;padding:22px 26px;text-align:center;max-width:420px;box-shadow:0 10px 0 rgba(0,0,0,.25);animation:fstamp .5s cubic-bezier(.2,1.6,.4,1) both}
+.bench .bico{font-size:70px}.bench h2{margin:4px 0;color:#b3261e}.bench p{margin:6px 0 10px;font-weight:700}
+.bench .bn{display:inline-block;min-width:70px;font:400 54px "Lilita One","Baloo 2",sans-serif;color:#fff;background:#b3261e;border-radius:16px;padding:2px 14px}
 .okbad{display:flex;gap:6px;flex:none;font-weight:800;font-size:17px;white-space:nowrap}.okbad b{padding:1px 9px;border-radius:999px;font-weight:800}.okbad .ok{background:#d9f7e6;color:#13703f}.okbad .ko{background:#ffe1e5;color:#b3261e}
 .okbad.big{justify-content:center;gap:12px;margin:6px 0 2px;font-size:24px}.okbad.big b{padding:6px 18px;border:3px solid currentColor;box-shadow:0 4px 0 rgba(0,0,0,.18)}
 .podtitle{color:#fff;-webkit-text-stroke:3px var(--wood2);paint-order:stroke fill;font-size:44px;text-shadow:0 5px 0 rgba(0,0,0,.3);margin-top:10px}
@@ -857,7 +866,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 57 · 18/11/2026 · Trucos más caros que se duplican con cada uso; la fiesta trae su propia música</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 58 · 19/11/2026 · Contra las respuestas al azar: tiempo para leer, banquillo y fallos que restan</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -2535,6 +2544,12 @@ function applyFx(k,secs,from){
 const turboOn=()=>document.body.classList.contains('fx-turbo');
 
 /* ---------- tienda de trucos del alumno ---------- */
+function benchShow(secs){
+  document.querySelectorAll('.bench').forEach(e=>e.remove());
+  const el=document.createElement('div');el.className='bench';
+  el.innerHTML='<div class="bcard"><div class="bico">🪑</div><h2>¡Al banquillo!</h2><p>Has fallado 3 veces seguidas contestando demasiado rápido.<br>Respira y lee con calma.</p><b class="bn">'+secs+'</b></div>';
+  document.body.appendChild(el);let s=secs;const iv=setInterval(()=>{s--;const n=el.querySelector('.bn');if(n)n.textContent=Math.max(0,s);if(s<=0){clearInterval(iv);el.remove();}},1000);
+}
 let TRK={sel:null,key:null,list:[]},TPRICE={};
 const tprice=k=>TPRICE[k]!=null?TPRICE[k]:TRICKS[k].price;
 const trkHave=()=>Math.max(0,Math.floor(+($('hudGold').dataset.v||0)));
@@ -3618,7 +3633,7 @@ function hostMsg(conn,d){
   if(d.t==='trick'){onTrick(p,d);return;}
   if(d.t==='do'){const g=BG[H.mode];if(g&&g.do&&(g.shared||p.phase==='act'))g.do(p,d);return;}
   if(d.t==='next'&&(p.phase==='idle'||p.phase==='done'))sendQuestion(p);
-  else if(d.t==='answer'&&p.phase==='q')onAnswer(p,d.i===p.right);
+  else if(d.t==='answer'&&p.phase==='q'){const q=curQ(p);if(Date.now()-(p.qAt||0)<qLock(q&&q.q)*0.7)return;onAnswer(p,d.i===p.right);}
   else if(d.t==='pick'&&p.phase==='chest')onPick(p,d.i);
   else if(d.t==='target'&&p.phase==='target')onTarget(p,d.key);
   else if(d.t==='card'&&p.phase==='card')onCard(p,d.i|0);
@@ -3626,8 +3641,27 @@ function hostMsg(conn,d){
   else if(d.t==='minihits'&&H.cy&&H.cy.mini){H.cy.mini.hits[p.key]=Math.max(H.cy.mini.hits[p.key]||0,Math.min(150,d.n|0));if(!H.local)renderPanel();}
 }
 function curQ(p){return H.qs[p.cur];}
+/* Contra las respuestas al azar:
+   1) tiempo mínimo para leer: los botones se desbloquean pasado un momento (más si la pregunta es larga)
+   3) banquillo: 3 fallos rápidos seguidos → 10 segundos sin poder jugar
+   4) la rapidez solo premia si se acierta (+3); fallar resta 5 puntos y 5 monedas */
+const ANTI={bonus:3,penal:5,quick:2500,benchN:3,benchMs:10000};
+function qLock(text){return Math.min(3500,Math.max(1200,800+String(text||'').length*30));}
+function antiAzar(p,ok){
+  const q=curQ(p),lock=qLock(q&&q.q),t=Date.now()-(p.qAt||Date.now()),out=[];
+  if(ok){p.qw=0;if(t<lock+4000){p.gold+=ANTI.bonus;out.push('⚡ Rápido y bien: +'+ANTI.bonus+' ⭐');}}
+  else{
+    const before=p.gold;p.gold=Math.max(0,p.gold-ANTI.penal);if(before>p.gold)out.push('❌ Fallo: −'+(before-p.gold)+' ⭐ puntos y 🪙 monedas');
+    if(t<lock+ANTI.quick){p.qw=(p.qw||0)+1;
+      if(p.qw>=ANTI.benchN){p.qw=0;p.benchUntil=Date.now()+ANTI.benchMs;hsend(p,{t:'bench',secs:ANTI.benchMs/1000});}
+      else if(p.qw===ANTI.benchN-1)out.push('🪑 ¡Cuidado! Otro fallo tan rápido y te vas al banquillo');}
+    else p.qw=0;
+  }
+  return out.join(' · ');
+}
 function sendQuestion(p){
   if(H.state!=='playing')return;
+  if(p.benchUntil&&p.benchUntil>Date.now()){if(!p.benchT)p.benchT=setTimeout(()=>{p.benchT=null;sendQuestion(p);},p.benchUntil-Date.now()+50);return;}
   if(BG[H.mode]&&BG[H.mode].shared){BG[H.mode].start(p);return;}
   if(H.tarea&&p.answered>=H.n){endGame();return;}
   const idx=p.order[p.qi%p.order.length]; p.qi++;
@@ -3639,6 +3673,7 @@ function sendQuestion(p){
   hsend(p,{t:'q',text:q.q,opts,pic:q.pic||'',num:H.tarea?(p.answered+1)+' de '+H.n:'',help});
 }
 function onAnswer(p,ok){
+  const note=antiAzar(p,ok);if(note)setTimeout(()=>hsend(p,{t:'hit',text:note,gold:p.gold}),60);
   const q=curQ(p);p.answered++;if(ok)p.correct++;
   const right=q?q.a:'';
   if(BG[H.mode]){BG[H.mode].answer(p,ok,right);return;}
@@ -4331,7 +4366,10 @@ function playerMsg(d){
     $('qText').innerHTML=(d.num?'<div class="hint" style="font-size:17px">Pregunta '+esc(d.num)+'</div>':'')+esc(d.text);
     $('answers').innerHTML='';
     if(d.help)toast('💡 '+d.help.from+' te ayuda: la respuesta marcada es la correcta',3000);
-    d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='ans'+(d.help&&d.help.i===i?' helped':'');b.textContent=o;b.onclick=()=>{$('answers').querySelectorAll('button').forEach(x=>x.disabled=true);send({t:'answer',i});};$('answers').appendChild(b);});
+    d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='ans'+(d.help&&d.help.i===i?' helped':'');b.textContent=o;b.disabled=true;b.onclick=()=>{$('answers').querySelectorAll('button').forEach(x=>x.disabled=true);send({t:'answer',i});};$('answers').appendChild(b);});
+    {const ms=qLock(d.text),bar=document.createElement('div');bar.className='rlock';bar.innerHTML='<span>📖 Lee bien la pregunta…</span><i style="animation-duration:'+ms+'ms"></i>';
+     $('answers').prepend(bar);$('answers').classList.add('locked');clearTimeout(window._rl);
+     window._rl=setTimeout(()=>{bar.remove();$('answers').classList.remove('locked');$('answers').querySelectorAll('button').forEach(x=>x.disabled=false);},ms);}
     show('s-q');return;
   }
   if(boardMsg(d))return;
@@ -4390,6 +4428,7 @@ function playerMsg(d){
   if(d.t==='caught'){setGold(d.gold);$('cyAlertArt').innerHTML=cyclopsSVG(200);$('cyAlertTxt').textContent=(d.group?(d.who?(d.who===P.name?'¡Te ha atrapado a ti, que ibas el último! ':'¡Ha atrapado a '+d.who+', que iba el último! ')+'Volvéis todos a la entrada del laberinto':'¡Ha atrapado a la clase! Volvéis todos a la entrada del laberinto'):'Vuelves al principio del nivel '+d.level)+(d.lose?' y pierdes '+d.lose+' doblones':'')+'. ¡Corred otra vez!';
     const al=$('cyAlert');al.classList.add('on');clearTimeout(al.h);al.h=setTimeout(()=>al.classList.remove('on'),2600);return;}
   if(d.t==='hit'){if(d.gold!=null)setGold(d.gold);if(d.text)toast(d.text,3500);return;}
+  if(d.t==='bench'){benchShow(d.secs||10);return;}
   if(d.t==='mates'){setMates(d.list);toast('🕵️ '+d.text,5000);return;}
   if(d.t==='meeting'){
     $('voteList').innerHTML='';
