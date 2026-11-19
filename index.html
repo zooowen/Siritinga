@@ -866,7 +866,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 62 · 19/11/2026 · El mapa de la expedición vuelve a empezar</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 63 · 19/11/2026 · Música grabada de verdad para cada juego, con fundidos, tensión al final y sintonía de victoria</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -1006,7 +1006,9 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <select id="ptsPct"><option value="25">25 % de los puntos</option><option value="50" selected>50 % de los puntos</option><option value="75">75 % de los puntos</option><option value="100">100 % de los puntos</option></select>
       <p class="hint">Cada 🪙 moneda que se gana jugando suma también un ⭐ punto. Las monedas sirven para comprar trucos durante la partida; los puntos deciden quién gana y, al final, se convierten en 💰 doblones para la bolsa de cada alumno. En los juegos por equipos los puntos se suman y al final se reparten a partes iguales entre los jugadores del equipo.</p>
       <label for="musKind">Música</label>
-      <select id="musKind"></select><p class="hint">Al elegir un tema empieza a sonar para que lo escuches. La música es libre (Wikimedia Commons) y sus autores aparecen en los créditos.</p>
+      <select id="musKind"></select>
+      <label for="musVol">Volumen de la música <span id="musVolN"></span></label><input type="range" id="musVol" min="0" max="100" step="5" style="width:100%">
+      <p class="hint">Al elegir un tema empieza a sonar para que lo escuches. La música es libre (Wikimedia Commons) y sus autores aparecen en los créditos.</p>
     </div>
     <div id="hwOpts" style="display:none">
       <label for="hwN">Número de preguntas</label>
@@ -1534,19 +1536,20 @@ const LATIN=[
 /* Temas de música libre: se buscan en Wikimedia Commons (solo licencias libres) */
 const MUSIC_THEMES={
   latina:{n:'Ritmos latinos: cumbia, salsa, merengue, tango…',fixed:true},
-  auto:{n:'Según el juego (cambia sola con cada juego)'},
+  auto:{n:'Según el juego (recomendada: música grabada de verdad)'},
   pirata:{n:'Aventura pirata',q:['Kevin MacLeod adventure','Kevin MacLeod pirate','Kevin MacLeod sea']},
   fiesta:{n:'Fiesta y alegría',q:['Kevin MacLeod happy','Kevin MacLeod upbeat','Kevin MacLeod polka']},
   misterio:{n:'Misterio y espías',q:['Kevin MacLeod mystery','Kevin MacLeod suspense','Kevin MacLeod sneaky']},
+  vikinga:{n:'Vikingos y tambores'},
   epica:{n:'Persecución épica',q:['Kevin MacLeod action','Kevin MacLeod epic','Kevin MacLeod chase']},
   medieval:{n:'Castillos y caballeros',q:['Kevin MacLeod medieval','Kevin MacLeod celtic','Kevin MacLeod renaissance']},
   espacio:{n:'Espacio y futuro',q:['Kevin MacLeod space','Kevin MacLeod electronic','Kevin MacLeod synth']},
   selva:{n:'Selva y safari',q:['Kevin MacLeod jungle','Kevin MacLeod african','Kevin MacLeod tribal']},
   calma:{n:'Calma para pensar',q:['Kevin MacLeod calm','Kevin MacLeod relaxing','Kevin MacLeod piano']},
   miedo:{n:'Halloween (un poco de miedo)',q:['Kevin MacLeod spooky','Kevin MacLeod halloween','Kevin MacLeod creepy']},
-  gen:{n:'Música del juego (creada por Siritinga)'}
+  gen:{n:'Música electrónica sencilla (creada por Siritinga, sin internet)'}
 };
-const MODE_MUSIC={tesoro:'pirata',oca:'pirata',mercaderes:'pirata',escaleras:'selva',fiesta:'miedo',saboteador:'misterio',bandera:'epica',flota:'epica',conecta:'fiesta',ciclope:'epica',damas:'medieval',bingo:'fiesta',domino:'latina',tarea:'calma'};
+const MODE_MUSIC={tesoro:'pirata',vikingos:'vikinga',oca:'pirata',mercaderes:'pirata',escaleras:'selva',fiesta:'miedo',saboteador:'misterio',bandera:'epica',flota:'epica',conecta:'fiesta',ciclope:'epica',damas:'medieval',bingo:'fiesta',domino:'fiesta',tarea:'calma'};
 const MUSIC_CACHE={};
 async function commonsTracks(theme){
   if(MUSIC_CACHE[theme])return MUSIC_CACHE[theme];
@@ -1565,13 +1568,41 @@ async function commonsTracks(theme){
   if(out.length){try{localStorage.setItem('siritingaMusicaTema_'+theme,JSON.stringify({t:Date.now(),list:out}));const cr=JSON.parse(localStorage.getItem('siritingaMusicaCreditos')||'{}');out.forEach(x=>cr[x[0]]=x.slice(1));localStorage.setItem('siritingaMusicaCreditos',JSON.stringify(cr));}catch(e){}}
   return MUSIC_CACHE[theme]=out;
 }
+/* Música grabada (no sintetizada) guardada junto a Siritinga en GitHub: Kevin MacLeod (incompetech.com), CC BY.
+   Listas elegidas a mano para cada tipo de juego, con el volumen igualado. */
+const MUSIC_DIR='musica/';
+const SONGS={'achaidh-cheide':'Achaidh Cheide','amazing-plan':'Amazing Plan','batty-mcfaddlin':'Batty McFaddlin','celtic-impulse':'Celtic Impulse','clash-defiant':'Clash Defiant','cloud-dancer':'Cloud Dancer','club-seamus':'Club Seamus','crossing-the-chasm':'Crossing the Chasm','curse-of-the-scarab':'Curse of the Scarab','drums-of-the-deep':'Drums of the Deep','enchanted-valley':'Enchanted Valley','fiddles-mcginty':'Fiddles McGinty','fluffing-a-duck':'Fluffing a Duck','folk-round':'Folk Round','ghost-story':'Ghost Story','goblin-tinker-soldier-spy':'Goblin Tinker Soldier Spy','heroic-age':'Heroic Age','hidden-agenda':'Hidden Agenda','hillbilly-swing':'Hillbilly Swing','hustle':'Hustle','hyperfun':'Hyperfun','if-i-had-a-chicken':'If I Had a Chicken','interloper':'Interloper','le-grand-chase':'Le Grand Chase','lord-of-the-land':'Lord of the Land','magic-forest':'Magic Forest','minstrel-guild':'Minstrel Guild','monkeys-spinning-monkeys':'Monkeys Spinning Monkeys','scheming-weasel':'Scheming Weasel','sergios-magic-dustbin':"Sergio's Magic Dustbin",'show-must-be-go':'Show Must Be Go','skye-cuillin':'Skye Cuillin','sneaky-snitch':'Sneaky Snitch','spazzmatica-polka':'Spazzmatica Polka','tabuk':'Tabuk','teller-of-the-tales':'Teller of the Tales','thatched-villagers':'Thatched Villagers','the-builder':'The Builder','the-cannery':'The Cannery'};
+const LOCAL_MUSIC={
+  pirata:['club-seamus','fiddles-mcginty','monkeys-spinning-monkeys','le-grand-chase','thatched-villagers','hustle','fluffing-a-duck'],
+  fiesta:['hyperfun','cloud-dancer','if-i-had-a-chicken','batty-mcfaddlin','hillbilly-swing','show-must-be-go','the-builder','spazzmatica-polka','the-cannery','amazing-plan'],
+  misterio:['sneaky-snitch','scheming-weasel','hidden-agenda','interloper','goblin-tinker-soldier-spy'],
+  epica:['crossing-the-chasm','clash-defiant','heroic-age','le-grand-chase','drums-of-the-deep','curse-of-the-scarab'],
+  vikinga:['drums-of-the-deep','heroic-age','celtic-impulse','skye-cuillin','achaidh-cheide'],
+  medieval:['minstrel-guild','folk-round','teller-of-the-tales','lord-of-the-land','celtic-impulse'],
+  selva:['tabuk','enchanted-valley','magic-forest','monkeys-spinning-monkeys'],
+  espacio:['the-builder','amazing-plan','hyperfun','the-cannery'],
+  calma:['enchanted-valley','magic-forest','skye-cuillin','teller-of-the-tales'],
+  miedo:['ghost-story','sergios-magic-dustbin','goblin-tinker-soldier-spy','curse-of-the-scarab'],
+  tension:['le-grand-chase','hustle','crossing-the-chasm'],
+  party:['hyperfun']
+};
 const Music=(()=>{
-  let audio=null,on=false,list=[],i=0,theme='tesoro',playing=null,token=0;
-  const kind=()=>{try{const k=localStorage.getItem('siritingaMusicaTipo');return MUSIC_THEMES[k]?k:'latina';}catch(e){return 'latina';}};
-  const wanted=()=>{const k=kind();return k==='auto'?(MODE_MUSIC[theme]||'pirata'):k;};
-  async function tracksFor(th){if(th==='latina')return LATIN.map(t=>['https://upload.wikimedia.org/wikipedia/commons/'+t[0],t[1],'Kevin MacLeod','CC BY 3.0']);return await commonsTracks(th);}
+  let audio=null,on=false,list=[],i=0,theme='tesoro',playing=null,token=0,fails=0,tense=false;
+  const vol=()=>{try{const v=parseFloat(localStorage.getItem('siritingaVolumen'));return isNaN(v)?.5:Math.max(0,Math.min(1,v));}catch(e){return .5;}};
+  const kind=()=>{try{const k=localStorage.getItem('siritingaMusicaTipo');return MUSIC_THEMES[k]?k:'auto';}catch(e){return 'auto';}};
+  const wanted=()=>{const k=kind();if(tense&&k!=='gen'&&k!=='latina')return 'tension';return k==='auto'?(MODE_MUSIC[theme]||'pirata'):k;};
+  const localList=th=>(LOCAL_MUSIC[th]||[]).map(s=>[MUSIC_DIR+s+'.mp3',SONGS[s],'Kevin MacLeod','CC BY 4.0']);
+  async function tracksFor(th){
+    if(LOCAL_MUSIC[th]&&fails<3)return localList(th);
+    if(th==='latina')return LATIN.map(t=>['https://upload.wikimedia.org/wikipedia/commons/'+t[0],t[1],'Kevin MacLeod','CC BY 3.0']);
+    return await commonsTracks(MUSIC_THEMES[th]&&MUSIC_THEMES[th].q?th:'epica');
+  }
+  // fundidos suaves: nada de cortes bruscos entre canciones
+  function fade(el,to,ms,done){clearInterval(el._ft);const from=el.volume,st=performance.now();
+    el._ft=setInterval(()=>{const k=Math.min(1,(performance.now()-st)/ms);el.volume=Math.max(0,Math.min(1,from+(to-from)*k));if(k>=1){clearInterval(el._ft);done&&done();}},40);}
+  let partyA=null,partying=false,resumeAudio=false,vA=null,vict=false;
   async function next(){
-    if(partying)return;
+    if(partying||vict)return;
     const th=wanted(),my=++token;
     if(th==='gen'){if(audio)audio.pause();MusicGen.start();MusicGen.setTheme(MUSIC_GEN_OF[theme]||'tesoro');playing='gen';return;}
     MusicGen.stop();
@@ -1579,30 +1610,47 @@ const Music=(()=>{
       if(!L.length){playing='gen';MusicGen.start();MusicGen.setTheme(MUSIC_GEN_OF[theme]||'tesoro');return;} // sin conexión: música del juego
       list=L.slice().sort(()=>Math.random()-.5);i=0;playing=th;}
     const t=list[i++%list.length];
-    if(!audio){audio=new Audio();audio.volume=.35;audio.addEventListener('ended',()=>on&&next());audio.addEventListener('error',()=>on&&setTimeout(next,500));}
-    audio.src=t[0];audio.play().catch(()=>{});
+    if(!audio){audio=new Audio();audio.preload='auto';
+      audio.addEventListener('ended',()=>on&&next());
+      audio.addEventListener('error',()=>{if(!on)return;if(String(audio.src).includes(MUSIC_DIR)){fails++;if(fails>=3){list=[];playing=null;}}setTimeout(next,400);});
+      audio.addEventListener('playing',()=>{if(String(audio.src).includes(MUSIC_DIR))fails=0;});}
+    const go=()=>{if(my!==token)return;audio.src=t[0];audio.volume=0;audio.play().then(()=>fade(audio,vol(),1200)).catch(()=>{});};
+    if(!audio.paused&&audio.volume>0.02)fade(audio,0,700,go);else go();
   }
   function start(){on=true;next();}
-  function stop(){on=false;token++;MusicGen.stop();if(audio)audio.pause();}
+  function stop(){on=false;token++;MusicGen.stop();if(audio&&!audio.paused)fade(audio,0,500,()=>audio.pause());}
   function setTheme(t){const before=wanted();theme=t;if(on&&(kind()==='auto'||kind()==='gen')&&wanted()!==before){list=[];next();}else if(kind()==='gen')MusicGen.setTheme(MUSIC_GEN_OF[t]||'tesoro');}
-  function setKind(k){try{localStorage.setItem('siritingaMusicaTipo',k);}catch(e){}list=[];if(on){stop();start();}}
-  // Música propia de fiesta (truco «Momento de fiesta»): solo suena si la música está encendida
-  let partyA=null,partying=false,resumeAudio=false;
-  const PARTY_URL='https://upload.wikimedia.org/wikipedia/commons/a/a8/Beachfront_Celebration_%28ISRC_USUAN1200022%29.mp3';
+  function setKind(k){try{localStorage.setItem('siritingaMusicaTipo',k);}catch(e){}list=[];if(on){stop();setTimeout(start,550);}}
+  function setVolume(v){v=Math.max(0,Math.min(1,+v||0));try{localStorage.setItem('siritingaVolumen',String(v));}catch(e){}
+    [audio,partyA].forEach(el=>{if(el&&!el.paused){clearInterval(el._ft);el.volume=v;}});}
+  // último minuto de la partida: música de persecución para meter tensión
+  function tension(yes){yes=!!yes;if(tense===yes)return;tense=yes;if(on&&kind()!=='gen'&&kind()!=='latina'){list=[];next();}}
+  // Música de fiesta (truco «Momento de fiesta»): se para la que suene y entra una canción de fiesta
+  const PARTY_URL=MUSIC_DIR+'hyperfun.mp3',PARTY_ALT='https://upload.wikimedia.org/wikipedia/commons/a/a8/Beachfront_Celebration_%28ISRC_USUAN1200022%29.mp3';
   function party(yes){
     const host=typeof H!=='undefined'&&H&&H.state;   // en el maestro suena siempre; en los alumnos, solo si tienen la música puesta
     if(yes){
       if(!on&&!host)return;
-      partying=true;token++;resumeAudio=!!(audio&&!audio.paused);if(audio)audio.pause();MusicGen.stop();
-      if(!partyA){partyA=new Audio(PARTY_URL);partyA.loop=true;partyA.volume=.55;}
-      try{partyA.currentTime=0;}catch(e){}
-      partyA.play().catch(()=>{MusicGen.start();MusicGen.setTheme('party');});   // sin conexión: fiesta con la música del juego
+      partying=true;token++;resumeAudio=!!(audio&&!audio.paused);if(audio)fade(audio,0,300,()=>audio.pause());MusicGen.stop();
+      if(!partyA){partyA=new Audio(PARTY_URL);partyA.loop=true;partyA.addEventListener('error',()=>{if(partying&&!partyA.src.includes('wikimedia')){partyA.src=PARTY_ALT;partyA.play().catch(()=>{MusicGen.start();MusicGen.setTheme('party');});}});}
+      try{partyA.currentTime=0;}catch(e){}partyA.volume=0;
+      partyA.play().then(()=>fade(partyA,Math.min(1,vol()+.1),600)).catch(()=>{MusicGen.start();MusicGen.setTheme('party');});
     }else{
-      if(!partying)return;partying=false;if(partyA)partyA.pause();MusicGen.stop();
-      if(!on)return;if(resumeAudio&&audio)audio.play().catch(()=>next());else next();
+      if(!partying)return;partying=false;if(partyA)fade(partyA,0,600,()=>partyA.pause());MusicGen.stop();
+      if(!on)return;setTimeout(()=>{if(resumeAudio&&audio){audio.play().then(()=>fade(audio,vol(),900)).catch(()=>next());}else next();},500);
     }
   }
-  return {start,stop,setTheme,setKind,kind,party,isOn:()=>on,theme:()=>theme};
+  // final de partida: un fragmento triunfal grabado (en vez de la fanfarria sintetizada)
+  function victory(){
+    vict=true;token++;if(audio&&!audio.paused)fade(audio,0,400,()=>audio.pause());MusicGen.stop();
+    if(!vA)vA=new Audio(MUSIC_DIR+'victoria.mp3');
+    try{vA.currentTime=0;}catch(e){}vA.volume=Math.min(1,vol()+.25);
+    const pr=vA.play();
+    const done=()=>{vict=false;if(on){list=[];next();}};
+    vA.onended=done;setTimeout(()=>{if(vict)done();},9000);
+    return pr;
+  }
+  return {start,stop,setTheme,setKind,setVolume,vol,kind,party,tension,victory,isOn:()=>on,theme:()=>theme};
 })();
 const MUSIC_GEN_OF={tesoro:'tesoro',fiesta:'fiesta',saboteador:'saboteador',bandera:'bandera',ciclope:'ciclope'};
 
@@ -1793,7 +1841,7 @@ picSVG=function(key){
 };
 function creditsHTML(){
   let extra='';try{const cr=JSON.parse(localStorage.getItem('siritingaMusicaCreditos')||'{}');const L=Object.values(cr);if(L.length)extra='<li><b>Otras músicas usadas en este ordenador</b>: '+L.map(x=>'«'+x[0]+'» de '+x[1]+' ('+x[2]+')').join(', ')+' · Wikimedia Commons</li>';}catch(e){}
-  return extra+'<li><b>Música «Ritmos latinos»</b>: '+LATIN.map(t=>'«'+t[1]+'» ('+t[2]+')').join(', ')+', de Kevin MacLeod (incompetech.com) · licencia <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener">CC BY 3.0</a> · Wikimedia Commons</li>'+Object.entries(PHOTOS).map(([k,f])=>`<li><b>${f.d}</b>: autor ${f.a} · licencia <a href="https://creativecommons.org/${f.l==='CC0'?'publicdomain/zero/1.0/':/^Dominio/.test(f.l)?'publicdomain/mark/1.0/':'licenses/'+f.l.replace('CC ','').toLowerCase().replace(' ','/')+'/'}" target="_blank" rel="noopener">${f.l}</a> · <a href="https://commons.wikimedia.org/wiki/${encodeURI(f.p)}" target="_blank" rel="noopener">ver en Wikimedia Commons</a></li>`).join('');
+  return extra+'<li><b>Música de los juegos</b>: '+Object.values(SONGS).map(s=>'«'+s+'»').join(', ')+', de Kevin MacLeod (incompetech.com) · licencia <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></li><li><b>Música «Ritmos latinos»</b>: '+LATIN.map(t=>'«'+t[1]+'» ('+t[2]+')').join(', ')+', de Kevin MacLeod (incompetech.com) · licencia <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener">CC BY 3.0</a> · Wikimedia Commons</li>'+Object.entries(PHOTOS).map(([k,f])=>`<li><b>${f.d}</b>: autor ${f.a} · licencia <a href="https://creativecommons.org/${f.l==='CC0'?'publicdomain/zero/1.0/':/^Dominio/.test(f.l)?'publicdomain/mark/1.0/':'licenses/'+f.l.replace('CC ','').toLowerCase().replace(' ','/')+'/'}" target="_blank" rel="noopener">${f.l}</a> · <a href="https://commons.wikimedia.org/wiki/${encodeURI(f.p)}" target="_blank" rel="noopener">ver en Wikimedia Commons</a></li>`).join('');
 }
 
 /* ============================================================
@@ -1994,6 +2042,10 @@ function fnv(str){let h=0x811c9dc5;for(let i=0;i<str.length;i++){h^=str.charCode
 function updMusicBtn(){const b=$('musicBtn');b.textContent=Music.isOn()?'🎵':'🔇';b.classList.toggle('off',!Music.isOn());b.title=Music.isOn()?'Quitar la música':'Poner música';}
 function musicFor(mode){Music.setTheme(mode||'tesoro');}
 function musicAuto(defaultOn){const v=store('siritingaMusica');if(v===true||(v===null&&defaultOn)){Music.start();}updMusicBtn();}
+// noviembre 2026: todos pasan a la música grabada según el juego (la sintetizada sonaba «a lata»)
+try{if(!localStorage.getItem('siritingaMusica63')){localStorage.setItem('siritingaMusicaTipo','auto');localStorage.setItem('siritingaMusica63','1');}}catch(e){}
+$('musVol').value=Math.round(Music.vol()*100);$('musVolN').textContent=$('musVol').value+' %';
+$('musVol').oninput=()=>{Music.setVolume($('musVol').value/100);$('musVolN').textContent=$('musVol').value+' %';};
 $('musKind').innerHTML=Object.entries(MUSIC_THEMES).map(([k,t])=>`<option value="${k}">${t.n}</option>`).join('');$('musKind').value=Music.kind();$('musKind').onchange=()=>{Music.setKind($('musKind').value);if(!Music.isOn()){Music.start();store('siritingaMusica',true);updMusicBtn();}};
 $('musicBtn').onclick=()=>{if(Music.isOn())Music.stop();else Music.start();store('siritingaMusica',Music.isOn());updMusicBtn();};
 
@@ -3142,10 +3194,13 @@ function finale(sub,sound,head){
       const noise=(at,dur,vol,freq)=>{const n=A.createBuffer(1,A.sampleRate*dur,A.sampleRate),dd=n.getChannelData(0);for(let i=0;i<dd.length;i++)dd[i]=(Math.random()*2-1)*Math.pow(1-i/dd.length,3);
         const s=A.createBufferSource(),f=A.createBiquadFilter(),g=A.createGain();f.type='highpass';f.frequency.value=freq;g.gain.value=vol;s.buffer=n;s.connect(f);f.connect(g);g.connect(A.destination);s.start(at);};
       noise(t,1.4,.35,5000);
+      const fanfare=()=>{const t=A.currentTime+.02;
       [[523,0,.14],[659,.14,.14],[784,.28,.14],[1047,.42,.5],[784,.74,.12],[880,.86,.12],[1047,.98,1.1]].forEach(([fq,s,dd])=>{
         [1,2,1.5].forEach((m,j)=>{const o=A.createOscillator(),g=A.createGain();o.type=['sawtooth','triangle','square'][j];o.frequency.value=fq*m;
           g.gain.setValueAtTime(.0001,t+s);g.gain.exponentialRampToValueAtTime([.11,.05,.02][j],t+s+.03);g.gain.exponentialRampToValueAtTime(.0001,t+s+dd);
-          o.connect(g);g.connect(A.destination);o.start(t+s);o.stop(t+s+dd+.05);});});
+          o.connect(g);g.connect(A.destination);o.start(t+s);o.stop(t+s+dd+.05);});});};
+      let vp=null;try{vp=Music.victory();}catch(e){}
+      if(vp&&vp.catch)vp.catch(fanfare);else fanfare();
       for(let k=0;k<7;k++)noise(t+1.2+k*.45+Math.random()*.2,.5,.22,1200);
       setTimeout(()=>A.close(),6500);}catch(e){}
     if(calm)return;
@@ -3883,6 +3938,7 @@ function renderLobby(){
 function vikRandom(){if(!H||!H.teams)return;vikShuffle();renderLobby();}
 function kick(k){const p=H.players[k];if(!p)return;hsend(p,{t:'kicked'});setTimeout(()=>p.conn&&p.conn.close(),300);delete H.players[k];renderLobby();}
 function startGame(){
+  try{Music.tension(false);}catch(e){}
   const ps=allP().filter(p=>p.conn);const m=MODES[H.mode];
   if(ps.length<m.min){$('lobbyErr').textContent='Este juego necesita al menos '+m.min+' alumnos conectados.';return;}
   $('lobbyErr').textContent='';
@@ -3924,6 +3980,7 @@ function tick(){
   if(!H||H.state!=='playing')return;
   const left=Math.max(0,H.endsAt-Date.now());
   $('timer').textContent=mmss(left);$('timer').style.color=left<=30000?'#ff9aa7':'';
+  if(!H.tarea)try{Music.tension(left>0&&left<=60000);}catch(e){}
   if(H.mode==='ciclope'){cyStep();renderPanel();if(H.cy.mini)return setTimeout(tick,250);}
   if(BG[H.mode]&&BG[H.mode].tick){BG[H.mode].tick();const n=$('bgNext');if(n&&H.bg)n.textContent=Math.max(0,Math.ceil((H.bg.next-Date.now())/1000));}
   if(H.mode==='saboteador'){
@@ -4149,6 +4206,7 @@ function onCard(p,i){
 
 /* ----- final ----- */
 function endGame(){
+  try{Music.tension(false);}catch(e){}
   if(!H||H.state==='over')return;
   H.state='over';H.meeting=null;
   const r=ranking();
