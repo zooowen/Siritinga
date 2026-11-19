@@ -518,6 +518,23 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
 .bench .bcard{background:#fff;border-radius:22px;padding:22px 26px;text-align:center;max-width:420px;box-shadow:0 10px 0 rgba(0,0,0,.25);animation:fstamp .5s cubic-bezier(.2,1.6,.4,1) both}
 .bench .bico{font-size:70px}.bench h2{margin:4px 0;color:#b3261e}.bench p{margin:6px 0 10px;font-weight:700}
 .bench .bn{display:inline-block;min-width:70px;font:400 54px "Lilita One","Baloo 2",sans-serif;color:#fff;background:#b3261e;border-radius:16px;padding:2px 14px}
+/* tonos de color propios de cada juego (los Cofres del tesoro usan los de siempre) */
+body[data-g=fiesta]{--parch:#f6ecff;--parch2:#e0c8f6;--gold-d:#9a5cd6;--wood:#4b1d73;--wood2:#3a0f5c;--b1:#c58cff;--b2:#9a4fe0;--b3:#7d36c2;--b4:#4f1d85}
+body[data-g=saboteador]{--parch:#fbefdd;--parch2:#ecd2a6;--gold-d:#b97a2f;--wood:#5a3414;--wood2:#3e230c;--b1:#f0a75a;--b2:#d27f2a;--b3:#b5661a;--b4:#7a400a}
+body[data-g=bandera]{--parch:#eef6ff;--parch2:#cfe3fb;--gold-d:#3d7fd0;--wood:#173f73;--wood2:#0d2a52;--b1:#ff7b7b;--b2:#e8414b;--b3:#c52d37;--b4:#8a1a22}
+body[data-g=flota]{--parch:#e8f7f5;--parch2:#bfe5df;--gold-d:#2c9a96;--wood:#13525a;--wood2:#0b3238;--b1:#4fd1c5;--b2:#1fa79b;--b3:#178a80;--b4:#0d5952}
+body[data-g=vikingos]{--parch:#eef4f8;--parch2:#cddfe9;--gold-d:#6d8ea6;--wood:#2b4253;--wood2:#1a2a36;--b1:#6fb4e0;--b2:#3f8cc4;--b3:#2f73a6;--b4:#1b4a70}
+body[data-g=ciclope]{--parch:#fbf6ea;--parch2:#e7dcc0;--gold-d:#c9a24a;--wood:#2d5d8a;--wood2:#143152;--b1:#5d9bd8;--b2:#2f6fb8;--b3:#245c9c;--b4:#153c6b}
+body[data-g=conecta]{--parch:#eef0ff;--parch2:#d3d7ff;--gold-d:#6f62e0;--wood:#2c2380;--wood2:#1b1450;--b1:#8c7bff;--b2:#6252f0;--b3:#4e3fd6;--b4:#2e2394}
+body[data-g=damas]{--parch:#f7efe2;--parch2:#e3cfae;--gold-d:#a8743a;--wood:#5e2222;--wood2:#3a1010;--b1:#d65a5a;--b2:#b23a3a;--b3:#962c2c;--b4:#5e1515}
+body[data-g=bingo]{--parch:#fff0f6;--parch2:#ffd1e5;--gold-d:#e0609b;--wood:#8a2558;--wood2:#4e0f30;--b1:#ff7eb6;--b2:#ef4f97;--b3:#d23a7e;--b4:#8e1f50}
+body[data-g=domino]{--parch:#fff4e0;--parch2:#ffdcae;--gold-d:#e08a2e;--wood:#8f3c14;--wood2:#4f1d06;--b1:#ffa55a;--b2:#f07c22;--b3:#d26414;--b4:#8c3c06}
+body[data-g=oca]{--parch:#f3fae4;--parch2:#d9ecb3;--gold-d:#8bb33f;--wood:#45601a;--wood2:#24340a;--b1:#8bd65a;--b2:#5cb82d;--b3:#489c20;--b4:#2c6810}
+body[data-g=escaleras]{--parch:#eefae6;--parch2:#cbeebd;--gold-d:#5fae4f;--wood:#255d22;--wood2:#123510;--b1:#5fd07a;--b2:#2fb553;--b3:#239843;--b4:#146428}
+body[data-g=mercaderes]{--parch:#fff7e6;--parch2:#f7dcac;--gold-d:#d9a02f;--wood:#6b4a17;--wood2:#3b2606;--b1:#3fc9c0;--b2:#19a89f;--b3:#138a82;--b4:#0b5a55}
+body[data-g] .card{background:radial-gradient(120% 90% at 15% 0%,#fff 0%,var(--parch) 55%,var(--parch2) 100%);box-shadow:0 0 0 4px var(--wood),0 14px 0 rgba(0,0,0,.28),inset 0 0 40px rgba(0,0,0,.06)}
+body[data-g] .btn:not(.gold):not(.green):not(.red):not(.ghost){background:linear-gradient(var(--b1),var(--b2) 60%,var(--b3));box-shadow:inset 0 3px 0 rgba(255,255,255,.45),0 6px 0 var(--b4),0 9px 12px rgba(0,0,0,.25)}
+body[data-g] .card,body[data-g] .btn{transition:background .4s,box-shadow .4s}
 .okbad{display:flex;gap:6px;flex:none;font-weight:800;font-size:17px;white-space:nowrap}.okbad b{padding:1px 9px;border-radius:999px;font-weight:800}.okbad .ok{background:#d9f7e6;color:#13703f}.okbad .ko{background:#ffe1e5;color:#b3261e}
 .okbad.big{justify-content:center;gap:12px;margin:6px 0 2px;font-size:24px}.okbad.big b{padding:6px 18px;border:3px solid currentColor;box-shadow:0 4px 0 rgba(0,0,0,.18)}
 .podtitle{color:#fff;-webkit-text-stroke:3px var(--wood2);paint-order:stroke fill;font-size:44px;text-shadow:0 5px 0 rgba(0,0,0,.3);margin-top:10px}
@@ -866,7 +883,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 63 · 19/11/2026 · Música grabada de verdad para cada juego, con fundidos, tensión al final y sintonía de victoria</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 64 · 19/11/2026 · Cada juego con sus colores; música grabada de verdad para cada juego</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -2019,7 +2036,8 @@ function setScene(id){
   if(id==='s-q'||!sceneCur){const L=SCENES[sceneMode()]||SCENES.tarea;if(id==='s-q')sceneN++;const k=L[sceneN%L.length];
     if(k!==sceneCur){sceneCur=k;$('scenebg').style.backgroundImage='url('+IMG['f_'+k]+')';}}
 }
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));setScene(id);document.body.classList.toggle('home',id==='s-home');window.scrollTo(0,0);}
+function gameTheme(m){if(m&&m!=='tesoro')document.body.dataset.g=m;else delete document.body.dataset.g;}
+function show(id){if(id==='s-home'||id==='s-games'||id==='s-pin')gameTheme('');document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));setScene(id);document.body.classList.toggle('home',id==='s-home');window.scrollTo(0,0);}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
@@ -3621,7 +3639,7 @@ function openSetup(){openGames();}
 function openGames(){renderModes();show('s-games');}
 /* 2) opciones del juego elegido (tiempo, música, clase, preguntas…) */
 function openOptions(){
-  const m=MODES[SET.mode];renderModes();
+  const m=MODES[SET.mode];renderModes();gameTheme(SET.mode);
   $('setupHead').innerHTML=(IMG['m_'+SET.mode]?`<img src="${IMG['m_'+SET.mode]}" alt="">`:'')+`<div><small>Preparar el juego</small><h2>${m.icon} ${m.name}</h2><p class="hint">${m.desc}</p></div>`;
   if(!SET.bank){let last=null;try{last=store('siritingaUltimoBanco');}catch(e){}const b=BANKS.find(x=>x.id===last);if(b)useBank(b);}
   if(!SET.bank)$('bankSum').innerHTML='<span style="font-size:30px">❓</span><div style="flex:1"><b>Todavía no has elegido las preguntas</b><small>Elige la asignatura y el juego de preguntas</small></div><button class="btn small green" onclick="openSubjects()">Elegir preguntas</button>';
@@ -3674,7 +3692,7 @@ async function createGame(){
   $('createBtn').disabled=false;$('setupErr').textContent='';
   H={net,code,qs,cls:CL.sel,sabN:$('sabN').value,photos:$('usePhotos').checked,mode:SET.mode,season:$('season').value,pct:+$('ptsPct').value||50,vikN:+$('vikN').value||4,dur:+$('dur').value*1000,players:{},state:'lobby',endsAt:0,feed:[],joinN:0};
   if(H.mode==='vikingos')H.teams=vikTeams(H.vikN);
-  document.body.classList.toggle('hallo',H.mode==='fiesta');
+  document.body.classList.toggle('hallo',H.mode==='fiesta');gameTheme(H.mode);
   $('codeBig').textContent=code;$('codeSmall').textContent=code;
   $('lobbyMode').textContent=MODES[H.mode].icon+' '+modeLabel(H.mode,H.season)+' · '+clsById(H.cls).name;
   $('gameModeName').textContent=modeLabel(H.mode,H.season);
@@ -4405,7 +4423,7 @@ function goJoin(){show('s-join');setTimeout(()=>$('joinCode').focus(),50);}
 if(params.get('c')){$('joinCode').value=params.get('c');goJoin();}
 HW=readHomework();
 if(HW){
-  document.body.classList.toggle('hallo',HW.m==='fiesta');
+  document.body.classList.toggle('hallo',HW.m==='fiesta');gameTheme(HW.m);
   $('hwTitle').textContent=HW.name;
   $('hwDesc').textContent=MODES[HW.m].icon+' '+modeLabel(HW.m,HW.s)+' · '+HW.n+' preguntas. Al terminar verás un código para entregarlo en Canvas.';
   show('s-hwjoin');
@@ -4442,7 +4460,7 @@ function playerMsg(d){
   if(d.dob!=null)setDob(d.dob);
   if(d.t==='reject'){P.clearTo&&P.clearTo();$('joinErr').textContent=d.why;$('hwErr').textContent=d.why;$('joinBtn').disabled=false;P.conn&&P.conn.destroy&&P.conn.destroy();return;}
   if(d.t==='welcome'){
-    P.clearTo&&P.clearTo();USE_PHOTOS=d.photos!==false;if(d.exp!=null)paintBg(d.exp);const first=!P.joined;P.joined=true;P.mode=d.mode;musicFor(d.mode);P.season=d.season;P.T=theme(d.mode);
+    P.clearTo&&P.clearTo();USE_PHOTOS=d.photos!==false;if(d.exp!=null)paintBg(d.exp);const first=!P.joined;P.joined=true;P.mode=d.mode;gameTheme(d.mode);musicFor(d.mode);P.season=d.season;P.T=theme(d.mode);
     document.body.classList.toggle('hallo',P.T.hallo);
     setGold(d.gold);hudAv();$('hud').classList.add('on');emoVisible(!P.hw&&!d.late);
     if(P.hw){H.state='playing';if(H.mode==='ciclope'){H.dur=H.n*9000;cyInit();cyLoop();}if(BG[H.mode])BG[H.mode].init();const p=allP()[0];sendQuestion(p);return;}
