@@ -866,7 +866,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 61 · 19/11/2026 · Juego nuevo de Español: el abecedario y el orden alfabético</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 62 · 19/11/2026 · El mapa de la expedición vuelve a empezar</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -2011,6 +2011,7 @@ function loadClasses(){
   c.list.forEach(x=>{if(!x.alumnos||typeof x.alumnos!=='object')x.alumnos={};x.exp=Math.max(0,+x.exp||0);});
   // noviembre 2026: Óscar pidió que la expedición empezara de nuevo (los piratas y los doblones de cada alumno se conservan)
   if(!c.islas56){c.islas56=true;c.list.forEach(x=>x.exp=0);store('siritingaClases',c);}
+  if(!c.islas62){c.islas62=true;c.list.forEach(x=>x.exp=0);store('siritingaClases',c);}   // 19/11/2026: Óscar pidió reiniciar el mapa otra vez
   return c;
 }
 let CL=loadClasses();
