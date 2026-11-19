@@ -866,7 +866,7 @@ h1.logo{font-size:clamp(70px,13vw,150px);color:var(--gold);-webkit-text-stroke:7
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 59 · 19/11/2026 · Tareas para casa de hasta 100 preguntas, o todas las del juego</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 60 · 19/11/2026 · Ninguna pregunta se repite dos veces seguidas al empezar otra vuelta</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -3666,7 +3666,8 @@ function sendQuestion(p){
   if(BG[H.mode]&&BG[H.mode].shared){BG[H.mode].start(p);return;}
   if(H.tarea&&p.answered>=H.n){endGame();return;}
   const idx=p.order[p.qi%p.order.length]; p.qi++;
-  if(p.qi%p.order.length===0)p.order=shuffle(p.order);
+  // vuelta completa: se barajan otra vez, sin que la última pregunta salga justo la primera de la siguiente vuelta
+  if(p.qi%p.order.length===0){p.order=shuffle(p.order);if(p.order.length>1&&p.order[0]===idx){const j=1+Math.floor(Math.random()*(p.order.length-1));[p.order[0],p.order[j]]=[p.order[j],p.order[0]];}}
   const q=H.qs[idx]; p.cur=idx;
   const opts=shuffle([q.a,...q.w]); p.right=opts.indexOf(q.a); p.phase='q';
   const help=p.helpFrom?{i:p.right,from:p.helpFrom}:null;p.helpFrom=null;
