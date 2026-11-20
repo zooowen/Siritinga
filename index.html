@@ -537,6 +537,9 @@ body[data-g] .btn:not(.gold):not(.green):not(.red):not(.ghost){background:linear
 body[data-g] .card,body[data-g] .btn{transition:background .4s,box-shadow .4s}
 .qpic:has(.usamap){width:min(560px,100%)}.qpic:has(.usamap) figure{width:100%}
 .qpic svg.usamap,.usamap{width:100%;max-width:560px;height:auto;display:block;margin:0 auto;border-radius:14px}
+.hwboard{width:100%;max-width:820px;margin-bottom:10px}.hwboard:empty{display:none}.hwboard #modePanel{max-width:none;zoom:.66;margin:0 auto}
+@media (max-width:760px){.hwboard #modePanel{zoom:.5}}
+#s-fb:has(#modePanel) .big-msg{font-size:44px}#s-fb:has(#modePanel) #fbImg{display:none!important}
 .okbad{display:flex;gap:6px;flex:none;font-weight:800;font-size:17px;white-space:nowrap}.okbad b{padding:1px 9px;border-radius:999px;font-weight:800}.okbad .ok{background:#d9f7e6;color:#13703f}.okbad .ko{background:#ffe1e5;color:#b3261e}
 .okbad.big{justify-content:center;gap:12px;margin:6px 0 2px;font-size:24px}.okbad.big b{padding:6px 18px;border:3px solid currentColor;box-shadow:0 4px 0 rgba(0,0,0,.18)}
 .podtitle{color:#fff;-webkit-text-stroke:3px var(--wood2);paint-order:stroke fill;font-size:44px;text-shadow:0 5px 0 rgba(0,0,0,.3);margin-top:10px}
@@ -885,7 +888,7 @@ body[data-g] .card,body[data-g] .btn{transition:background .4s,box-shadow .4s}
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 65 · 20/11/2026 · Ciencias sociales: los 50 estados y sus capitales, con mapas</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 66 · 20/11/2026 · En las tareas para casa se ve el tablero de cada juego</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -1226,6 +1229,7 @@ body[data-g] .card,body[data-g] .btn{transition:background .4s,box-shadow .4s}
 </section>
 
 <section class="screen" id="s-fb">
+  <div class="hwboard" id="hwBoardSlot"></div>
   <img id="fbImg" alt="" style="height:min(30vh,240px);display:none">
   <div class="big-msg" id="fbMsg"></div>
   <div class="card" id="fbBox" style="text-align:center;font-size:23px;display:none"></div>
@@ -1245,6 +1249,7 @@ body[data-g] .card,body[data-g] .btn{transition:background .4s,box-shadow .4s}
 </section>
 
 <section class="screen" id="s-act">
+  <div class="hwboard" id="hwSlotAct"></div>
   <div class="card" style="max-width:640px;text-align:center"><div id="actMsg" style="font-size:21px"></div><div id="actBox" style="margin-top:14px"></div></div>
 </section>
 <section class="screen" id="s-bingo" style="justify-content:flex-start;padding-top:70px">
@@ -2058,7 +2063,8 @@ function setScene(id){
     if(k!==sceneCur){sceneCur=k;$('scenebg').style.backgroundImage='url('+IMG['f_'+k]+')';}}
 }
 function gameTheme(m){if(m&&m!=='tesoro')document.body.dataset.g=m;else delete document.body.dataset.g;}
-function show(id){if(id==='s-home'||id==='s-games'||id==='s-pin')gameTheme('');document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));setScene(id);document.body.classList.toggle('home',id==='s-home');window.scrollTo(0,0);}
+function show(id){if(id==='s-home'||id==='s-games'||id==='s-pin')gameTheme('');
+  if(typeof H!=='undefined'&&H&&H.local){const mp=$('modePanel');if(mp.closest('.hwboard')){if(id==='s-fb')$('hwBoardSlot').appendChild(mp);else if(id==='s-act')$('hwSlotAct').appendChild(mp);}}document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));setScene(id);document.body.classList.toggle('home',id==='s-home');window.scrollTo(0,0);}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
@@ -4133,6 +4139,10 @@ function renderLobby(){
 }
 function vikRandom(){if(!H||!H.teams)return;vikShuffle();renderLobby();}
 function kick(k){const p=H.players[k];if(!p)return;hsend(p,{t:'kicked'});setTimeout(()=>p.conn&&p.conn.close(),300);delete H.players[k];renderLobby();}
+function setupPanel(){const G=BG[H.mode];
+  $('modePanel').style.display=(H.mode==='saboteador'||H.mode==='bandera'||H.mode==='ciclope'||G)?'block':'none';
+  if(H.mode==='ciclope')$('modePanel').innerHTML='<div class="row" style="justify-content:space-between"><h2>👁️ ¡Que viene el cíclope!</h2><span class="hint">'+H.cy.levels+' niveles hasta la salida. Toda la clase corre junta: cada acierto os hace avanzar. Quien falla o tarda se queda atrás 🐢. Si el cíclope alcanza al último, volvéis todos a la entrada.</span></div><div class="cyscene laby">'+labySVG()+'<div id="cyMarks"></div><div class="cymon" id="cyMon">'+cyclopsSVG(96)+'</div><div id="cyRunners"></div></div><div class="row" style="margin-top:10px;align-items:center;flex-wrap:nowrap"><img id="cyCarrot" alt="La zanahoria gigante" style="width:150px;border-radius:12px;flex:none"><div id="cyProg" style="flex:1"></div></div>';
+}
 function startGame(){
   try{Music.tension(false);}catch(e){}
   const ps=allP().filter(p=>p.conn);const m=MODES[H.mode];
@@ -4158,8 +4168,7 @@ function startGame(){
     else sendQuestion(p);
   });
   if(G&&G.begin)G.begin();
-  $('modePanel').style.display=(H.mode==='saboteador'||H.mode==='bandera'||H.mode==='ciclope'||G)?'block':'none';
-  if(H.mode==='ciclope')$('modePanel').innerHTML='<div class="row" style="justify-content:space-between"><h2>👁️ ¡Que viene el cíclope!</h2><span class="hint">'+H.cy.levels+' niveles hasta la salida. Toda la clase corre junta: cada acierto os hace avanzar. Quien falla o tarda se queda atrás 🐢. Si el cíclope alcanza al último, volvéis todos a la entrada.</span></div><div class="cyscene laby">'+labySVG()+'<div id="cyMarks"></div><div class="cymon" id="cyMon">'+cyclopsSVG(96)+'</div><div id="cyRunners"></div></div><div class="row" style="margin-top:10px;align-items:center;flex-wrap:nowrap"><img id="cyCarrot" alt="La zanahoria gigante" style="width:150px;border-radius:12px;flex:none"><div id="cyProg" style="flex:1"></div></div>';
+  setupPanel();
   $('boardTitle').textContent=H.mode==='saboteador'?'Tripulación':'Clasificación';
   show('s-hgame');renderBoard();tick();
 }
@@ -4215,7 +4224,7 @@ function renderBoardNow(){
   renderPanel();
 }
 function renderPanel(){
-  if(!H||H.local)return;
+  if(!H||(H.local&&!(MODES[H.mode]&&(MODES[H.mode].board||H.mode==='ciclope'))))return;
   if(BG[H.mode]&&H.bg){if(renderPanel.t)return;renderPanel.t=setTimeout(()=>{renderPanel.t=0;if(H&&H.bg&&BG[H.mode]){const h=BG[H.mode].panel();if(h!=null)$('modePanel').innerHTML=h;}},250);return;}
   if(H.mode==='saboteador'){
     const m=H.meeting;
@@ -4584,6 +4593,7 @@ function startHomework(){
   H={local:true,photos:HW.ph!==0,tarea:true,n:HW.n,id:HW.id,qs:HW.qs,mode:HW.m,season:HW.s||'halloween',players:{},state:'lobby',feed:[],joinN:0,dur:0,endsAt:0};
   P={name,conn:{open:true,send:m=>setTimeout(()=>hostMsg(hostSide,m),0)},joined:false,hw:true};
   loadProfile(name);musicFor(HW.m);musicAuto(false);
+  if(MODES[HW.m]&&(MODES[HW.m].board||HW.m==='ciclope'))$('hwBoardSlot').appendChild($('modePanel'));
   P.conn.send({t:'join',name,av:PROF.av});
 }
 function endHomework(p){
@@ -4641,7 +4651,7 @@ function playerMsg(d){
     P.clearTo&&P.clearTo();USE_PHOTOS=d.photos!==false;if(d.exp!=null)paintBg(d.exp);const first=!P.joined;P.joined=true;P.mode=d.mode;gameTheme(d.mode);musicFor(d.mode);P.season=d.season;P.T=theme(d.mode);
     document.body.classList.toggle('hallo',P.T.hallo);
     setGold(d.gold);hudAv();$('hud').classList.add('on');emoVisible(!P.hw&&!d.late);
-    if(P.hw){H.state='playing';if(H.mode==='ciclope'){H.dur=H.n*9000;cyInit();cyLoop();}if(BG[H.mode])BG[H.mode].init();const p=allP()[0];sendQuestion(p);return;}
+    if(P.hw){H.state='playing';if(H.mode==='ciclope'){H.dur=H.n*9000;cyInit();cyLoop();}if(BG[H.mode])BG[H.mode].init();if($('hwBoardSlot').contains($('modePanel'))){setupPanel();renderPanel();}const p=allP()[0];sendQuestion(p);return;}
     if(first||d.late)openPirate(d.late?'late':'lobby');
     return;
   }
