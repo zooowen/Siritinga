@@ -551,7 +551,9 @@ body[data-g] .card,body[data-g] .btn{transition:background .4s,box-shadow .4s}
 .mrich{position:absolute;right:16%;bottom:15%;max-width:26%;background:rgba(255,250,236,.9);border-radius:12px;padding:6px 10px;font-size:clamp(10px,1.1vw,14px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
 .mrich .mrank{font-size:inherit}
 .role .rsecret,.role .rmsg{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
-.role .renv{font-size:90px;line-height:1;animation:renv 1.4s ease-in-out infinite}
+.role .renv{font-size:90px;line-height:1;animation:renv 1.4s ease-in-out infinite}.role .rbottle{width:120px;height:150px;display:block}
+.role .rpic{position:relative}.role .rpic img{height:170px;filter:drop-shadow(0 6px 4px rgba(0,0,0,.3))}.role .rbadge{position:absolute;right:-18px;bottom:6px;font-size:52px}
+.role .rship img{width:230px;max-width:70vw;filter:drop-shadow(0 6px 4px rgba(0,0,0,.3));animation:rsail 2.4s ease-in-out infinite alternate}@keyframes rsail{from{transform:rotate(-3deg) translateY(0)}to{transform:rotate(3deg) translateY(-6px)}}
 @keyframes renv{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg) scale(1.06)}}
 .role .rico{font-size:84px;line-height:1;animation:fstamp .5s cubic-bezier(.2,1.6,.4,1) both}
 .role p{font-size:21px;margin:4px 0}.role .rmates{background:rgba(255,90,95,.12);border-radius:12px;padding:6px 12px}
@@ -903,7 +905,7 @@ body[data-g] .card,body[data-g] .btn{transition:background .4s,box-shadow .4s}
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 69 · 20/11/2026 · El mensaje secreto dice «saboteador del barco»</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 70 · 20/11/2026 · El saboteador: mensaje en una botella, con dibujos de piratas y galeones</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -2069,7 +2071,7 @@ function COLS_AV(){return COLORS;}
 /* ---------- utilidades ---------- */
 const $ = id => document.getElementById(id);
 /* Fondos de juego (ilustraciones de Óscar): cada modo tiene sus escenarios y van rotando por pregunta */
-const SCENES={oca:['granja','plaza'],escaleras:['marino','sabana'],mercaderes:['ciudad','plaza'],flota:['marino','palacio'],conecta:['futurista','espacio'],damas:['castillo','plaza'],bingo:['ciudad','granja'],domino:['desierto','sabana'],tesoro:['marino','palacio'],saboteador:['futurista','espacio'],bandera:['bandmar'],vikingos:['vikmar'],ciclope:['sabana','desierto'],fiesta:['plaza'],tarea:['granja','ciudad','marino','castillo','espacio','desierto','sabana','futurista','palacio','plaza']};
+const SCENES={oca:['granja','plaza'],escaleras:['marino','sabana'],mercaderes:['ciudad','plaza'],flota:['marino','palacio'],conecta:['futurista','espacio'],damas:['castillo','plaza'],bingo:['ciudad','granja'],domino:['desierto','sabana'],tesoro:['marino','palacio'],saboteador:['marino','bandmar'],bandera:['bandmar'],vikingos:['vikmar'],ciclope:['sabana','desierto'],fiesta:['plaza'],tarea:['granja','ciudad','marino','castillo','espacio','desierto','sabana','futurista','palacio','plaza']};
 const GAME_SCREENS=['s-act','s-bingo','s-domino','s-hgame','s-role','s-q','s-fb','s-chests','s-target','s-cards','s-vote','s-mini','s-msg','s-ready'];
 let sceneN=0,sceneCur='';
 function sceneMode(){try{if(P&&P.hw)return 'tarea';if(P&&P.mode)return P.mode;if(H&&H.mode)return H.tarea?'tarea':H.mode;}catch(e){}return 'tesoro';}
@@ -4697,20 +4699,20 @@ function playerMsg(d){
     const sab=d.role==='sab';setMates(sab?d.mates:null);
     const n=d.nsab||1,nTxt=n===1?'un saboteador':n+' saboteadores';
     const msg=sab
-      ?`<div class="rico">🏴‍☠️</div><div class="big" style="color:var(--bad)">Eres ${n>1?'un':'el'} saboteador del barco</div>
+      ?`<div class="rico rpic"><img src="${IMG.p_pirata2||''}" alt=""><span class="rbadge">💣</span></div><div class="big" style="color:var(--bad)">Eres ${n>1?'un':'el'} saboteador del barco</div>
         <p>${d.turned?'<b>¡Te has pasado al bando del saboteador!</b><br>':''}Cada respuesta correcta abre una vía de agua en el galeón. Disimula: si la tripulación te descubre en una reunión, te mandan al bote.</p>
         ${d.mates&&d.mates.length?`<p class="rmates">${d.mates.length>1?'Tus compañeros saboteadores':'Tu compañero saboteador'}: <b>${d.mates.map(m=>esc(m.name)+(m.out?' (en el bote)':'')).join(', ')}</b></p>`:'<p class="rmates">Eres el único saboteador. ¡Mucha suerte!</p>'}`
-      :`<div class="rico">⛵</div><div class="big" style="color:var(--ok)">Eres de la tripulación del barco</div>
+      :`<div class="rico rship"><img src="${IMG.band_barco_rojo||''}" alt=""></div><div class="big" style="color:var(--ok)">Eres de la tripulación del barco</div>
         <p>Cada respuesta correcta acerca el galeón a Siritinga. Entre vosotros hay <b>${nTxt}</b> escondido${n>1?'s':''}: busca pistas y vota bien en las reuniones.</p>`;
     $('roleCard').innerHTML=`<div class="rsecret" id="rSecret">
-        <div class="renv">✉️</div><div class="big">Mensaje secreto</div>
-        <p>Solo para <b>${esc(P.name)}</b>.<br>Comprueba que nadie mira tu pantalla y ábrelo.</p>
-        <button class="btn gold" id="rOpen">🔓 Abrir mi mensaje</button></div>
+        <div class="renv"><svg class="rbottle" viewBox="0 0 120 150" aria-hidden="true"><ellipse cx="60" cy="142" rx="40" ry="6" fill="rgba(0,0,0,.18)"/><path d="M48 8h24v22c0 6 18 14 18 34v62c0 9-7 14-16 14H46c-9 0-16-5-16-14V64c0-20 18-28 18-34z" fill="rgba(170,230,240,.55)" stroke="#2f7f9a" stroke-width="4"/><rect x="45" y="2" width="30" height="14" rx="4" fill="#9a5b22" stroke="#5a3010" stroke-width="3"/><g transform="rotate(-12 60 96)"><rect x="40" y="70" width="40" height="52" rx="6" fill="#f6e2b0" stroke="#a86f2a" stroke-width="3"/><path d="M46 84h28M46 94h24M46 104h28" stroke="#a86f2a" stroke-width="3" stroke-linecap="round"/><circle cx="60" cy="116" r="7" fill="#c8323a" stroke="#7a1218" stroke-width="2"/><path d="M57 113l6 6M63 113l-6 6" stroke="#fff" stroke-width="2"/></g><path d="M38 64c4-10 10-14 10-14" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".7"/></svg></div><div class="big">Un mensaje en la botella</div>
+        <p>Ha llegado a cubierta solo para <b>${esc(P.name)}</b>.<br>Comprueba que ningún pirata mira tu pantalla y ábrelo.</p>
+        <button class="btn gold" id="rOpen">🍾 Abrir la botella</button></div>
       <div class="rmsg" id="rMsg" style="display:none">${msg}
         <p class="hint">🤫 No se lo digas a nadie. Cuando lo hayas leído, ciérralo.</p>
         <button class="btn gold" id="rOk">¡Entendido, cerrar!</button></div>`;
     $('rOpen').onclick=()=>{$('rSecret').style.display='none';$('rMsg').style.display='';};
-    $('rOk').onclick=()=>{$('rMsg').innerHTML='<div class="renv">🔒</div><div class="big">Mensaje guardado</div><p>¡A jugar!</p>';setTimeout(()=>send({t:'next'}),700);};
+    $('rOk').onclick=()=>{$('rMsg').innerHTML='<div class="renv"><svg class="rbottle" viewBox="0 0 120 150" aria-hidden="true"><ellipse cx="60" cy="142" rx="40" ry="6" fill="rgba(0,0,0,.18)"/><path d="M48 8h24v22c0 6 18 14 18 34v62c0 9-7 14-16 14H46c-9 0-16-5-16-14V64c0-20 18-28 18-34z" fill="rgba(170,230,240,.55)" stroke="#2f7f9a" stroke-width="4"/><rect x="45" y="2" width="30" height="14" rx="4" fill="#9a5b22" stroke="#5a3010" stroke-width="3"/><g transform="rotate(-12 60 96)"><rect x="40" y="70" width="40" height="52" rx="6" fill="#f6e2b0" stroke="#a86f2a" stroke-width="3"/><path d="M46 84h28M46 94h24M46 104h28" stroke="#a86f2a" stroke-width="3" stroke-linecap="round"/><circle cx="60" cy="116" r="7" fill="#c8323a" stroke="#7a1218" stroke-width="2"/><path d="M57 113l6 6M63 113l-6 6" stroke="#fff" stroke-width="2"/></g><path d="M38 64c4-10 10-14 10-14" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".7"/></svg></div><div class="big">Mensaje de vuelta en la botella</div><p>¡A navegar!</p>';setTimeout(()=>send({t:'next'}),700);};
     show('s-role');return;
   }
   if(d.t==='team'){
