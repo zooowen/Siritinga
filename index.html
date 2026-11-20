@@ -872,6 +872,64 @@ body[data-g] .card,body[data-g] .btn{transition:background .4s,box-shadow .4s}
 .vmine b{display:block;color:var(--c);font-size:20px}
 .vbig{width:240px;height:auto;margin:0 auto;display:block}
 
+
+/* ===== saboteador: reunión en cubierta (pantalla del maestro) ===== */
+#sabMeet{position:fixed;inset:0;z-index:950;background:#3a2210 url(img/sab/cubierta.webp) center/cover no-repeat;display:flex;align-items:center;justify-content:center;gap:3vw;overflow:hidden;animation:smIn .6s ease-out}
+#sabMeet::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 55%,rgba(0,0,0,0) 35%,rgba(35,14,0,.6));pointer-events:none}
+#sabMeet .smHead{position:absolute;top:1.6vh;left:0;right:0;text-align:center;color:#fff;font-size:clamp(26px,6vh,68px);font-weight:900;text-shadow:0 .5vh 0 #6b3510,0 0 2vh rgba(0,0,0,.45);z-index:3;letter-spacing:.5px}
+#sabMeet .smHead small{display:block;font-size:.42em;font-weight:800;opacity:.95}
+#sabMeet .smParch{position:relative;height:86vh;aspect-ratio:820/937;background:url(img/sab/pergamino.webp) center/contain no-repeat;z-index:2;margin-top:9vh;-webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent),linear-gradient(180deg,transparent,#000 4%,#000 94%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent),linear-gradient(180deg,transparent,#000 4%,#000 94%,transparent);mask-composite:intersect}
+#sabMeet .smList{position:absolute;left:18%;right:19%;top:26.5%;bottom:31.5%;display:grid;grid-template-columns:var(--cols,1fr);gap:.4vh 1vw;align-content:safe center;overflow:hidden}
+#sabMeet .smRow{display:flex;align-items:center;gap:.5vw;font-size:var(--fs,2.6vh);color:#3a1f0a;font-weight:800;line-height:1.05;min-width:0;border-radius:1vh;padding:.15vh .3vw;transition:background .25s,transform .25s,opacity .4s}
+#sabMeet .smRow .av{width:calc(var(--fs,2.6vh)*1.45);height:calc(var(--fs,2.6vh)*1.45);flex:none}
+#sabMeet .smRow .av svg{width:100%;height:100%}
+#sabMeet .noav .smRow .av{display:none!important}
+#sabMeet .smRow .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#sabMeet .smRow .tl{display:flex;align-items:center;gap:.18em;flex:none;color:#a3221a;font-weight:900}
+#sabMeet .smRow .tl i{display:inline-block;width:.28em;height:1.05em;background:#a3221a;border-radius:.1em;transform:rotate(14deg);animation:smStamp .5s cubic-bezier(.2,1.9,.4,1) both}
+#sabMeet .smRow .tl b{font-size:.9em;margin-left:.15em}
+#sabMeet .smRow.hit{animation:smHit .8s}
+#sabMeet .smRow.lit{background:rgba(255,214,90,.75);transform:scale(1.06)}
+#sabMeet .smRow.gone{opacity:.25}
+#sabMeet .smRow.chosen{background:#ffd65a;transform:scale(1.12);box-shadow:0 0 0 .35vh #a3221a}
+#sabMeet .smLine{position:absolute;left:16%;right:16%;top:66.5%;height:7.5%;display:flex;align-items:flex-end;justify-content:center;font-size:clamp(18px,5.4vh,64px);font-weight:900;color:#8a1510;font-style:italic;white-space:nowrap;overflow:hidden}
+#sabMeet .smLine span{display:inline-block;clip-path:inset(0 100% 0 0);animation:smWrite 1.3s steps(16,end) forwards}
+#sabMeet .smSide{z-index:3;display:flex;flex-direction:column;align-items:center;gap:2vh;width:34vw;margin-top:9vh}
+#sabMeet .smTime{font-size:16vh;line-height:1;font-weight:900;color:#fff;text-shadow:0 .7vh 0 #6b3510,0 0 3vh rgba(0,0,0,.4)}
+#sabMeet .smTime.urg{color:#ffcabb;animation:smPulse 1s infinite}
+#sabMeet .smCount{font-size:3.4vh;color:#fff;background:rgba(70,30,6,.78);padding:.8vh 1.8vw;border-radius:999px;font-weight:800}
+#sabMeet .smPops{display:flex;flex-direction:column;gap:1.2vh;min-height:24vh;align-items:center;width:100%}
+#sabMeet .smPop{background:#fff6dc;color:#3a1f0a;border:.35vh solid #7a3d12;border-radius:2vh;padding:1.1vh 1.6vw;font-size:3.1vh;font-weight:800;box-shadow:0 .7vh 0 rgba(60,25,5,.45);animation:smPopIn .55s cubic-bezier(.2,1.7,.4,1) both;text-align:center;max-width:100%}
+#sabMeet .smPop b{color:#a3221a}
+#sabMeet .smPop.old{opacity:.55;transform:scale(.92);transition:all .4s}
+#sabMeet .smSailors{position:absolute;right:1.5vw;bottom:-1vh;display:flex;gap:.5vw;z-index:2;pointer-events:none}
+#sabMeet .smSailors img{height:27vh;animation:smBob 1.5s ease-in-out infinite alternate;transform-origin:50% 100%}
+#sabMeet .smSailors img+img{animation-delay:-.75s}
+#sabMeet .smSus{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;pointer-events:none}
+#sabMeet .smSus div{font-size:clamp(30px,8vh,90px);font-weight:900;color:#fff;text-shadow:0 .8vh 0 #6b3510,0 0 4vh #000;background:rgba(40,16,2,.55);padding:2vh 4vw;border-radius:3vh;animation:smPopIn .6s cubic-bezier(.2,1.6,.4,1) both}
+#sabMeet.sus .smParch{animation:smShake .18s infinite}
+#sabMeet .smPlank{position:absolute;inset:0;z-index:8;background:radial-gradient(ellipse at center,#1d8f9c,#0b4f5c);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vh;animation:smIn .5s ease-out}
+#sabMeet .smPlank img{width:min(94vw,calc(76vh*4/3));aspect-ratio:4/3;border-radius:2.4vh;box-shadow:0 2vh 5vh rgba(0,0,0,.45);border:.6vh solid #fff3d0}
+#sabMeet .smBan{font-size:clamp(26px,7vh,80px);font-weight:900;color:#fff;text-shadow:0 .7vh 0 #08343c,0 0 3vh rgba(0,0,0,.4);text-align:center;animation:smPopIn .6s cubic-bezier(.2,1.6,.4,1) both}
+#sabMeet .smBan b{color:#ffd65a}
+#sabMeet .smRes{position:absolute;inset:0;z-index:9;display:flex;align-items:center;justify-content:center;background:rgba(5,30,36,.35)}
+#sabMeet .smRes div{background:#fff6dc;border:.8vh solid var(--rc,#22b573);border-radius:4vh;padding:4vh 5vw;text-align:center;box-shadow:0 2vh 6vh rgba(0,0,0,.5);animation:smReveal .8s cubic-bezier(.2,1.6,.4,1) both;max-width:84vw}
+#sabMeet .smRes h3{font-size:clamp(30px,9vh,110px);margin:0;color:var(--rc,#22b573);line-height:1.05}
+#sabMeet .smRes p{font-size:clamp(16px,3.6vh,40px);margin:1.5vh 0 0;color:#3a1f0a;font-weight:700}
+#sabMeet .smConf{position:absolute;top:-6vh;font-size:5vh;animation:smFall linear forwards;z-index:8;pointer-events:none}
+#sabMeet.out{animation:smOut .5s ease-in forwards}
+@keyframes smIn{from{opacity:0;transform:scale(1.06)}to{opacity:1;transform:none}}
+@keyframes smOut{to{opacity:0}}
+@keyframes smStamp{0%{transform:rotate(14deg) scale(3);opacity:0}100%{transform:rotate(14deg) scale(1);opacity:1}}
+@keyframes smHit{0%,100%{background:transparent}25%{background:rgba(255,214,90,.9);transform:scale(1.08)}}
+@keyframes smWrite{to{clip-path:inset(0 0 0 0)}}
+@keyframes smPulse{50%{transform:scale(1.1)}}
+@keyframes smPopIn{0%{transform:scale(.3) translateY(4vh);opacity:0}100%{transform:none;opacity:1}}
+@keyframes smBob{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(-1.6vh) rotate(2deg)}}
+@keyframes smShake{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(.25vh,-.2vh) rotate(.3deg)}75%{transform:translate(-.25vh,.2vh) rotate(-.3deg)}}
+@keyframes smReveal{0%{transform:scale(.2) rotate(-8deg);opacity:0}100%{transform:none;opacity:1}}
+@keyframes smFall{to{transform:translateY(115vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){#sabMeet *{animation-duration:.01s!important}}
 </style>
 </head>
 <body>
@@ -905,7 +963,7 @@ body[data-g] .card,body[data-g] .btn{transition:background .4s,box-shadow .4s}
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 70 · 20/11/2026 · El saboteador: mensaje en una botella, con dibujos de piratas y galeones</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 71 · 20/11/2026 · Reuniones en cubierta con votos en directo, suspense y tabla para tirar por la borda</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -4220,7 +4278,7 @@ function tick(){
     if(H.meeting){if(Date.now()>=H.meeting.until)endMeeting();else renderPanel();}
     else if(Date.now()>=H.nextMeeting&&left>35000)startMeeting();
   }
-  if(left<=0&&!H.meeting){endGame();return;}
+  if(left<=0&&!H.meeting&&!H.smBusy){endGame();return;}
   setTimeout(tick,250);
 }
 function ranking(){
@@ -4229,7 +4287,7 @@ function ranking(){
   return allP().sort((a,b)=>b.gold-a.gold);}
 function barRow(p,i,max){
   const extra=p.team&&H.teams&&H.teams[p.team]?`<span style="width:12px;height:12px;border-radius:50%;background:${H.teams[p.team].color};flex:none"></span>`:'';
-  const tag=p.out?` <small style="color:var(--muted)">${p.revealSab?'(era saboteador)':'(en el bote)'}</small>`:(H.mode==='ciclope'&&H.cy&&p.pos!=null?` <small style="color:var(--muted)">${p.done?'⛵ a salvo':'nivel '+cyLevel(p)}</small>`:'');
+  const tag=p.out?` <small style="color:var(--muted)">${p.revealSab?'(era saboteador)':'(por la borda)'}</small>`:(H.mode==='ciclope'&&H.cy&&p.pos!=null?` <small style="color:var(--muted)">${p.done?'⛵ a salvo':'nivel '+cyLevel(p)}</small>`:'');
   return '<div class="bar'+(p.out?' out':'')+'"><span class="pos">'+(i+1)+'</span><span class="name">'+avMini(p.av,30)+extra+esc(p.name)+'</span><div style="flex:1"><div class="fill" style="width:'+Math.max(1,p.gold/max*100)+'%"></div></div><span class="val">⭐ '+fmt(p.gold)+tag+'</span></div>';
 }
 function renderBoard(){
@@ -4306,26 +4364,106 @@ function giveClue(p){
   const pool=allP().filter(x=>x!==p&&x.role==='crew'&&!x.out&&!p.clues.includes(x.key));
   if(!pool.length)return null;const c=pick(pool);p.clues.push(c.key);return c.name;
 }
+
+/* ===== saboteador: reunión en cubierta en la pantalla grande ===== */
+const SM={a:null,iv:0,tl:{},T:[]};
+function smAudio(){if(SM.a)return SM.a;try{SM.a=new (window.AudioContext||window.webkitAudioContext)();}catch(e){SM.a=null;}return SM.a;}
+function smSnd(k){const A=smAudio();if(!A)return;try{if(A.state==='suspended')A.resume();const t=A.currentTime+.02,out=A.destination;
+  const tone=(f,at,d,v,type,f2)=>{const o=A.createOscillator(),g=A.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t+at);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+at+d);g.gain.setValueAtTime(.0001,t+at);g.gain.exponentialRampToValueAtTime(v,t+at+.015);g.gain.exponentialRampToValueAtTime(.0001,t+at+d);o.connect(g);g.connect(out);o.start(t+at);o.stop(t+at+d+.05);};
+  const noise=(at,d,v,type,f,shape)=>{const b=A.createBuffer(1,Math.ceil(A.sampleRate*d),A.sampleRate),x=b.getChannelData(0);for(let i=0;i<x.length;i++){const p=i/x.length;x[i]=(Math.random()*2-1)*(shape?shape(p,i/A.sampleRate):Math.pow(1-p,2));}
+    const s=A.createBufferSource(),fl=A.createBiquadFilter(),g=A.createGain();fl.type=type||'lowpass';fl.frequency.value=f||1200;g.gain.value=v;s.buffer=b;s.connect(fl);fl.connect(g);g.connect(out);s.start(t+at);};
+  if(k==='open'){[0,.18,.36].forEach((a,i)=>tone([392,494,587][i],a,.5,.18,'triangle'));tone(784,.55,.9,.14,'triangle');}
+  else if(k==='vote'){tone(180,0,.12,.35,'sine',90);noise(0,.06,.35,'bandpass',900);tone(1318,.07,.6,.12,'sine');tone(1976,.07,.4,.05,'sine');}
+  else if(k==='tick'){tone(1100,0,.05,.12,'square');}
+  else if(k==='drum'){noise(0,2.6,.5,'bandpass',850,(p,s)=>{const h=(s*(13+s*9))%1;return Math.exp(-h*16)*(.25+.75*p);});}
+  else if(k==='write'){noise(0,1.2,.12,'highpass',2500,(p,s)=>.5+.5*Math.sin(s*60));}
+  else if(k==='hit'){tone(110,0,.6,.5,'sine',55);noise(0,.4,.35,'lowpass',500);}
+  else if(k==='splash'){noise(0,1.4,.65,'lowpass',1600,(p)=>Math.pow(1-p,3));noise(.05,1.1,.25,'highpass',3000,(p)=>Math.pow(1-p,4));}
+  else if(k==='yay'){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,i*.12,.35,.16,'triangle'));tone(1319,.75,1.1,.12,'triangle');}
+  else if(k==='boo'){[392,370,349,294].forEach((f,i)=>tone(f,i*.32,i===3?1.1:.3,.16,'sawtooth',i===3?220:0));}
+  else if(k==='shrug'){tone(330,0,.25,.14,'triangle');tone(262,.28,.5,.14,'triangle');}
+}catch(e){}}
+function smLater(fn,ms){SM.T.push(setTimeout(fn,ms));}
+function smClose(fast){clearInterval(SM.iv);SM.T.forEach(clearTimeout);SM.T=[];const el=$('sabMeet');if(!el)return;if(fast){el.remove();return;}el.classList.add('out');setTimeout(()=>el.remove(),520);}
+function smGirl(av){const k=(av&&av.kind)||'';if(/a$/.test(k))return true;if(/o$/.test(k))return false;SM.alt=!SM.alt;return SM.alt;}
+function smOpen(){
+  if(!H||H.local)return;smClose(true);SM.tl={};
+  const cand=allP().filter(p=>!p.out),n=cand.length+1,cols=n>20?3:n>10?2:1,rows=Math.ceil(n/cols),fs=Math.max(1.2,Math.min(3.4,36/rows/(cols>2?1.6:2)));
+  const el=document.createElement('div');el.id='sabMeet';
+  el.innerHTML=`<div class="smHead">📣 ¡Reunión en cubierta!<small>¿Quién es el saboteador? Votad en vuestra pantalla</small></div>
+  <div class="smParch"><div class="smList${cols>2?' noav':''}" style="--cols:repeat(${cols},minmax(0,1fr));--fs:${fs}vh">${cand.map(p=>`<div class="smRow" data-k="${esc(p.key)}"><span class="av">${avatarSVG(p.av,40)}</span><span class="nm">${esc(p.name)}</span><span class="tl"></span></div>`).join('')}<div class="smRow" data-k="_skip"><span class="av" style="display:flex;align-items:center;justify-content:center;font-size:1.2em">🤷</span><span class="nm">Saltar</span><span class="tl"></span></div></div><div class="smLine"></div></div>
+  <div class="smSide"><div class="smTime" id="smTime">30</div><div class="smCount" id="smCount">0 de ${H.meeting?H.meeting.voters:0} votos</div><div class="smPops" id="smPops"></div></div>
+  <div class="smSailors"><img src="img/sab/marinera.webp" alt=""><img src="img/sab/marinero.webp" alt=""></div>`;
+  document.body.appendChild(el);smSnd('open');
+  let last=-1;SM.iv=setInterval(()=>{const m=H&&H.meeting;if(!m)return;const s=Math.max(0,Math.ceil((m.until-Date.now())/1000)),t=$('smTime');if(!t)return;t.textContent=s;t.classList.toggle('urg',s<=10);if(s!==last&&s<=10&&s>0)smSnd('tick');last=s;},200);
+  // precarga de las animaciones de la tabla
+  ['chico','chica'].forEach(k=>{if(!SM['img'+k]){const i=new Image();i.src='img/sab/tabla_'+k+'.webp';SM['img'+k]=i;}});
+}
+function smVote(key){
+  const el=$('sabMeet');if(!el||!H.meeting)return;const m=H.meeting;
+  SM.tl[key]=(SM.tl[key]||0)+1;const n=SM.tl[key];
+  const row=el.querySelector(`.smRow[data-k="${CSS.escape(key)}"]`);
+  if(row){const tl=row.querySelector('.tl');if(n<=3)tl.insertAdjacentHTML('beforeend','<i></i>');else tl.innerHTML='<i></i><b>×'+n+'</b>';row.classList.remove('hit');void row.offsetWidth;row.classList.add('hit');}
+  const v=H.players[key],pops=$('smPops');
+  if(pops){pops.querySelectorAll('.smPop').forEach(x=>x.classList.add('old'));pops.insertAdjacentHTML('afterbegin',key==='_skip'?'<div class="smPop">🤷 Alguien ha decidido <b>saltar</b> su voto</div>':`<div class="smPop">🗳️ ¡Alguien ha votado a <b>${esc(v?v.name:'?')}</b>!</div>`);[...pops.children].slice(3).forEach(x=>x.remove());}
+  const c=$('smCount');if(c)c.textContent=Object.keys(m.votes).length+' de '+m.voters+' votos';
+  smSnd('vote');
+}
+/* devuelve cuánto dura la escena (ms) */
+function smDecide(r){
+  const el=$('sabMeet');if(!el)return 0;clearInterval(SM.iv);
+  const head=el.querySelector('.smHead');head.innerHTML='⚖️ ¡Se acabó la votación!<small>Recuento de votos…</small>';
+  const t=$('smTime');if(t){t.classList.remove('urg');t.textContent='⏳';}
+  el.insertAdjacentHTML('beforeend','<div class="smSus"><div>La tripulación ha decidido<span>.</span><span>.</span><span>.</span></div></div>');
+  el.classList.add('sus');smSnd('drum');
+  // la luz salta entre los más votados hasta pararse
+  const rows=[...el.querySelectorAll('.smRow')].filter(x=>SM.tl[x.dataset.k]&&x.dataset.k!=='_skip');
+  let i=0,delay=110;const hop=()=>{rows.forEach(x=>x.classList.remove('lit'));if(!rows.length)return;rows[i%rows.length].classList.add('lit');i++;delay*=1.12;if(delay<520)smLater(hop,delay);};hop();
+  const D1=2700;
+  smLater(()=>{el.classList.remove('sus');const sus=el.querySelector('.smSus');if(sus)sus.remove();rows.forEach(x=>x.classList.remove('lit'));
+    if(!r.v){head.innerHTML='🤷 Nadie al agua<small>No os habéis puesto de acuerdo</small>';el.querySelectorAll('.smRow').forEach(x=>x.classList.add('gone'));
+      el.insertAdjacentHTML('beforeend','<div class="smRes" style="--rc:#c47a12"><div><h3>🤷 Nadie al agua</h3><p>La tripulación no se ha puesto de acuerdo. ¡Seguid buscando pistas!</p></div></div>');smSnd('shrug');return;}
+    el.querySelectorAll('.smRow').forEach(x=>x.classList.toggle(x.dataset.k===r.v.key?'chosen':'gone',true));
+    el.querySelector('.smLine').innerHTML='<span>'+esc(r.v.name)+'</span>';smSnd('hit');smLater(()=>smSnd('write'),150);
+    head.innerHTML='🏴‍☠️ '+esc(r.v.name)+'<small>¡Va a caminar por la tabla!</small>';
+  },D1);
+  if(!r.v){smLater(()=>smClose(),D1+3800);return D1+4300;}
+  const D2=D1+2300,girl=smGirl(r.v.av),k=girl?'chica':'chico';
+  smLater(()=>{
+    el.insertAdjacentHTML('beforeend',`<div class="smPlank"><div class="smBan">¡<b>${esc(r.v.name)}</b>, por la borda!</div><img alt="" src="img/sab/tabla_${k}.webp?t=${Date.now()}"></div>`);
+    smLater(()=>smSnd('splash'),2850);
+  },D2);
+  const D3=D2+4300;
+  smLater(()=>{
+    const sab=r.v.role==='sab';
+    el.insertAdjacentHTML('beforeend',`<div class="smRes" style="--rc:${sab?'#1f9d5c':'#c0392b'}"><div><h3>${sab?'¡Era el saboteador! 🎉':'¡Era inocente! 😬'}</h3><p>${sab?esc(r.v.name)+' nadará hasta el bote salvavidas.':esc(r.v.name)+' no era el saboteador. ¡Entra más agua en la bodega!'}${r.extra?'<br><b style="color:#a3221a">'+r.extra+'</b>':''}</p></div></div>`);
+    smSnd(sab?'yay':'boo');
+    if(sab)for(let j=0;j<40;j++){const c=document.createElement('div');c.className='smConf';c.textContent=pick(['🎉','🪙','⭐','🎊','🏴‍☠️']);c.style.left=(Math.random()*100)+'vw';c.style.animationDuration=(2.2+Math.random()*2)+'s';c.style.animationDelay=(Math.random()*.8)+'s';el.appendChild(c);}
+  },D3);
+  smLater(()=>smClose(),D3+4200);
+  return D3+4700;
+}
 function voters(){return allP().filter(p=>!p.out&&p.conn);}
 function sendMeeting(p){
   const left=H.meeting.until-Date.now();
   hsend(p,{t:'meeting',secs:Math.ceil(left/1000),list:allP().filter(x=>x!==p&&!x.out).map(x=>({key:x.key,name:x.name,av:x.av}))});
 }
 function startMeeting(){
-  if(!H||H.mode!=='saboteador'||H.meeting||H.state!=='playing')return;
+  if(!H||H.mode!=='saboteador'||H.meeting||H.smBusy||H.state!=='playing')return;
   H.meeting={until:Date.now()+30000,votes:{},voters:voters().length};
   H.endsAt+=30000; // la reunión no gasta tiempo de juego
   addFeed('📣 <b>¡Reunión en cubierta!</b>');
   allP().forEach(p=>{
-    if(p.out){p.phase='meeting';hsend(p,{t:'msg',title:'Reunión en cubierta',text:'Desde el bote no puedes votar. Espera a que termine la votación.'});}
+    if(p.out){p.phase='meeting';hsend(p,{t:'msg',title:'Reunión en cubierta',text:'Desde el bote salvavidas no puedes votar. ¡Mira la pantalla grande!'});}
     else{p.phase='meeting';sendMeeting(p);}
   });
-  renderPanel();
+  smOpen();renderPanel();
 }
 function onVote(p,key){
   if(H.meeting.votes[p.key])return;
   H.meeting.votes[p.key]=key&&H.players[key]&&!H.players[key].out?key:'_skip';
-  hsend(p,{t:'msg',title:'¡Voto enviado!',text:'Espera a que vote el resto de la tripulación.'});
+  hsend(p,{t:'msg',title:'¡Voto enviado!',text:'Espera a que vote el resto de la tripulación y mira la pantalla grande.'});
+  smVote(H.meeting.votes[p.key]);
   if(Object.keys(H.meeting.votes).length>=voters().length)endMeeting();else renderPanel();
 }
 function endMeeting(){
@@ -4333,29 +4471,34 @@ function endMeeting(){
   const tally={};Object.values(m.votes).forEach(k=>tally[k]=(tally[k]||0)+1);
   const skip=tally._skip||0;delete tally._skip;
   const ranked=Object.entries(tally).sort((a,b)=>b[1]-a[1]);
-  let text,title;
+  let text,title,victim=null,extra='';
   if(!ranked.length||ranked[0][1]<=skip||(ranked[1]&&ranked[1][1]===ranked[0][1])){
-    title='Nadie al bote';text='La tripulación no se ha puesto de acuerdo. ¡Seguid buscando pistas!';addFeed('🤷 Nadie ha ido al bote');
+    title='Nadie al agua';text='La tripulación no se ha puesto de acuerdo. ¡Seguid buscando pistas!';addFeed('🤷 Nadie ha caminado por la tabla');
   }else{
-    const v=H.players[ranked[0][0]];v.out=true;
+    const v=H.players[ranked[0][0]];v.out=true;victim=v;
     if(v.role==='sab'){
-      v.revealSab=true;title='¡Saboteador descubierto!';text=v.name+' era el saboteador y se va al bote salvavidas.';addFeed('🎉 <b>'+esc(v.name)+'</b> era el saboteador');
+      v.revealSab=true;title='¡Saboteador descubierto!';text=v.name+' era el saboteador. ¡Por la borda!';addFeed('🎉 <b>'+esc(v.name)+'</b> era el saboteador');
       const active=allP().filter(p=>p.role==='sab'&&!p.out).length;
       const crewLeft=allP().filter(p=>p.role==='crew'&&!p.out&&p.conn);
       if(!active&&H.endsAt-Date.now()>70000&&crewLeft.length>=3){
         const nw=pick(crewLeft);nw.role='sab';nw.newSab=true;
         allP().filter(x=>x!==nw&&x.role==='sab').forEach(x=>hsend(x,{t:'mates',list:sabMates(x),text:nw.name+' se ha pasado a tu bando de saboteadores'}));
-        text+=' Pero ¡cuidado!: alguien de la tripulación se ha pasado en secreto al bando del saboteador.';
+        text+=' Pero ¡cuidado!: alguien de la tripulación se ha pasado en secreto al bando del saboteador.';extra='¡Cuidado! Alguien se ha pasado en secreto al bando del saboteador.';
         addFeed('🕵️ Hay un <b>nuevo saboteador</b> a bordo');
       }
     }
-    else{title='¡Oh, no!';text=v.name+' no era el saboteador. Se va al bote, pero puede seguir remando. ¡Entra más agua!';H.water=Math.min(100,H.water+8);addFeed('😬 <b>'+esc(v.name)+'</b> era inocente');}
+    else{title='¡Oh, no!';text=v.name+' no era el saboteador. Ha caído por la borda, pero desde el bote puede seguir remando. ¡Entra más agua!';H.water=Math.min(100,H.water+8);addFeed('😬 <b>'+esc(v.name)+'</b> era inocente');}
   }
-  allP().forEach(p=>hsend(p,{t:'msg',title,text}));
-  H.nextMeeting=Date.now()+80000;
-  renderBoard();
-  if(checkSab())return;
-  setTimeout(()=>{if(H.state!=='playing')return;allP().forEach(p=>{p.phase='idle';if(p.newSab){p.newSab=false;sendRole(p,true);}else sendQuestion(p);});},4500);
+  const D=smDecide({v:victim,extra})||0,RV=victim?7300:2700;
+  if(D){H.smBusy=true;H.endsAt+=D;allP().forEach(p=>hsend(p,{t:'msg',title:'La tripulación está decidiendo…',text:'🥁 ¡Mirad la pantalla grande!'}));}
+  const tell=()=>allP().forEach(p=>{let tt=title,tx=text;
+    if(p===victim){tt=victim.role==='sab'?'¡Te han pillado!':'¡Te han tirado por la borda!';tx=victim.role==='sab'?'La tripulación ha descubierto que eras el saboteador. Te toca nadar hasta el bote salvavidas.':'La tripulación se ha equivocado contigo. Desde el bote salvavidas puedes seguir remando.';}
+    hsend(p,{t:'msg',title:tt,text:tx});});
+  if(D)setTimeout(tell,RV);else tell();
+  H.nextMeeting=Date.now()+80000+D;
+  setTimeout(renderBoard,D?RV:0);
+  setTimeout(()=>{H.smBusy=false;if(!H||H.state!=='playing')return;if(checkSab())return;
+    allP().forEach(p=>{p.phase='idle';if(p.newSab){p.newSab=false;sendRole(p,true);}else sendQuestion(p);});},D?D+300:4500);
 }
 function checkSab(){
   if(H.mode!=='saboteador'||H.state!=='playing')return false;
@@ -4441,7 +4584,7 @@ function onCard(p,i){
 function endGame(){
   try{Music.tension(false);}catch(e){}
   if(!H||H.state==='over')return;
-  H.state='over';H.meeting=null;
+  H.state='over';H.meeting=null;H.smBusy=false;try{smClose(true);}catch(e){}
   const r=ranking();
   if(H.tarea){endHomework(r[0]);return;}
   let title='¡Fin de la <span>partida</span>!',sub='';
