@@ -548,7 +548,16 @@ body[data-g] .card,body[data-g] .btn{transition:background .4s,box-shadow .4s}
 .mtile .mown small{background:#ffc83d;color:#3b2606;font-weight:800;font-size:clamp(8px,.95vw,12px);border-radius:999px;padding:0 5px;margin-top:-4px}
 .mtile .mtok{position:absolute;left:0;right:0;top:22%;display:flex;justify-content:center}
 .mtile .mtok .avs{justify-content:center;filter:drop-shadow(0 2px 2px rgba(0,0,0,.5))}
-.mrich{position:absolute;right:16%;bottom:15%;max-width:26%;background:rgba(255,250,236,.9);border-radius:12px;padding:6px 10px;font-size:clamp(10px,1.1vw,14px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.mtile .mtok .mfi{width:clamp(16px,2.5vw,40px);height:clamp(16px,2.5vw,40px);margin:0 calc(clamp(16px,2.5vw,40px)*-.22);filter:drop-shadow(0 2px 2px rgba(0,0,0,.55));flex:none}
+.mtile .mtok .more{align-self:center;margin-left:6px;background:#fff7e6;border-radius:999px;padding:0 5px;font-size:clamp(8px,.9vw,12px)}
+.mtile .mown.flag{right:auto;left:50%;top:-34%;transform:translateX(-50%);z-index:2}
+.mtile .mown.flag img{height:clamp(30px,5.2vw,82px);filter:drop-shadow(0 3px 3px rgba(0,0,0,.45))}
+.mtile .mown.flag small{margin-top:-3px;white-space:nowrap;max-width:9em;overflow:hidden;text-overflow:ellipsis}
+.mtile .mown.flag.top{top:-6%}
+.mtile .mown.flag.new img{animation:mPlant 1s cubic-bezier(.25,1.6,.45,1) both;transform-origin:50% 100%}
+@keyframes mPlant{0%{transform:translateY(-60%) scale(.3) rotate(-25deg);opacity:0}60%{opacity:1}100%{transform:none}}
+.mrich .mfi{width:20px;height:20px;vertical-align:middle}
+.mrich{position:absolute;z-index:3;right:16%;bottom:15%;max-width:26%;background:rgba(255,250,236,.9);border-radius:12px;padding:6px 10px;font-size:clamp(10px,1.1vw,14px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
 .mrich .mrank{font-size:inherit}
 .role .rsecret,.role .rmsg{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
 .role .renv{font-size:90px;line-height:1;animation:renv 1.4s ease-in-out infinite}.role .rbottle{width:120px;height:150px;display:block}
@@ -963,7 +972,7 @@ body[data-g] .card,body[data-g] .btn{transition:background .4s,box-shadow .4s}
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 71 · 20/11/2026 · Reuniones en cubierta con votos en directo, suspense y tabla para tirar por la borda</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 72 · 20/11/2026 · Mercaderes: cada jugador con su ficha y su bandera, que ondea en las islas que compra</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -3031,6 +3040,12 @@ const MERC=(()=>{const NM=[...MAP_STOPS.slice(1).map(s=>s.n).slice(0,10),'Cayo B
   const C={k:'cofre',n:'Cofre'},T={k:'tormenta',n:'Tormenta'},V={k:'viento',n:'Viento a favor'};
   return [{k:'salida',n:'Salida'},I(),I(),C,I(),I(),T,I(),{k:'calabozo',n:'Calabozo'},I(),I(),C,I(),V,I(),I(),T,I(),I(),C,I(),I(),V,I(),I(),C,I(),I()];})();
 const rent=sq=>Math.round(sq.price/4);
+/* cada jugador tiene su ficha y su bandera (30 diseños) */
+const MFLAGS=30,mfN=i=>String(i%MFLAGS+1).padStart(2,'0');
+function mercFlag(p){if(p.mflag==null){const used=new Set(allP().map(x=>x.mflag).filter(v=>v!=null));let i=0;while(used.has(i)&&i<MFLAGS)i++;p.mflag=i<MFLAGS?i:allP().indexOf(p)%MFLAGS;}return p.mflag;}
+const mercFicha=(p,cls='mfi')=>`<img class="${cls}" src="img/merc/f${mfN(mercFlag(p))}.webp" alt="" title="${esc(p.name)}" style="opacity:${p.conn||H.local?1:.5}">`;
+const mercBandera=(p,h)=>`<img src="img/merc/b${mfN(mercFlag(p))}.webp" alt="" title="${esc(p.name)}"${h?` style="height:${h}px"`:''}>`;
+const mercToks=l=>l.slice(0,4).map(p=>mercFicha(p)).join('')+(l.length>4?`<b class="more">+${l.length-4}</b>`:'');
 const propVal=p=>Object.entries(H.bg.own).filter(([,k])=>k===p.key).reduce((s,[i])=>s+MERC[i].price,0);
 function mercRect(i){   // posición de cada casilla sobre el dibujo del tablero (en %)
   const TW=(1088-68)/8,SH=(652-122)/6;let x0,y0,x1,y1;
@@ -3230,15 +3245,15 @@ const BG={
     end(){const w=raceRank()[0];return {title:w&&w.laps?'¡Gana <span>'+esc(w.name)+'</span>!':'¡Fin de las <span>serpientes marinas</span>!',sub:H.bg.fin+' de '+allP().length+' han llegado al final',per:p=>({title:p.laps?'¡Has llegado al final '+(p.laps>1?p.laps+' veces':'')+'!':'Has llegado a la casilla '+p.bpos+' de 50'})};}
   },
   mercaderes:{
-    init(){H.bg={own:{}};allP().forEach(p=>{p.bpos=0;p.skip=0;p.gold=100;});},
-    late(p){p.bpos=0;p.skip=0;p.gold=100;},
+    init(){H.bg={own:{},fresh:{}};allP().forEach(p=>{p.mflag=null;});allP().forEach(p=>{p.bpos=0;p.skip=0;p.gold=100;mercFlag(p);});},
+    late(p){p.bpos=0;p.skip=0;p.gold=100;mercFlag(p);},
     answer(p,ok,right){if(!ok){p.phase='done';hsend(p,{t:'result',ok,right});return;}
       p.gold+=gain(p,10);const r=mercMove(p);
-      if(r.buy!=null){const sq=MERC[r.buy];p.phase='act';p.act={k:'buy',sq:r.buy,html:'<b>¡Correcto!</b> '+pm(10)+'<br>'+r.msg+'<br><br>La isla <b>'+esc(sq.n)+'</b> no tiene dueño. ¿La compras por <b>'+sq.price+'</b> 🪙 monedas? Quien pase por ella te pagará <b>'+rent(sq)+'</b> 🪙.',gold:p.gold};hsend(p,{t:'act',...p.act});}
+      if(r.buy!=null){const sq=MERC[r.buy];p.phase='act';p.act={k:'buy',sq:r.buy,html:'<b>¡Correcto!</b> '+pm(10)+'<br>'+r.msg+'<br><br>La isla <b>'+esc(sq.n)+'</b> no tiene dueño. ¿La compras por <b>'+sq.price+'</b> 🪙 monedas? Quien pase por ella te pagará <b>'+rent(sq)+'</b> 🪙.<br><span style="display:inline-flex;align-items:center;gap:10px;margin-top:8px">'+mercBandera(p,70)+'<small>Si la compras, ondeará tu bandera</small></span>',gold:p.gold};hsend(p,{t:'act',...p.act});}
       else{p.phase='done';hsend(p,{t:'result',ok,right,msg:r.msg,gold:p.gold});}
       renderBoard();},
     do(p,d){const sq=MERC[p.act.sq];let text;
-      if(d.yes&&!H.bg.own[p.act.sq]&&dobN(p)>=sq.price){p.gold-=sq.price;H.bg.own[p.act.sq]=p.key;text='Ahora '+sq.n+' es tuya. Cada vez que alguien pase por ella, te pagará '+rent(sq)+' 🪙 monedas.';addFeed('🏝️ <b>'+esc(p.name)+'</b> compra '+esc(sq.n));}
+      if(d.yes&&!H.bg.own[p.act.sq]&&dobN(p)>=sq.price){p.gold-=sq.price;H.bg.own[p.act.sq]=p.key;(H.bg.fresh=H.bg.fresh||{})[p.act.sq]=Date.now();text='¡Tu bandera ya ondea en '+sq.n+'! Cada vez que alguien pase por ella, te pagará '+rent(sq)+' 🪙 monedas.';addFeed('🏝️ <b>'+esc(p.name)+'</b> compra '+esc(sq.n));}
       else text='No compras la isla. ¡A seguir navegando!';
       p.phase='done';p.act=null;hsend(p,{t:'info',title:d.yes?'🏝️ ¡Isla comprada!':'⛵ Sigues tu rumbo',text,gold:p.gold});renderBoard();},
     rank:()=>allP().sort((a,b)=>(b.gold+propVal(b))-(a.gold+propVal(a))),
@@ -3247,7 +3262,7 @@ const BG={
       if(!IMG.merc_tablero){return '';}
       let h='<div class="row" style="justify-content:space-between"><h2>🏝️ Mercaderes de Siritinga</h2><span class="hint">Compra islas: quien pase por ellas te paga. Gana quien tenga más riqueza (oro + islas).</span></div><div class="mboard" style="background-image:url('+IMG.merc_tablero+')">';
       MERC.forEach((sq,i)=>{const r=mercRect(i),own=H.bg.own[i],o=own&&H.players[own];
-        h+=`<div class="mtile${o?' owned':''}" style="left:${r[0]}%;top:${r[1]}%;width:${r[2]}%;height:${r[3]}%">${sq.price&&!o?`<span class="mprice">🪙${sq.price}</span>`:''}${o?`<span class="mown">${avatarLite(o.av,26)}<small>paga ${rent(sq)}</small></span>`:''}<div class="mtok">${avStack(by[i]||[],26)}</div></div>`;});
+        h+=`<div class="mtile${o?' owned':''}" style="left:${r[0]}%;top:${r[1]}%;width:${r[2]}%;height:${r[3]}%">${sq.price&&!o?`<span class="mprice">🪙${sq.price}</span>`:''}${o?`<span class="mown flag${i>=14&&i<22?' top':''}${Date.now()-((H.bg.fresh||{})[i]||0)<2500?' new':''}">${mercBandera(o)}<small>${esc(o.name)} · ${rent(sq)}</small></span>`:''}<div class="mtok">${mercToks(by[i]||[])}</div></div>`;});
       h+='<div class="mrich">'+raceRankM()+'</div></div>';return h;},
     end(){allP().forEach(p=>{p.gold+=Math.round(propVal(p)/2);});const w=BG.mercaderes.rank()[0];return {title:w?'¡<span>'+esc(w.name)+'</span> es el mercader más rico!':'¡Fin del <span>mercado</span>!',sub:'Las islas valen la mitad de su precio al final',per:p=>({title:'Tus islas: '+Object.values(H.bg.own).filter(k=>k===p.key).length})};}
   },
@@ -3408,7 +3423,7 @@ const BG={
     end(){return {title:'¡Fin del <span>dominó</span>!',sub:H.bg.chain.length+' fichas colocadas',per:p=>({title:p.doms?'¡Has hecho dominó '+p.doms+(p.doms===1?' vez':' veces')+'!':'Te quedan '+p.hand.length+' fichas'})};}
   }
 };
-function raceRankM(){const r=BG.mercaderes.rank().slice(0,6);return '<b>Más ricos</b>'+r.map((p,i)=>`<div class="mrank">${i+1}. ${avatarLite(p.av,22)} ${esc(p.name)} <small>${fmt(p.gold)} + ${fmt(propVal(p))} en islas</small></div>`).join('');}
+function raceRankM(){const r=BG.mercaderes.rank().slice(0,6);return '<b>Más ricos</b>'+r.map((p,i)=>`<div class="mrank">${i+1}. ${mercFicha(p)} ${esc(p.name)} <small>${fmt(p.gold)} + ${fmt(propVal(p))} en islas</small></div>`).join('');}
 function dmBoardHTML(b,sel,big){
   return `<div class="dm${big?' big':''}">${b.map((x,i)=>{const dark=(Math.floor(i/8)+i%8)%2===1;return `<div class="dmc${dark?' dk':''}" data-i="${i}">${x?`<span class="pc ${x.toLowerCase()==='r'?'rojo':'azul'}">${x===x.toUpperCase()?'👑':''}</span>`:''}</div>`;}).join('')}</div>`;
 }
