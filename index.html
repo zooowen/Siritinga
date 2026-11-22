@@ -557,6 +557,21 @@ body[data-g] .card,body[data-g] .btn{transition:background .4s,box-shadow .4s}
 .mtile .mown.flag.new img{animation:mPlant 1s cubic-bezier(.25,1.6,.45,1) both;transform-origin:50% 100%}
 @keyframes mPlant{0%{transform:translateY(-60%) scale(.3) rotate(-25deg);opacity:0}60%{opacity:1}100%{transform:none}}
 .mrich .mfi{width:20px;height:20px;vertical-align:middle}
+.mtile .mtok .mfi.hop{animation:mHop .3s ease-out}
+@keyframes mHop{0%{transform:translateY(0)}45%{transform:translateY(-55%) scale(1.15)}100%{transform:translateY(0)}}
+/* mapa propio del alumno */
+.mboard.stu{max-width:760px;margin:6px auto 10px}
+.mboard.stu .mtile.mine{box-shadow:0 0 0 4px #ffc83d,0 0 16px 5px rgba(255,200,61,.9)}
+.mboard.stu .mtile.other{box-shadow:none}
+.mboard.stu .mown.flag.small img{height:clamp(18px,3vw,34px);opacity:.75}
+.mboard.stu .mown.flag.mineF img{height:clamp(40px,8vw,96px)}
+.mboard.stu .stok{position:absolute;width:clamp(44px,9vw,92px);height:clamp(44px,9vw,92px);transform:translate(-50%,-62%);transition:left .26s ease-in-out,top .26s ease-in-out;z-index:4;filter:drop-shadow(0 6px 4px rgba(0,0,0,.45))}
+.mboard.stu .stok img{width:100%;height:100%}
+.mboard.stu .stok.hop img{animation:mHop .26s ease-out}
+.mboard.stu .stok::after{content:'Tú';position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);background:#ffc83d;color:#3b2606;font-weight:800;font-size:12px;border-radius:999px;padding:0 7px}
+.mroll{font-size:26px!important;padding:14px 30px!important;animation:mPulse 1.2s ease-in-out infinite}
+@keyframes mPulse{50%{transform:scale(1.06)}}
+.mme{display:inline-flex;align-items:center;gap:8px;font-weight:800;margin-top:4px}.mme img{height:46px}
 .mrich{position:absolute;z-index:3;right:16%;bottom:15%;max-width:26%;background:rgba(255,250,236,.9);border-radius:12px;padding:6px 10px;font-size:clamp(10px,1.1vw,14px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
 .mrich .mrank{font-size:inherit}
 .role .rsecret,.role .rmsg{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
@@ -972,7 +987,7 @@ body[data-g] .card,body[data-g] .btn{transition:background .4s,box-shadow .4s}
       <button class="btn big" onclick="goTeacher()">Soy el maestro</button>
     </div>
   </div>
-  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 72 · 20/11/2026 · Mercaderes: cada jugador con su ficha y su bandera, que ondea en las islas que compra</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
+  <div class="authorline">© 2026 Óscar Robles Braojos · Todos los derechos reservados<br><span style="font-size:14px">Dibujos basados en originales de Jaime Villanueva García</span><br><span style="font-size:13px;opacity:.85">Versión 73 · 22/11/2026 · Mercaderes: lanzas el dado tú, tu ficha avanza casilla a casilla y ves tu propio mapa con tus banderas</span><br><button class="btn ghost lt" style="font-size:14px;padding:2px 6px" onclick="openCredits()">Créditos de las imágenes</button></div>
 </section>
 
 <!-- CRÉDITOS -->
@@ -3045,7 +3060,7 @@ const MFLAGS=30,mfN=i=>String(i%MFLAGS+1).padStart(2,'0');
 function mercFlag(p){if(p.mflag==null){const used=new Set(allP().map(x=>x.mflag).filter(v=>v!=null));let i=0;while(used.has(i)&&i<MFLAGS)i++;p.mflag=i<MFLAGS?i:allP().indexOf(p)%MFLAGS;}return p.mflag;}
 const mercFicha=(p,cls='mfi')=>`<img class="${cls}" src="img/merc/f${mfN(mercFlag(p))}.webp" alt="" title="${esc(p.name)}" style="opacity:${p.conn||H.local?1:.5}">`;
 const mercBandera=(p,h)=>`<img src="img/merc/b${mfN(mercFlag(p))}.webp" alt="" title="${esc(p.name)}"${h?` style="height:${h}px"`:''}>`;
-const mercToks=l=>l.slice(0,4).map(p=>mercFicha(p)).join('')+(l.length>4?`<b class="more">+${l.length-4}</b>`:'');
+const mercToks=l=>l.slice(0,4).map(p=>mercFicha(p,'mfi'+(p.bdisp!=null&&Date.now()-(p.hopAt||0)<450?' hop':''))).join('')+(l.length>4?`<b class="more">+${l.length-4}</b>`:'');
 const propVal=p=>Object.entries(H.bg.own).filter(([,k])=>k===p.key).reduce((s,[i])=>s+MERC[i].price,0);
 function mercRect(i){   // posición de cada casilla sobre el dibujo del tablero (en %)
   const TW=(1088-68)/8,SH=(652-122)/6;let x0,y0,x1,y1;
@@ -3055,14 +3070,19 @@ function mercRect(i){   // posición de cada casilla sobre el dibujo del tablero
   else{const k=i-22;x0=996;x1=1146;y0=122+k*SH;y1=y0+SH;}
   return [x0/11.52,y0/7.68,(x1-x0)/11.52,(y1-y0)/7.68].map(v=>+v.toFixed(2));
 }
+/* mapa que ve cada alumno: su ficha y sus banderas en grande */
+function mercMap(p){return {me:mercFlag(p),pos:p.bpos||0,own:Object.entries(H.bg.own).map(([i,k])=>[+i,k===p.key?-1:(H.players[k]?mercFlag(H.players[k]):0)])};}
+/* la ficha avanza casilla a casilla en el tablero del maestro */
+function mercWalk(p,from,steps,delay){if(!steps)return;p.bdisp=from;clearInterval(p.walkT);
+  setTimeout(()=>{let n=0;p.walkT=setInterval(()=>{n++;p.bdisp=(from+n)%MERC.length;p.hopAt=Date.now();renderPanel();if(n>=steps){clearInterval(p.walkT);p.bdisp=null;setTimeout(renderPanel,320);}},300);},delay||0);}
 function mercMove(p){
-  if(p.skip>0){p.skip--;return {msg:'⛓️ Sigues en el calabozo: esta vez no tiras.'};}
+  if(p.skip>0){p.skip--;return {msg:'⛓️ Sigues en el calabozo: esta vez no tiras.',d:0,from:p.bpos||0};}
   const d=d6(),from=p.bpos||0,to=(from+d)%MERC.length;p.bpos=to;
   let msg='🎲 Has sacado un <b>'+d+'</b> '+DICE[d]+' → <b>'+MERC[to].n+'</b>.';
   if(to<from){p.gold+=40;msg+='<br>⚓ Pasas por la salida: '+pm(40)+'.';}
   const sq=MERC[to];
   if(sq.k==='isla'){const own=H.bg.own[to];
-    if(!own){if(dobN(p)>=sq.price)return {msg,buy:to};msg+='<br>Esta isla cuesta '+sq.price+' 🪙 monedas y aún no te llegan.';}
+    if(!own){if(dobN(p)>=sq.price)return {msg,buy:to,d,from};msg+='<br>Esta isla cuesta '+sq.price+' 🪙 monedas y aún no te llegan.';}
     else if(own===p.key)msg+='<br>¡Es tu isla! Descansas tranquilo.';
     else{const o=H.players[own],r=Math.min(p.gold,rent(sq));p.gold-=r;if(o){o.gold+=r;hsend(o,{t:'hit',text:'🏝️ '+p.name+' te paga '+r+' 🪙 monedas por pasar por '+sq.n,gold:o.gold});}msg+='<br>🏝️ Es de '+(o?o.name:'otro jugador')+': le pagas <b>'+r+'</b> 🪙 monedas.';}
   }
@@ -3070,7 +3090,7 @@ function mercMove(p){
   else if(sq.k==='tormenta'){const l=Math.min(p.gold,30);p.gold-=l;msg+='<br>⛈️ Tormenta: '+pmL(l)+'.';}
   else if(sq.k==='viento'){p.gold+=30;msg+='<br>💨 Viento a favor: '+pm(30)+'.';}
   else if(sq.k==='calabozo'){p.skip=1;msg+='<br>⛓️ Calabozo: pierdes un turno.';}
-  return {msg};
+  return {msg,d,from};
 }
 
 /* ---------- hundir la flota ---------- */
@@ -3245,20 +3265,26 @@ const BG={
     end(){const w=raceRank()[0];return {title:w&&w.laps?'¡Gana <span>'+esc(w.name)+'</span>!':'¡Fin de las <span>serpientes marinas</span>!',sub:H.bg.fin+' de '+allP().length+' han llegado al final',per:p=>({title:p.laps?'¡Has llegado al final '+(p.laps>1?p.laps+' veces':'')+'!':'Has llegado a la casilla '+p.bpos+' de 50'})};}
   },
   mercaderes:{
-    init(){H.bg={own:{},fresh:{}};allP().forEach(p=>{p.mflag=null;});allP().forEach(p=>{p.bpos=0;p.skip=0;p.gold=100;mercFlag(p);});},
+    init(){H.bg={own:{},fresh:{}};allP().forEach(p=>{p.mflag=null;});allP().forEach(p=>{p.bpos=0;p.bdisp=null;p.skip=0;p.gold=100;mercFlag(p);});},
     late(p){p.bpos=0;p.skip=0;p.gold=100;mercFlag(p);},
     answer(p,ok,right){if(!ok){p.phase='done';hsend(p,{t:'result',ok,right});return;}
-      p.gold+=gain(p,10);const r=mercMove(p);
-      if(r.buy!=null){const sq=MERC[r.buy];p.phase='act';p.act={k:'buy',sq:r.buy,html:'<b>¡Correcto!</b> '+pm(10)+'<br>'+r.msg+'<br><br>La isla <b>'+esc(sq.n)+'</b> no tiene dueño. ¿La compras por <b>'+sq.price+'</b> 🪙 monedas? Quien pase por ella te pagará <b>'+rent(sq)+'</b> 🪙.<br><span style="display:inline-flex;align-items:center;gap:10px;margin-top:8px">'+mercBandera(p,70)+'<small>Si la compras, ondeará tu bandera</small></span>',gold:p.gold};hsend(p,{t:'act',...p.act});}
-      else{p.phase='done';hsend(p,{t:'result',ok,right,msg:r.msg,gold:p.gold});}
+      p.gold+=gain(p,10);
+      // ahora el alumno lanza el dado él mismo
+      p.phase='act';p.act={k:'mroll',html:'<b>¡Correcto!</b> '+pm(10)+'<br>¡Lanza el dado y avanza con tu ficha!',map:mercMap(p),gold:p.gold};hsend(p,{t:'act',...p.act});
       renderBoard();},
-    do(p,d){const sq=MERC[p.act.sq];let text;
+    do(p,d){
+      if(p.act.k==='mroll'){const r=mercMove(p),to=p.bpos;
+        if(r.d)mercWalk(p,r.from,r.d,1300);
+        if(r.buy!=null){const sq=MERC[r.buy];p.act={k:'mbuy',sq:r.buy,d:r.d,from:r.from,to,map:mercMap(p),html:r.msg+'<br><br>La isla <b>'+esc(sq.n)+'</b> no tiene dueño. ¿La compras por <b>'+sq.price+'</b> 🪙 monedas? Quien pase por ella te pagará <b>'+rent(sq)+'</b> 🪙.<br><span class="mme">'+mercBandera(p,70)+'<small>Si la compras, ondeará tu bandera</small></span>',gold:p.gold};}
+        else{p.phase='done';p.act={k:'mmoved',d:r.d,from:r.from,to,map:mercMap(p),html:r.msg,gold:p.gold};}
+        hsend(p,{t:'act',...p.act});if(p.phase==='done')p.act=null;renderBoard();return;}
+      const sq=MERC[p.act.sq];let text;
       if(d.yes&&!H.bg.own[p.act.sq]&&dobN(p)>=sq.price){p.gold-=sq.price;H.bg.own[p.act.sq]=p.key;(H.bg.fresh=H.bg.fresh||{})[p.act.sq]=Date.now();text='¡Tu bandera ya ondea en '+sq.n+'! Cada vez que alguien pase por ella, te pagará '+rent(sq)+' 🪙 monedas.';addFeed('🏝️ <b>'+esc(p.name)+'</b> compra '+esc(sq.n));}
       else text='No compras la isla. ¡A seguir navegando!';
-      p.phase='done';p.act=null;hsend(p,{t:'info',title:d.yes?'🏝️ ¡Isla comprada!':'⛵ Sigues tu rumbo',text,gold:p.gold});renderBoard();},
+      p.phase='done';p.act=null;const bought=d.yes&&H.bg.own[p.bpos]===p.key;hsend(p,{t:'act',k:'mmoved',d:0,from:p.bpos,to:p.bpos,plant:bought?p.bpos:null,map:mercMap(p),html:'<b>'+(bought?'🏝️ ¡Isla comprada!':'⛵ Sigues tu rumbo')+'</b><br>'+esc(text),gold:p.gold});renderBoard();},
     rank:()=>allP().sort((a,b)=>(b.gold+propVal(b))-(a.gold+propVal(a))),
     panel(){
-      const by={};allP().forEach(p=>(by[p.bpos||0]=by[p.bpos||0]||[]).push(p));
+      const by={};allP().forEach(p=>{const q=p.bdisp!=null?p.bdisp:(p.bpos||0);(by[q]=by[q]||[]).push(p);});
       if(!IMG.merc_tablero){return '';}
       let h='<div class="row" style="justify-content:space-between"><h2>🏝️ Mercaderes de Siritinga</h2><span class="hint">Compra islas: quien pase por ellas te paga. Gana quien tenga más riqueza (oro + islas).</span></div><div class="mboard" style="background-image:url('+IMG.merc_tablero+')">';
       MERC.forEach((sq,i)=>{const r=mercRect(i),own=H.bg.own[i],o=own&&H.players[own];
@@ -3430,8 +3456,32 @@ function dmBoardHTML(b,sel,big){
 
 /* ---------- alumno: pantallas de los juegos de mesa ---------- */
 let ACT=null;
+/* Mercaderes: el mapa propio del alumno */
+function stuMercMap(m,pos){
+  if(!IMG.merc_tablero||!m)return '';const mine=new Set(m.own.filter(o=>o[1]<0).map(o=>o[0]));
+  let h='<div class="mboard stu" id="stuMap" style="background-image:url('+IMG.merc_tablero+')">';
+  MERC.forEach((sq,i)=>{const r=mercRect(i),o=m.own.find(x=>x[0]===i);
+    h+=`<div class="mtile${o?(o[1]<0?' owned mine':' other'):''}" data-i="${i}" style="left:${r[0]}%;top:${r[1]}%;width:${r[2]}%;height:${r[3]}%">${sq.price&&!o?`<span class="mprice">🪙${sq.price}</span>`:''}${o?`<span class="mown flag ${o[1]<0?'mineF':'small'}${i>=14&&i<22?' top':''}"><img src="img/merc/b${mfN(o[1]<0?m.me:o[1])}.webp" alt=""></span>`:''}</div>`;});
+  const r=mercRect(pos);h+=`<div class="stok" id="stuTok" style="left:${r[0]+r[2]/2}%;top:${r[1]+r[3]/2}%"><img src="img/merc/f${mfN(m.me)}.webp" alt=""></div></div>`;return h;}
+function stuWalk(from,steps,done){const t=$('stuTok');if(!t||!steps){done&&done();return;}let n=0;
+  const iv=setInterval(()=>{n++;const r=mercRect((from+n)%MERC.length);t.style.left=(r[0]+r[2]/2)+'%';t.style.top=(r[1]+r[3]/2)+'%';t.classList.remove('hop');void t.offsetWidth;t.classList.add('hop');
+    if(n>=steps){clearInterval(iv);setTimeout(()=>done&&done(),350);}},300);}
 function showAct(d){
-  ACT=d;setGold(d.gold);$('actMsg').innerHTML=d.html||'';const box=$('actBox');
+  ACT=d;setGold(d.gold);$('actMsg').innerHTML=d.html||'';const box=$('actBox');box.closest('.card').style.maxWidth=/^m(roll|buy|moved)$/.test(d.k)?'min(960px,96vw)':'';
+  if(d.k==='mroll'||d.k==='mbuy'||d.k==='mmoved'){const local=!!(typeof H!=='undefined'&&H&&H.local);
+    const map=local?'':stuMercMap(d.map,d.k==='mroll'?d.map.pos:(d.from!=null?d.from:d.map.pos));
+    if(d.k==='mroll'){box.innerHTML='<button class="btn green mroll" id="mRoll">🎲 Lanzar el dado</button>'+map;
+      $('mRoll').onclick=()=>{$('mRoll').disabled=true;send({t:'do',roll:true});};show('s-act');return;}
+    const after=()=>{
+      if(d.k==='mbuy'){$('actMsg').innerHTML=d.html;$('mBtns').innerHTML='<button class="btn green" id="aYes">🏝️ Comprar</button><button class="btn" id="aNo">No, gracias</button>';
+        $('aYes').onclick=()=>{$('mBtns').querySelectorAll('button').forEach(b=>b.disabled=true);send({t:'do',yes:true});};$('aNo').onclick=()=>{$('mBtns').querySelectorAll('button').forEach(b=>b.disabled=true);send({t:'do',yes:false});};}
+      else{$('actMsg').innerHTML=d.html;$('mBtns').innerHTML='<button class="btn green" id="mNext">Siguiente pregunta</button>';$('mNext').onclick=()=>{$('mNext').disabled=true;send({t:'next'});};
+        if(/Isla comprada|Viento a favor|Cofre:|Pasas por la salida/.test(d.html))coinBurst(16);}};
+    $('actMsg').innerHTML=d.d?'🎲 ¡Lanzando el dado…!':d.html;box.innerHTML='<div class="row" id="mBtns" style="justify-content:center"></div>'+map;
+    if(d.plant!=null){const f=box.querySelector(`.mtile[data-i="${d.plant}"] .mown`);if(f)f.classList.add('new');}
+    show('s-act');
+    if(d.d){diceFx(d.d);setTimeout(()=>stuWalk(d.from,d.d,after),1300);}else after();
+    return;}
   if(d.k==='buy'){box.innerHTML='<div class="row"><button class="btn green" id="aYes">🏝️ Comprar</button><button class="btn" id="aNo">No, gracias</button></div>';
     $('aYes').onclick=()=>{box.querySelectorAll('button').forEach(b=>b.disabled=true);send({t:'do',yes:true});};$('aNo').onclick=()=>{box.querySelectorAll('button').forEach(b=>b.disabled=true);send({t:'do',yes:false});};}
   if(d.k==='shoot'){box.innerHTML=(d.legend||'')+'<div class="fgrid big" style="grid-template-columns:repeat('+FN+',1fr)">'+d.shot.map((v,i)=>fcell(v,i,true)).join('')+'</div>';
